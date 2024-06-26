@@ -167,3 +167,12 @@ data/protein2ipr_pfam.dat
 data/protein2ipr.dat
 .DS_Store
 .DS_Store
+A8KBH6_protein2ipr_entry.dat
+data/1k_proteins.dat
+data/10_proteins.dat
+data/protein2ipr_pfam2.dat
+data/uniprot_trembl_10M.fasta
+data/uniref100_10M.fasta
+data/uniref100_10M.proteins
+data/uniref100_100M.fasta
+data/uniref100_500M.fasta
