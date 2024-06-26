@@ -182,3 +182,6 @@ data/uniref100_500M.fasta
 .DS_Store
 data/A8KBH6_ipr_pfam.dat
 data/protein2ipr_new.dat
+data/protein2ipr_new_1M.dat
+data/protein2ipr_new_20M.dat
+data/protein2ipr_new_25M.dat
