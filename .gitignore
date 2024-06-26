@@ -1,3 +1,5 @@
+*.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -176,3 +178,5 @@ data/uniref100_10M.fasta
 data/uniref100_10M.proteins
 data/uniref100_100M.fasta
 data/uniref100_500M.fasta
+.DS_Store
+.DS_Store
