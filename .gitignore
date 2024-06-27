@@ -185,3 +185,9 @@ data/protein2ipr_new.dat
 data/protein2ipr_new_1M.dat
 data/protein2ipr_new_20M.dat
 data/protein2ipr_new_25M.dat
+data/disordered/extra.xml.gz
+data/taxonomy/coll_dump.txt
+data/taxonomy/taxcat_readme.txt
+data/taxonomy/taxcat.tar.gz
+data/taxonomy/taxdump_readme.txt
+data/taxonomy/taxdump.tar.gz
