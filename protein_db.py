@@ -13,7 +13,8 @@ class ProteinDB:
         #con = duckdb.connect(database=':memory:')
         con = duckdb.connect(database=ProteinDB.db_string)
         
-        # Create table
+        
+        # protein sentence
         con.execute("\
             CREATE TABLE PROTEIN_SENTENCE (\
                 UNIPROT_ID VARCHAR,\
@@ -26,7 +27,7 @@ class ProteinDB:
                 END_POS USMALLINT\
             )")
 
-        #Q6GZX4	IPRXXXXXX	Putative transcription factor 001R n=4 Tax=Ranavirus TaxID=10492 RepID=001R_FRG3G	LowComplexity	1	257
+        # pfam and disordered entries
         con.execute("\
             CREATE TABLE PROTEIN_WORD (\
                 UNIPROT_ID VARCHAR,\
@@ -36,10 +37,10 @@ class ProteinDB:
                 START_POS USMALLINT,\
                 END_POS USMALLINT\
             )")
-        
-        # Close the connection
-        con.close()
-        
+
+        # close the connection
+        con.close()        
+    
     def create_indexes(self):
         con = duckdb.connect(database=ProteinDB.db_string)
         con.execute("CREATE INDEX w_protid_idx ON PROTEIN_WORD(UNIPROT_ID)")
