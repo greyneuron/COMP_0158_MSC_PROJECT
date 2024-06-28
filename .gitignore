@@ -1,4 +1,16 @@
+# Added by patrick
 *.DS_Store
+*.dmp
+*.dat
+*.gz
+*.tar
+*.fasta
+data/disordered/extra.10000.xml
+gc.prt
+
+data/taxonomy/*
+#data/taxonomy/taxcat_readme.txt
+#data/taxonomy/taxdump_readme.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -162,34 +174,5 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
-data/protein2ipr_pfam_duf.dat
-data/.DS_Store
-data/protein2ipr_pfam_puf.dat
-data/protein2ipr_pfam.dat
-data/protein2ipr.dat
-.DS_Store
-.DS_Store
-A8KBH6_protein2ipr_entry.dat
-data/1k_proteins.dat
-data/10_proteins.dat
-data/protein2ipr_pfam2.dat
-data/uniprot_trembl_10M.fasta
-data/uniref100_10M.fasta
-data/uniref100_10M.proteins
-data/uniref100_100M.fasta
-data/uniref100_500M.fasta
-.DS_Store
-.DS_Store
-data/A8KBH6_ipr_pfam.dat
-data/protein2ipr_new.dat
-data/protein2ipr_new_1M.dat
-data/protein2ipr_new_20M.dat
-data/protein2ipr_new_25M.dat
-data/disordered/extra.xml.gz
-data/taxonomy/coll_dump.txt
-data/taxonomy/taxcat_readme.txt
-data/taxonomy/taxcat.tar.gz
-data/taxonomy/taxdump_readme.txt
-data/taxonomy/taxdump.tar.gz
-data/masked_regions.dat
-data/disordered/extra.10000.xml
+
+
