@@ -1,7 +1,7 @@
 
 use DateTime; 
 
-my $protein_file = "/Users/patrick/dev/ucl/comp0158_mscproject/data/10_proteins.dat";
+my $protein_file = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein2ipr.dat";
 my $ipr_file = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein2ipr_pfam.dat";
 
 open (my $fh, '<', $protein_file) or die "Can't open file: $!";
