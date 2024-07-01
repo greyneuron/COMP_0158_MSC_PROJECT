@@ -4,29 +4,46 @@ class ProteinDB:
     db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/proteins.db"
     
     def __init__(self):
-        print('ProteinDB')
+        print('ProteinDB created at ', ProteinDB.db_string)
     
     
-    def create_tables(self):
-        # Connect in memory
-        
+    def create_protein_table(self):
         #con = duckdb.connect(database=':memory:')
         con = duckdb.connect(database=ProteinDB.db_string)
         
-        
-        # protein sentence
+        # protein sentence - comes from uniref100
         con.execute("\
-            CREATE TABLE PROTEIN_SENTENCE (\
+            CREATE TABLE PROTEIN (\
                 UNIPROT_ID VARCHAR,\
-                IPR VARCHAR,\
-                DESCRIPTION VARCHAR,\
+                SHORT_DESCRIPTION VARCHAR,\
                 TAX_NAME VARCHAR,\
                 TAX_ID VARCHAR,\
                 DOM_TYPE VARCHAR,\
+                REP_ID VARCHAR,\
                 START_POS USMALLINT,\
                 END_POS USMALLINT\
             )")
+        
+        result = con.execute("DESCRIBE PROTEIN")
+        print(result)
 
+        con.close()
+    
+    
+    def create_protein_indices(self):
+        con = duckdb.connect(database=ProteinDB.db_string)
+        con.execute("CREATE INDEX PROT_ID_X ON PROTEIN(UNIPROT_ID)")
+        con.close()
+    
+    def create_pfam_indices(self):
+        con = duckdb.connect(database=ProteinDB.db_string)
+        con.execute("CREATE INDEX WORD_PROT_ID_X ON PROTEIN_WORD(UNIPROT_ID)")
+        con.close()
+    
+    
+    # holds pfam and disordered regions
+    def create_word_table(self):
+        con = duckdb.connect(database=ProteinDB.db_string)
         # pfam and disordered entries
         con.execute("\
             CREATE TABLE PROTEIN_WORD (\
@@ -37,21 +54,4 @@ class ProteinDB:
                 START_POS USMALLINT,\
                 END_POS USMALLINT\
             )")
-
-        # close the connection
         con.close()        
-    
-    def create_indexes(self):
-        con = duckdb.connect(database=ProteinDB.db_string)
-        con.execute("CREATE INDEX w_protid_idx ON PROTEIN_WORD(UNIPROT_ID)")
-        con.execute("CREATE INDEX w_refid_idx ON PROTEIN_WORD(REF_ID)")
-        con.execute("CREATE INDEX p_protid_idx ON PROTEIN_SENTENCE(UNIPROT_ID)")
-        con.close()
-        
-    def describe_tables(self):
-        con = duckdb.connect(database=ProteinDB.db_string)
-        result = con.execute("DESCRIBE PROTEIN_SENTENCE")
-        print(result)
-        result = con.execute("DESCRIBE PROTEIN_WORD")
-        print(result)
-        con.close()
