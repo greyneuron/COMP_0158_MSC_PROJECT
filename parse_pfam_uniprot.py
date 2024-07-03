@@ -1,18 +1,18 @@
 from Bio import SeqIO
 import re
 import csv
-import duckdb
-
-# internal representation
-from protein_db import ProteinDB
 
 limit       = True # if True, onLy parses Max_lines lines 
 MAX_COUNT   = -1
 OUTPUT_LIMIT = 10000000
 
+#
+# Reads a full protein2ipr file and outputs only lines with pfam entries
+# Once this is done. the file can be parsed into the db using load_pfam_entries.ipynb
+#
 def parse_parse_protein_2ipr_pfam():
     path        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein2ipr_pfam.dat"
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam_entries_full.dat"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/pfam_entries_full.dat"
     
     uniprot_id = ""
     output_file = open(output, "w")
