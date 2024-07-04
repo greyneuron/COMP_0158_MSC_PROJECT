@@ -180,3 +180,4 @@ cython_debug/
 
 
 data/pfam/protein2ipr.dat.zip
+data/output_corpus.csv
