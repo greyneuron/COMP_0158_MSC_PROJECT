@@ -28,11 +28,15 @@ def reduce_trembl_fasta(dom_type):
     start_time = time.time()
     mid_time_start = time.time()
     line = ""
+
+    # -----------------
+    print('parsing fasta into .dat file:', input)
+    # -----------------
     
     output_file = open(output, "w")
-    
+
     for record in SeqIO.parse(input, "fasta"):
-        # extracts the id from the name
+        # extract id
         #print(record.name)
         uniprot_res = re.search(rexp, record.name)
         uniprot_id  = uniprot_res.group(1)
@@ -44,8 +48,9 @@ def reduce_trembl_fasta(dom_type):
         for m in re.finditer(r'.{3,}', str(record.seq)):            # modified for UniRef100
             start = str(m.start()+1)
             end = str(m.end()+1)
-        
         #print(uniprot_id, start, end)
+        
+        # create output file
         try:
             line = "|".join([uniprot_id, start, end]) +'\n'
             output_file.write(line)
@@ -75,7 +80,11 @@ def reduce_trembl_fasta(dom_type):
     exec_time = end_time - start_time
     print('>>>', record_count, 'records processed in', exec_time, 's', 'error count:', error_count)
 
+# --------------------------------------------
 
+# *************  DATABASE STUFF  *************
+
+# --------------------------------------------
 def load_fasta_dat_db():
     db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
     con = duckdb.connect(database=db_string)           
@@ -85,7 +94,11 @@ def load_fasta_dat_db():
     con.close()
 
 def create_idx():
-    
+    db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
+    con = duckdb.connect(database=db_string)
+    con.execute("CREATE INDEX UNIP_IDX ON MY_UNIPROT_DATA(ID)")
+    print('index created')
+    con.close()
     
 def count():
     db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
@@ -94,8 +107,26 @@ def count():
     print(count)
     con.close()
  
+ 
+def select():
+    db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
+    con = duckdb.connect(database=db_string)
+    s = time.time()
+    res = con.execute("SELECT * FROM MY_UNIPROT_DATA WHERE ID = 'A0A016T105'").fetchall()
+    t = time.time() - s
+    print(res)
+    print('time taken %d ms' % (t) )
+    con.close()
 
+
+# --------------------------------------------
+
+# *************  MAIN  *************
+
+# --------------------------------------------
 
 #reduce_trembl_fasta("LowComplexity")
 #parse_trembl_fasta(file, "CoiledCoil")
-count()  
+#create_idx()
+#count()
+select()
