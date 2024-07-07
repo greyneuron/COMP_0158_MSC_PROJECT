@@ -14,6 +14,7 @@ gc.prt
 # for terraform
 *.hcl
 .terraform
+*.tfstate
 
 data/taxonomy/*
 database/*
@@ -191,3 +192,4 @@ data/output_corpus.csv
 data/new_attempt.csv
 data/small_output_corpus.csv
 code/db_utils/allgebra_output.csv
+code/terraform/aws_ebs_basic/terraform.tfstate
