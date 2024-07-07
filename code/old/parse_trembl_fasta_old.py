@@ -5,7 +5,7 @@ import duckdb
 import time
 
 # internal representation
-from protein_db import ProteinDB
+from code.old.protein_db import ProteinDB
 
 pdb = ProteinDB()
 
