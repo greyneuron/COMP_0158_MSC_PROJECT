@@ -14,11 +14,26 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_instance" "app_server" {
-  ami           = "ami-08ca6be1dc85b0e84"
-  instance_type = var.instance_type
+resource "aws_instance" "w2v-server" {
+  ami                    = "ami-08ca6be1dc85b0e84"
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.instance.id]
+  availability_zone      = var.availabilty_zone
 
   tags = {
     Name = var.instance_name
+  }
+}
+
+
+# -------------- S3 ---------------
+
+# Create a S3 bucket
+resource "aws_s3_bucket" "w2v_s3_bucket" {
+  bucket = var.bucket_name
+
+
+  lifecycle {
+    prevent_destroy = true
   }
 }
