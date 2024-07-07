@@ -7,6 +7,9 @@
 *.fasta
 data/disordered/extra.10000.xml
 gc.prt
+*.csv
+*.model
+*.png
 
 data/taxonomy/*
 database/*
@@ -183,3 +186,4 @@ data/pfam/protein2ipr.dat.zip
 data/output_corpus.csv
 data/new_attempt.csv
 data/small_output_corpus.csv
+code/db_utils/allgebra_output.csv
