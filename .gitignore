@@ -11,6 +11,10 @@ gc.prt
 *.model
 *.png
 
+# for terraform
+*.hcl
+.terraform
+
 data/taxonomy/*
 database/*
 
