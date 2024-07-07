@@ -13,15 +13,19 @@ pdb = ProteinDB()
 # PARSE TREMBL FASTA AND LOOKUP PFAM ENTRIES
 #
 # 0.8s per 1000 lines - 82s for 100k
-# get down to 78s for 100k using a buffer
-# should take 2hrs for 10M
+# 10k lines ~= 7 to 8s
+# 100k lines ~= 70s
+# 1M took ~= 669s
+
+# thus 78M ~= 780 min = 10hrs
+
 def parse_trembl_fasta(dom_type):
     path            = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprot_trembl_10M.fasta"
-    output          = "/Users/patrick/dev/ucl/comp0158_mscproject/data/output_corpus.csv"
+    output          = "/Users/patrick/dev/ucl/comp0158_mscproject/data/small_output_corpus.csv"
     uniprot_re      = "tr\|([A-Z0-9]+)\|"
     
-    PROCESS_LIMIT   = 100
-    OUTPUT_LIMIT    = 10
+    PROCESS_LIMIT   = 1000000
+    OUTPUT_LIMIT    = 100000
     BUFFER_LIMIT    = 5000
     
     con = duckdb.connect(database=ProteinDB.db_string) 
@@ -43,10 +47,10 @@ def parse_trembl_fasta(dom_type):
         uniprot_id  = result.group(1)
         
         # look for pfam entries by id
-        db_start = time.time()
+        #db_start = time.time()
         pfam_res = con.execute("SELECT * FROM PFAM_TOKEN WHERE column0 = ?", [uniprot_id]).fetchall()
-        db_end = time.time()
-        print('DB:', db_end - db_start)
+        #db_end = time.time()
+        #print('DB:', db_end - db_start)
         #output_line.joinuniprot_id
         
         if pfam_res is not None:
