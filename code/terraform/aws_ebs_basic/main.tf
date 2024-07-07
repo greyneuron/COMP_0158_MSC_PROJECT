@@ -34,6 +34,6 @@ resource "aws_s3_bucket" "w2v_s3_bucket" {
 
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
