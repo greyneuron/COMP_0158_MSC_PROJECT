@@ -17,4 +17,8 @@ provider "aws" {
 resource "aws_ebs_volume" "w2v_ebs_vol" {
   availability_zone = var.availabilty_zone
   size              = 10
+
+  tags = {
+    Name = "Word2Vec_EBS"
+  }
 }
