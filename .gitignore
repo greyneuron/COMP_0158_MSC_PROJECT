@@ -194,3 +194,4 @@ data/small_output_corpus.csv
 code/db_utils/allgebra_output.csv
 code/terraform/aws_ebs_basic/terraform.tfstate
 code/terraform/aws_ebs_basic/terraform.tfstate.backup
+code/terraform/aws_ebs_basic/word2vec_key_pair_file
