@@ -21,6 +21,9 @@ resource "aws_instance" "w2v-server" {
   vpc_security_group_ids = [aws_security_group.instance.id]
   availability_zone      = var.availabilty_zone
 
+  # need this for ssh
+  associate_public_ip_address = true
+
   subnet_id = aws_subnet.subnet.id
 
   tags = {

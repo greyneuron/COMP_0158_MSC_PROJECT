@@ -15,9 +15,9 @@ resource "aws_subnet" "subnet" {
   availability_zone = var.availabilty_zone
 }
 
-/*
+
 # not sure I really want an internet gateway - would rather keep this closed off
+# need it to be able to ssh
 resource "aws_internet_gateway" "w2v-igw" {
     vpc_id = aws_vpc.w2v-dev-vpc.id
 }
-*/

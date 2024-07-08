@@ -16,6 +16,8 @@ gc.prt
 .terraform
 *.tfstate
 
+*.lock.info
+
 data/taxonomy/*
 database/*
 
