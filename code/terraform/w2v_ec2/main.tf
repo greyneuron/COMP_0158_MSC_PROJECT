@@ -28,6 +28,17 @@ resource "aws_instance" "w2v-server" {
   }
 }
 
+#
+# Attach EBS volume (ie disk) - get the volume_id AFTE
+# running terraform apply from the ebs folder
+#
+resource "aws_volume_attachment" "w2v_ebs_att" {
+  device_name = "/dev/sdh"
+  volume_id   = "vol-05e84fcbb59aede3c"
+  instance_id = aws_instance.w2v-server.id
+}
+
+
 
 # ---------- key pair
 
