@@ -1,3 +1,5 @@
+# https://www.geeksforgeeks.org/how-to-create-an-aws-ec2-instance-and-attach-ebs-to-ec2-with-terraform/
+
 terraform {
   required_providers {
     aws = {
