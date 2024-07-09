@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 
-
+# ----- vpc
 resource "aws_vpc" "w2v-dev-vpc" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
@@ -25,6 +25,7 @@ resource "aws_vpc" "w2v-dev-vpc" {
   }
 }
 
+# ----- public subnet in vpc
 resource "aws_subnet" "public_subnet" {
   cidr_block        = var.public_subnet_cidr_block
   vpc_id            = aws_vpc.w2v-dev-vpc.id
@@ -35,6 +36,7 @@ resource "aws_subnet" "public_subnet" {
   }
 }
 
+# ----- private subnet in vpc
 resource "aws_subnet" "private_subnet" {
   cidr_block        = var.private_subnet_cidr_block
   vpc_id            = aws_vpc.w2v-dev-vpc.id
@@ -46,8 +48,7 @@ resource "aws_subnet" "private_subnet" {
 }
 
 
-# not sure I really want an internet gateway - would rather keep this closed off
-# need it to be able to ssh
+# gateway for vpc - needed for public access to vpc
 resource "aws_internet_gateway" "w2v-igw" {
   vpc_id = aws_vpc.w2v-dev-vpc.id
 
@@ -57,7 +58,7 @@ resource "aws_internet_gateway" "w2v-igw" {
 
 }
 
-# ----- Need a route table to actually make the subnet piblic
+# ----- route table to actually make the subnet public
 resource "aws_route_table" "w2v_rt" {
   vpc_id = aws_vpc.w2v-dev-vpc.id
 
@@ -71,6 +72,7 @@ resource "aws_route_table" "w2v_rt" {
   }
 }
 
+# ----- route table to associate public subnet with internet gateway
 resource "aws_route_table_association" "w2v_public_subnet_assoc" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.w2v_rt.id
