@@ -1,7 +1,8 @@
 resource "aws_security_group" "instance" {
 
   name   = "w2v-security_group"
-  vpc_id = aws_vpc.w2v-dev-vpc.id
+  #vpc_id = aws_vpc.w2v-dev-vpc.id
+  vpc_id = "vpc-08462cea34b97fb2a"
 
   ingress {
     from_port   = var.server_port
