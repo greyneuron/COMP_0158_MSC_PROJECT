@@ -42,6 +42,15 @@ resource "aws_instance" "w2v-server" {
   #subnet_id = aws_subnet.subnet.id
   subnet_id = "subnet-0b5a447ba95b50112"
 
+  # ----- install some software
+  user_data = <<-EOL
+    #!/bin/bash -xe
+
+    sudo yum install python3 pip3
+    sudo pip3 install virtualenv
+    sudo virtualenv word2vec
+    EOL
+
   tags = {
     Name = var.instance_name
   }
