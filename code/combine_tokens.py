@@ -14,22 +14,22 @@ from collections import defaultdict
 
 
 #
-# PARSES FASTA DAT FILE AND LOOKUP PFAM TOKENS FROM DATABASE
+# PARSES FASTA DAT FILE AND LOOKS UP PFAM TOKENS FROM DATABASE
 #
-# 100,000 lines in 92s - roughly 1.5 mins
-# 1M lines `~= 15mins
-# 10M lines ~= 150 mins = 2hr 30min
-# 78M lines ~= 
+# 100,000 lines took 73s - 77s
+# 500,000 lines took 376s (6min 16s) and resulted in 331,278 entries
+# 1M lines  ~= 750s = 12.5 min
+# 10M lines ~= 125mins = 2hr 5min
+# 78M lines ~= 16hr
 def combine_tokens():
-    fasta_dat   = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb-2759_78494531_reduced.dat"
+    protein_dat   = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat"
     pfam_dat    = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam.dat"
     db_string   = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
     
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus.dat"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/protein_pfam_corpus.dat"
     
-    PROCESS_LIMIT   = 1000000
-    OUTPUT_LIMIT    = 10000
-    BUFFER_LIMIT    = 5000
+    PROCESS_LIMIT   = 500000
+    OUTPUT_LIMIT    = 100000
     
     record_count    = 0
     buffer          = 0
@@ -43,28 +43,39 @@ def combine_tokens():
     
     con = duckdb.connect(database=db_string) 
     
-    with open(fasta_dat, 'r') as file:
+    with open(protein_dat, 'r') as file:
         for line_number, line in enumerate(file):    
-            cols        = line.split('|')
-            #uniprot_id  = cols[0]
+            cols            = line.split('|')
+            protein_id      = cols[0]
+            last_pfam_protein_id = ""
+            pfam_line       = ""
             
-            output_line = cols[0] #uniprot_id
+            # get pfam tokens from db
+            pfam_tokens = con.execute("SELECT * FROM PFAM_TOKEN WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
                 
-            #ids.append(cols[0])
-            #print('looking up', uniprot_id)
-            #pfam_res = con.execute("SELECT * FROM PFAM_TOKEN WHERE column0 IN (?)", [cols[0]]).fetchall()
-            pfam_res = con.execute("SELECT * FROM PFAM_TOKEN WHERE UNIPROT_ID = (?)", [cols[0]]).fetchall()
-                
-            if pfam_res is not None:
-                if len(pfam_res) >0:
-                    for item in pfam_res:
-                        output_line.join([cols[0], '|', item[1], '|',str(item[2]), '|', str(item[3])])
-                        #print(uniprot_id, item[1], item[2], item[3])
-                        #output_file.write(uniprot_id+','+item[1]+'\n')
-                    #print(output_line)            
-            output_file.write(output_line+'\n')
-            #print(output_line)
-            
+            if pfam_tokens is not None and len(pfam_tokens) >0:
+                for item in pfam_tokens:
+                    pfam_protein_id = item[0]
+                    
+                    # if this is first time, remember what protein we have found
+                    # and create first part of output line, 
+                    if(last_pfam_protein_id == ""):
+                        last_pfam_protein_id = pfam_protein_id
+                        pfam_line = pfam_protein_id + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
+                        continue
+                    
+                    # if not first time through and we have already found this protein, append to line
+                    if (pfam_protein_id == last_pfam_protein_id):
+                        pfam_line_extra = '|' + item[1] + ':' + str(item[2]) + ':' + str(item[3])
+                        pfam_line = pfam_line + pfam_line_extra
+                    
+                    # if not first time and we have a new protein, then print the current line and start a new one
+                    else:
+                        last_pfam_protein_id = pfam_protein_id
+                        pfam_line = pfam_protein_id + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
+                # write out current line
+                #print(pfam_line)
+                output_file.write(pfam_line +'\n')
             record_count += 1
                 
             # -------- check for termination ------------
@@ -83,9 +94,20 @@ def combine_tokens():
     
     end_time = time.time()
     exec_time = end_time - start_time
-    print(record_count, 'records processed in ', exec_time, 's')
+    print(record_count, 'proteins processed in ', exec_time, 's')
 
-#combine_tokens()
+combine_tokens()
+
+
+
+
+
+
+
+
+
+
+
 
 
 # ----------------------------------
@@ -132,7 +154,7 @@ def combine_tokens_db():
     exec_time = end_time - start_time
     print(record_count, 'records processed in ', exec_time, 's')   
 
-combine_tokens_db()
+#combine_tokens_db()
 
 
 
@@ -170,10 +192,10 @@ def combine_tokens_dat_2_dat():
 # NOT FINISHED - IF FILES WERE ORDERED I COULD START AT LAST FIND POSITION
 #
 def search_ordered():
-    fasta_dat   = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb-2759_78494531_reduced.dat"
+    fasta_dat   = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat"
     pfam_dat    = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam.dat"
     
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/new_attempt.csv"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/combined_ordered_search.csv"
     db_string   = "/Users/patrick/dev/ucl/comp0158_mscproject/database/proteins.db"
     
     PROCESS_LIMIT   = 10000
@@ -188,25 +210,45 @@ def search_ordered():
     last_uniprot_id = ""
     record_count = 0
     
+    last_pfam_match = 0
+    last_protein_match = ""
+    match = False
+    
     with open(fasta_dat, 'r') as file:
         for line_number, line in enumerate(file):
             
             # using split
             cols        = line.split('|')
             uniprot_id  = cols[0]
-            #print('searching for', uniprot_id)
                 
             with open(pfam_dat, 'r') as pfam_file:
                 for pf_line_number, pf_line in enumerate(pfam_file):
-                    pf_cols = pf_line.split('\t')
-                
-                    #print(pf_cols[0])
-                
-                    if(pf_cols[0] == uniprot_id):
-                        print(uniprot_id, ':', pf_line, '@', pf_line_number)
-                        line = ":".join([uniprot_id, pf_line, '\n'])
-                        output_file.write(line)
+                    
+                    pf_cols = pf_line.split('|')
+                    current_id = pf_cols[0]
+                    
+                    if(current_id == uniprot_id):    
+                        match = True
+                        if not (current_id == last_protein_match): # if this is a new match
+                            print('found new match for:', uniprot_id, ':', 'protein line # :', line_number, 'pfam line #:', pf_line_number, 'pfam line:', pf_line)
+                            last_protein_match = current_id
+                            break
+                        else:
+                            print('found + match  for:', uniprot_id, ':', 'protein line # :', line_number, 'pfam line #:', pf_line_number, 'pfam line:', pf_line)
+                            break
+                            
+                        
+                        #last_protein_match = pf_cols[0]
+                        #last_match_line = pf_line_number
+                        
+                        #print('found:', uniprot_id, ':', 'protein line # :', line_number, 'pfam line #:', pf_line_number, 'pfam line:', pf_line)
+                        
+                        
+                        #line = ":".join([uniprot_id, pf_line, '\n'])
+                        #output_file.write(line)
                         break
+                    else:
+                        match = False
                 
             record_count += 1
             # -------- check for termination ------------
@@ -221,65 +263,3 @@ def search_ordered():
                     break
 #search_ordered()
 
-
-
-
-
-    
-    '''
-    # look for pfam entries by id
-    db_start = time.time()
-    pfam_res = con.execute("SELECT * FROM PFAM_TOKEN WHERE column0 = ?", [uniprot_id]).fetchall()
-    db_end = time.time()
-    print('DB:', db_end - db_start)
-    #output_line.joinuniprot_id
-    
-    if pfam_res is not None:
-        if len(pfam_res) >0:
-            for item in pfam_res:
-                #output_line = output_line + '|' + item[1]
-                output_line.join([uniprot_id, '|', item[1]])
-                #print(uniprot_id, item[1], item[2], item[3])
-                #output_file.write(uniprot_id+','+item[1]+'\n')
-            #output_line = output_line + '\n'
-            output_line.join('\n')
-    buffer +=1
-        
-        if buffer == BUFFER_LIMIT:
-            #
-            #print('flush....')          
-            output_file.write(output_line)
-            buffer = 0
-            output_line = ""
-        
-        #con.execute("INSERT INTO PROTEIN (UNIPROT_ID, SHORT_DESCRIPTION, TAX_NAME, TAX_ID, DOM_TYPE, REP_ID, START_POS, END_POS) VALUES##(?,?,?,?,?,?,?,?)", (uniprot_id, short_desc, tax_name, tax_id, dom_type, rep_id, start, end))
-        
-        # -------- check for termination ------------
-        if (record_count % OUTPUT_LIMIT == 0):
-                mid_time_end = time.time()
-                exec_time = mid_time_end - mid_time_start
-                mid_time_start = mid_time_end
-                print(record_count, 'lines processed in ', exec_time, 's')
-        
-        if(PROCESS_LIMIT != -1):
-            if record_count >= PROCESS_LIMIT:
-                print('Stopped at', PROCESS_LIMIT, 'last entry:', record.name)
-                break
-        # ------------------------------------
-        
-        record_count += 1
-     
-    con.close()
-    output_file.close()
-    
-    end_time = time.time()
-    exec_time = end_time - start_time
-    print('Processed in ', exec_time, 's')
-
-parse_trembl_fasta("LowComplexity")
-#parse_trembl_fasta(file, "CoiledCoil")
-'''
-
-#combine_tokens_db()
-
-#combine_tokens_db_2()

@@ -45,8 +45,7 @@ def parse_protein2ipr_pfam():
             
             record_count += 1
             
-            # -------- check for termination ------------
-            #
+            # -------- check for termination -----
             if (record_count % OUTPUT_LIMIT == 0):
                 mid_time_end = time.time()
                 exec_time = mid_time_end - mid_time_start
@@ -70,6 +69,8 @@ def parse_protein2ipr_pfam():
 # *************  DATABASE STUFF  *************
 
 # --------------------------------------------
+
+# load data
 def load_pfam_dat_db():
     db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
     
@@ -80,6 +81,7 @@ def load_pfam_dat_db():
     con.close()
 #load_pfam_dat_db()
 
+# check its there
 def db_test():
     db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
     
@@ -89,6 +91,7 @@ def db_test():
     con.close()
 #db_test()
 
+# apply index
 def db_index():
     db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
     
