@@ -203,3 +203,6 @@ code/terraform/w2v_ec2/word2vec_key_pair_file
 code/cpp/tokeniser.out
 code/cpp/token_combiner.out
 data/uniprot/uniprotkb-2759_78494531.fasta.zip
+code/terraform/w2v_ebs/extra.xml.gz.md5
+code/terraform/w2v_ebs/extra.dtd
+data/disordered/extras_head.xml

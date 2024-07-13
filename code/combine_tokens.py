@@ -28,8 +28,8 @@ def combine_tokens():
     
     output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/protein_pfam_corpus.dat"
     
-    PROCESS_LIMIT   = 500000
-    OUTPUT_LIMIT    = 100000
+    PROCESS_LIMIT   = 100
+    OUTPUT_LIMIT    = 10
     
     record_count    = 0
     buffer          = 0
@@ -86,7 +86,8 @@ def combine_tokens():
                 print(OUTPUT_LIMIT, 'lines processed in ', t, 's', 'total:', record_count)
                 
             if(PROCESS_LIMIT != -1):
-                if record_count == PROCESS_LIMIT:
+                if record_count >= PROCESS_LIMIT:
+                    print('limit reached, returning')
                     break
                 
     con.close()

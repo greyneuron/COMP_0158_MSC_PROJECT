@@ -2,8 +2,12 @@ variable "region" {
   default = "eu-west-1"
 }
 
+
+# t4g.medium = 2 vCPU 4GB, $0.0368
+# t4g.large = 2 vCPU 8GB, $0.0736
+# t4g.xlarge = 4 vCPU 16GB, $0.1472
 variable "instance_type" {
-  default = "t2.micro"
+  default = "d2.4xlarge"
 }
 
 variable "availabilty_zone" {
@@ -20,15 +24,21 @@ variable "instance_name" {
 # ------------- ports ------------
 
 variable "server_port" {
-  description = "Server use this port for http requests"
+  description = "Web Server port 80"
   type        = number
   default     = 80
 }
 
 variable "ssh_port" {
-  description = "Describes the ssh port"
+  description = "SSH Port"
   type        = number
   default     = 22
+}
+
+variable "https_port" {
+  description = "HTTPS Port"
+  type        = number
+  default     = 443
 }
 
 # ------------- key pair ------------

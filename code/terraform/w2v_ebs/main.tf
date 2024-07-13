@@ -16,7 +16,8 @@ provider "aws" {
 
 resource "aws_ebs_volume" "w2v_ebs_vol" {
   availability_zone = var.availabilty_zone
-  size              = 10
+  size              = 750 # size in GB
+  type              = "st1" # throughput optimised
 
   tags = {
     Name = "Word2Vec_EBS"

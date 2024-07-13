@@ -18,6 +18,46 @@ import time
 #
 
 
+'''
+File header:
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE interproextra SYSTEM "extra.dtd">
+<interproextra>
+<release>
+  <dbinfo dbname="PFAM-N" version="36.0"/>
+  <dbinfo dbname="FUNFAM" version="4.3.0"/>
+  <dbinfo dbname="MOBIDBLT" version="2.0"/>
+  <dbinfo dbname="PHOBIUS" version="1.01"/>
+  <dbinfo dbname="ELM" version="2023.04.11"/>
+  <dbinfo dbname="SIGNALP_E" version="4.1"/>
+  <dbinfo dbname="TMHMM" version="2.0c"/>
+  <dbinfo dbname="SIGNALP_G+" version="4.1"/>
+  <dbinfo dbname="SIGNALP_G-" version="4.1"/>
+  <dbinfo dbname="COILS" version="2.2.1"/>
+</release>
+
+This is followed immediately by a number of protein entries
+
+
+<protein id="Z9JZ37" name="Z9JZ37_9MICO" length="742" crc64="64394712D3B6312F">
+  <match id="PF02922" name="" dbname="PFAM-N" status="T" model="PF02922" evd="">
+    <lcn start="15" end="99"/>
+  </match>
+  <match id="PF00128" name="" dbname="PFAM-N" status="T" model="PF00128" evd="">
+    <lcn start="197" end="290"/>
+  </match>
+  <match id="mobidb-lite" name="disorder_prediction" dbname="MOBIDBLT" status="T" model="mobidb-lite" evd="MobiDBlite">
+    <lcn start="496" end="514" sequence-feature="Polyampholyte"/>
+    <lcn start="496" end="529" sequence-feature="Consensus Disorder Prediction"/>
+    <lcn start="680" end="717" sequence-feature="Consensus Disorder Prediction"/>
+  </match>
+</protein>
+
+And the past </protein> tag is followed by this:
+
+</interproextra>
+'''
+
 
 def create_table():
     db_string   = "/Users/patrick/dev/ucl/comp0158_mscproject/database/proteins.db"
@@ -33,17 +73,27 @@ def create_table():
 #
 #
 #
+import re
+import xml.etree.ElementTree as ElementTree
+import time
+
+# grep -c "disorder_prediction\" dbname=\"MOBIDBLT\"" /Volumes/My\ Passport/downloads/extra.xml
+# 57,013,227
+
+#wc -l extra.xml
+#4,007,237,378
+
 def parse_extra_file():
     file        = "/Volumes/My Passport/downloads/extra.xml"
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/disordered_tokens.dat"
-
-    PROCESS_LIMIT   = -1 # number of lines to process, set to -1 to ignore
-    OUTPUT_LIMIT    = 1000000  # determines how often to print a progress message
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/disordered_tokens_test.dat"
     
-    record_count    = 0
-    entry_count     = 0
+    file        = "/data/my_extra.xml"
+    output      = "/data/disordered_tokens.dat"
+
+    iteration_count = 0
     start_time      = time.time()
     mid_time_start  = time.time()
+    first_line      = True
     
     output_file = open(output, "w")
     
@@ -55,40 +105,63 @@ def parse_extra_file():
     event, root = next(context)
     #con = duckdb.connect(database=ProteinDB.db_string)
 
+
+    ELEMENT_LIMIT   = -1  # elements in xml to parse
+    OUTPUT_LIMIT    = 2000000   # number of elements how often to print a progress message
+    BUFFER_SIZE     = 500       # number of dat entries before flushing
+    
+    protein_count       = 0
+    element_count       = 0
+    dat_record_count    = 0
+    total_record_count  = 0
+    output_buffer       = ""
+    
     for event, protein in context:
+        element_count +=1
         if event == "end" and protein.tag == "protein":
-            # print(elem.attrib['id'])
+            protein_count += 1
+            
+            # look within the protein tag
             for match in protein:
                 if 'MOBIDBLT' in match.attrib['dbname']:
                     for coords in match:
-                        uniprot_id = protein.attrib['id']
-                        word_type="DISORDER"
-                        start = coords.attrib['start']
-                        end = coords.attrib['end']
+                        # get the entries for a single dat line
+                        uniprot_id  = protein.attrib['id']
+                        start       = coords.attrib['start']
+                        end         = coords.attrib['end']
                         
-                        output_line = "|".join([uniprot_id, start, end])
-                        #print(output_line)
-                        output_file.write(output_line +'\n')
-                        record_count +=1
+                        dat_line = "|".join([uniprot_id, start, end])
+                        output_buffer += dat_line + '\n'
                         
-                        '''
-                        print(protein.attrib['id']+"\tIPRXXXXXX\t" +
-                                match.attrib['name']+"\t"+match.attrib['id']+"\t" +
-                                coords.attrib['start']+"\t"+coords.attrib['end'])
-                        '''
-                        #con.execute("INSERT INTO PROTEIN_WORD (UNIPROT_ID, WORD_TYPE, START_POS, END_POS) VALUES(?,?,?,?)", (uniprot_id, word_type, start_pos, end_pos))
-        entry_count += 1
-        if (entry_count % OUTPUT_LIMIT == 0):
+                        dat_record_count   += 1
+                        total_record_count += 1
+                        
+                        if(dat_record_count % BUFFER_SIZE == 0):
+                            output_file.write(output_buffer)
+                            output_buffer = ""
+                            dat_record_count = 0
+        
+        if (element_count % OUTPUT_LIMIT == 0):
             mid_time_end = time.time()
             exec_time = mid_time_end - mid_time_start
             mid_time_start = mid_time_end
-            print(OUTPUT_LIMIT, 'lines processed total entries found :', record_count, 'time taken:', exec_time)
-                    
-    # exit()
+            print(element_count,'elements processed', total_record_count, 'total entries found\t',total_record_count, 'time taken last batch:\t', round(exec_time,2), '\ttime to date:\t', round(mid_time_end - start_time,2))
+                            
+        if(ELEMENT_LIMIT != -1):
+            if element_count >= ELEMENT_LIMIT:
+                print(element_count, 'elements processed.', protein_count, 'proteins found. Total dat entries:', total_record_count, 'Current dat record count to flush:', dat_record_count)
+                if(dat_record_count >0 ):
+                    output_file.write(output_buffer)
+                output_file.close()
+                #con.close()
+                print('*')
+                root.clear()
+                return
+    output_file.close()
+    #con.close()
+    print('*')
     root.clear()
-        #con.close()
-        
-#parse_extra_file()
+parse_extra_file()
 
 
 

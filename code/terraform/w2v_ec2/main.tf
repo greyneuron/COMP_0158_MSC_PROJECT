@@ -27,7 +27,8 @@ provider "aws" {
 }
 
 resource "aws_instance" "w2v-server" {
-  ami                    = "ami-08ca6be1dc85b0e84"
+  #ami                    = "ami-08ca6be1dc85b0e84"
+  ami                    = "ami-0b995c42184e99f98"
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.instance.id]
   availability_zone      = var.availabilty_zone
@@ -62,7 +63,7 @@ resource "aws_instance" "w2v-server" {
 #
 resource "aws_volume_attachment" "w2v_ebs_att" {
   device_name = "/dev/sdh"
-  volume_id   = "vol-05e84fcbb59aede3c"
+  volume_id   = "vol-0bf7b73594de17579"
   instance_id = aws_instance.w2v-server.id
 }
 
