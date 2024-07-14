@@ -3,6 +3,7 @@ import re
 import csv
 import xml.etree.ElementTree as ElementTree
 import time
+import os
 
 #
 # THIS WILL ERROR IF YOU ONLY USE A PARTIAL FILE
@@ -16,47 +17,6 @@ import time
 #
 # zgrep . -m 10000 data/disordered/extra.xml.gz > data/disordered/extra.10000.xml
 #
-
-
-'''
-File header:
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE interproextra SYSTEM "extra.dtd">
-<interproextra>
-<release>
-  <dbinfo dbname="PFAM-N" version="36.0"/>
-  <dbinfo dbname="FUNFAM" version="4.3.0"/>
-  <dbinfo dbname="MOBIDBLT" version="2.0"/>
-  <dbinfo dbname="PHOBIUS" version="1.01"/>
-  <dbinfo dbname="ELM" version="2023.04.11"/>
-  <dbinfo dbname="SIGNALP_E" version="4.1"/>
-  <dbinfo dbname="TMHMM" version="2.0c"/>
-  <dbinfo dbname="SIGNALP_G+" version="4.1"/>
-  <dbinfo dbname="SIGNALP_G-" version="4.1"/>
-  <dbinfo dbname="COILS" version="2.2.1"/>
-</release>
-
-This is followed immediately by a number of protein entries
-
-
-<protein id="Z9JZ37" name="Z9JZ37_9MICO" length="742" crc64="64394712D3B6312F">
-  <match id="PF02922" name="" dbname="PFAM-N" status="T" model="PF02922" evd="">
-    <lcn start="15" end="99"/>
-  </match>
-  <match id="PF00128" name="" dbname="PFAM-N" status="T" model="PF00128" evd="">
-    <lcn start="197" end="290"/>
-  </match>
-  <match id="mobidb-lite" name="disorder_prediction" dbname="MOBIDBLT" status="T" model="mobidb-lite" evd="MobiDBlite">
-    <lcn start="496" end="514" sequence-feature="Polyampholyte"/>
-    <lcn start="496" end="529" sequence-feature="Consensus Disorder Prediction"/>
-    <lcn start="680" end="717" sequence-feature="Consensus Disorder Prediction"/>
-  </match>
-</protein>
-
-And the past </protein> tag is followed by this:
-
-</interproextra>
-'''
 
 
 def create_table():
@@ -161,7 +121,28 @@ def parse_extra_file():
     #con.close()
     print('*')
     root.clear()
-parse_extra_file()
+    
+    
+    
+    
+ 
+# --------------------------------------------
+    
+def parse_extra_files():
+    root_folder = "/Volumes/My Passport/downloads/"
+    
+    for root, dirs, files in os.walk(root_folder):
+        for file in files:
+            if file.startswith("extras_part_"):
+                print(os.path.join(root, file))
+
+#parse_extra_files()
+
+
+
+
+
+
 
 
 
