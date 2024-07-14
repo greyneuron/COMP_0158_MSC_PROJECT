@@ -5,7 +5,6 @@ terraform {
       version = "5.18.1"
     }
   }
-
   required_version = ">= 1.2.0"
 }
 
@@ -33,6 +32,29 @@ resource "aws_subnet" "public_subnet" {
 
   tags = {
     Name = "w2v-public-subnet"
+  }
+}
+
+
+# ----- rds subnet in vpc
+resource "aws_subnet" "w2v_rds_subnet_1" {
+  cidr_block        = var.rds_1_subnet_cidr_block
+  vpc_id            = aws_vpc.w2v-dev-vpc.id
+  availability_zone = var.availabilty_zone
+
+  tags = {
+    Name = "w2v_rds_subnet_1"
+  }
+}
+
+# ----- rds subnet in vpc
+resource "aws_subnet" "w2v_rds_subnet_2" {
+  cidr_block        = var.rds_2_subnet_cidr_block
+  vpc_id            = aws_vpc.w2v-dev-vpc.id
+  availability_zone = var.availabilty_zone_2
+
+  tags = {
+    Name = "w2v_rds_subnet_2"
   }
 }
 

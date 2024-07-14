@@ -7,7 +7,9 @@
 # 3. Install Terraform (I followed the Terraform tutorial which has about 6 parts
 #    and results in you creating an ec2 instance - useful for making sure everything is installed)
 #
-# 4. Run w2v_vpc to create a network, take the vpc id and paste it into security_group.tf 
+# 4. Run w2v_vpc to create a networ
+#    - Take the vpc id and paste it into security_group.tf
+#    - Take the subnet id and paste it into subnet_id in the aws_instance resource 
 # 5. Run w2v_ebs to create an ebs and then paste its id into the 'ebs-attachment' entry below
 #
 
@@ -36,21 +38,11 @@ resource "aws_instance" "w2v-server" {
   # key-pair for this ec2
   key_name = aws_key_pair.w2v_ssh_key.key_name
 
-
   # need this for ssh
   associate_public_ip_address = true
 
-  #subnet_id = aws_subnet.subnet.id
-  subnet_id = "subnet-0b5a447ba95b50112"
-
-  # ----- install some software
-  user_data = <<-EOL
-    #!/bin/bash -xe
-
-    sudo yum install python3 pip3
-    sudo pip3 install virtualenv
-    sudo virtualenv word2vec
-    EOL
+  #subnet_id = aws_subnet.subnet.id (put this in public subnet)
+  subnet_id = "subnet-045c254c22359e7e7"
 
   tags = {
     Name = var.instance_name

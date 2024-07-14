@@ -12,3 +12,9 @@ output "instance_public_dns" {
   description = "Public DNS of the EC2 instance"
   value       = aws_instance.w2v-server.public_dns
 }
+
+
+output "security_group_id" {
+  description = "Security group id"
+  value       = aws_security_group.instance.id
+}

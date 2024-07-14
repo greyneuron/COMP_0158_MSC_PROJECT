@@ -7,7 +7,7 @@ variable "region" {
 # t4g.large = 2 vCPU 8GB, $0.0736
 # t4g.xlarge = 4 vCPU 16GB, $0.1472
 variable "instance_type" {
-  default = "d2.4xlarge"
+  default = "d2.xlarge"
 }
 
 variable "availabilty_zone" {

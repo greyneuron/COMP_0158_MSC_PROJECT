@@ -207,3 +207,5 @@ code/terraform/w2v_ebs/extra.xml.gz.md5
 code/terraform/w2v_ebs/extra.dtd
 data/disordered/extras_head.xml
 data/disordered/extras_head_test.xml
+code/terraform/w2v_rds/terraform.tfstate.backup
+code/terraform/w2v_vpc/terraform.tfstate.backup
