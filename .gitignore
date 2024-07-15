@@ -209,3 +209,4 @@ data/disordered/extras_head.xml
 data/disordered/extras_head_test.xml
 code/terraform/w2v_rds/terraform.tfstate.backup
 code/terraform/w2v_vpc/terraform.tfstate.backup
+data/corpus/corpus.dict

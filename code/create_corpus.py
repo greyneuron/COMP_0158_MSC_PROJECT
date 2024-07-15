@@ -1,5 +1,11 @@
 import re
 import time
+from gensim import corpora
+
+from numpy import triu
+from scipy.linalg import get_blas_funcs
+
+debug = False
 
 # finds overlapping regions - but assumes each token is in order
 # thus the start of token 2 will always be after the start of token 1
@@ -48,9 +54,9 @@ def remove_overlaps(tokens):
     return result
 
 
-
 def create_corpus():
     input_file      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20240715_1130.dat"
+    corpus = []
     
     PARSE_LIMIT  = 100  # number of lines to parse
     DEBUG_LIMIT  = 10   # number of lines after which to print a debug message
@@ -58,6 +64,10 @@ def create_corpus():
     start_time      = time.time()
     mid_time_start  = time.time()
     
+    corpus = []
+    
+    # parse all lines in the pre-corpus (each represents a protein) and build up
+    # the tokens for each - reminv overlaps
     with open(input_file, 'r') as input:
         for line_number, line in enumerate(input): # one line number per protein
             
@@ -69,9 +79,10 @@ def create_corpus():
             cols  = line.split('|')
             token_idx = 0
             
-            print('\nline >', line.strip('\n'), '<')
+            if(debug): print('\nline >', line.strip('\n'), '<')
             #print(len(cols), '> entries')
             
+            # tokens for the current line
             tokens = []
 
             # each col is a section - either being the uniptor part, pfam or disoreded reginos
@@ -89,7 +100,7 @@ def create_corpus():
                         tuple = (token_idx, pf_token, int(pf_cols[pf]), int(pf_cols[pf + 1]))
                         tokens.append(tuple)
                         token_idx += 1
-                # process a 'disordered'token
+                # process a 'disordered' token
                 elif col.startswith('DIS'):
                     dis_cols = col.split(':')
                     for dis in range(1, len(dis_cols)-1,2):
@@ -107,7 +118,41 @@ def create_corpus():
             sorted_tokens = sorted(tokens, key=lambda x: x[2])
             sorted_tokens_no_overlap = remove_overlaps(sorted_tokens)
             
-            #print('sorted:', sorted_tokens)
-            print('no overlaps',sorted_tokens_no_overlap)
+            if(debug): 
+                print('unsorted', tokens)
+                print('sorted:', sorted_tokens)
+                print('no overlaps',sorted_tokens_no_overlap)
+            
+            sentence = []
+            for token in sorted_tokens_no_overlap:
+                sentence.append(token[1])
+                sentence.append('GAP')
+            if(debug): print('final sentence:', sentence)
+            
+            # add to corpus
+            if(len(sentence) != 0):
+                corpus.append(sentence)
+            
+            # this just prints a progress message
+            if (line_number % DEBUG_LIMIT == 0):
+                mid_time_end = time.time()
+                exec_time = mid_time_end - mid_time_start
+                mid_time_start = mid_time_end
+                print(line_number, 'lines processed in', round(mid_time_end - start_time,2))
+            
+            # drops out if we only want to process a number of files
+            if(PARSE_LIMIT != -1):            
+                if(line_number == PARSE_LIMIT):
+                    end_time = time.time()
+                    tot_time = end_time - start_time
+                    print(PARSE_LIMIT, 'lines processed, terminating....')
+                    return corpus
+    return corpus
 
-create_corpus()
+    
+corpus = create_corpus()
+print("\n***** CORPUS *****:\n",corpus,'\n')
+
+dictionary = corpora.Dictionary(corpus)
+dictionary.save('/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/corpus.dict')  # store the dictionary, for future reference
+print(dictionary)
