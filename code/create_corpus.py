@@ -1,7 +1,5 @@
 import re
 import time
-import numpy as np
-
 
 # finds overlapping regions - but assumes each token is in order
 # thus the start of token 2 will always be after the start of token 1
@@ -40,14 +38,13 @@ def remove_overlaps(tokens):
         # if there is overlap - don't add this item (for now)    
         else:
             if start <= prev_end:
-                print('--------------> overlap : ', start , end)
+                #print('--------------> overlap : ', start , end)
                 # Overlapping interval found, skip adding this item
                 continue
             else:
                 # No overlap, add the item to the result list
                 result.append(token)
                 prev_start, prev_end = start, end
-
     return result
 
 
@@ -73,7 +70,7 @@ def create_corpus():
             token_idx = 0
             
             print('\nline >', line.strip('\n'), '<')
-            print(len(cols), '> entries')
+            #print(len(cols), '> entries')
             
             tokens = []
 
@@ -88,7 +85,7 @@ def create_corpus():
                     pf_cols = col.split(':')
                     pf_token = pf_cols[0]
                     for pf in range(1, len(pf_cols)-1,2):
-                        print('PFM:', token_idx, ':', pf_token, 'start:', pf_cols[pf],'end:', pf_cols[pf + 1])
+                        #print('PFM:', token_idx, ':', pf_token, 'start:', pf_cols[pf],'end:', pf_cols[pf + 1])
                         tuple = (token_idx, pf_token, int(pf_cols[pf]), int(pf_cols[pf + 1]))
                         tokens.append(tuple)
                         token_idx += 1
@@ -96,42 +93,21 @@ def create_corpus():
                 elif col.startswith('DIS'):
                     dis_cols = col.split(':')
                     for dis in range(1, len(dis_cols)-1,2):
-                        print('DIS:', token_idx, ': start:', dis_cols[dis],'end:', dis_cols[dis + 1])
+                        #print('DIS:', token_idx, ': start:', dis_cols[dis],'end:', dis_cols[dis + 1])
                         tuple = (token_idx, 'DISORDER', int(dis_cols[dis]), int(dis_cols[dis+1]))
                         tokens.append(tuple)
                         token_idx += 1
                 # just printing out the token if needed
                 else:
                     protein_cols = col.split(':')
-                    print('PROT:', protein_cols[0], 'start:', protein_cols[1], 'end:', protein_cols[2])
-            print('tokens:', tokens)
+                    #print('PROT:', protein_cols[0], 'start:', protein_cols[1], 'end:', protein_cols[2])
+            #print('tokens:', tokens)
             
             # sort the tokens by start point (second item)
             sorted_tokens = sorted(tokens, key=lambda x: x[2])
             sorted_tokens_no_overlap = remove_overlaps(sorted_tokens)
             
-
-
-            print('sorted:', sorted_tokens)
+            #print('sorted:', sorted_tokens)
             print('no overlaps',sorted_tokens_no_overlap)
-                
-                
-                
-                
-                
-                
-                
-            # this just prints a progress message
-            if (line_number % DEBUG_LIMIT == 0):
-                mid_time_end = time.time()
-                exec_time = mid_time_end - mid_time_start
-                mid_time_start = mid_time_end
-                print(line_number, 'lines processed in', round(mid_time_end - start_time,2))
-                                
-            if(line_number == PARSE_LIMIT):
-                end_time = time.time()
-                tot_time = end_time - start_time
-                print(PARSE_LIMIT, 'lines processed, terminating....')
-                return
 
 create_corpus()
