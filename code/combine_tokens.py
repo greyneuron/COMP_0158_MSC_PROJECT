@@ -14,7 +14,13 @@ from collections import defaultdict
 
 
 #
-# PARSES FASTA DAT FILE AND LOOKS UP PFAM TOKENS FROM DATABASE
+# PARSES FASTA DAT FILE AND LOOKS UP PFAM TOKENS AND DISORDER TOKENS FROM DATABASE
+# CREATES A NEW FILE AS A PRE_CURSOR TO CRRATING THE ACUTAL CORPUS
+#
+# On Macbook - 
+# 10,000 lines = 12s
+# 1M = ~20min
+# 10M =~200min == 3hours
 #
 # 100,000 lines took 73s - 77s
 # 500,000 lines took 376s (6min 16s) and resulted in 331,278 entries
@@ -34,10 +40,10 @@ def combine_tokens():
     
     db_string   = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
     
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/protein_pfam_corpus.dat"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20200715_0848.dat"
     
-    PROCESS_LIMIT   = 20
-    OUTPUT_LIMIT    = 10
+    PROCESS_LIMIT   = 10000000
+    OUTPUT_LIMIT    = 100000
     
     record_count    = 0
     buffer          = 0
@@ -89,8 +95,6 @@ def combine_tokens():
                         last_pfam_protein_id = pfam_protein_id
                         token_line = pfam_protein_id + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
                 
-                
-            
             # A0A010PZP8 has pfam and disorder entries
             if disorder_tokens is not None and len(disorder_tokens) > 0:
                 #print(protein_id, ' PF :', token_line)
@@ -108,8 +112,8 @@ def combine_tokens():
             
             # write out current line
             if(len(token_line) > 0):
-                print(token_line)
-            #output_file.write(token_line +'\n')
+                #print(token_line)
+                output_file.write(token_line +'\n')
             
                 
             # -------- check for termination ------------
