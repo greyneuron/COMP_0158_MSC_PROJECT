@@ -18,9 +18,9 @@ from collections import defaultdict
 # CREATES A NEW FILE AS A PRE_CURSOR TO CRRATING THE ACUTAL CORPUS
 #
 # On Macbook - 
-# 10,000 lines = 12s
-# 1M = ~20min
-# 10M =~200min == 3hours
+# 10,000 lines took ~12s
+# 1M took ~26min
+# 10M =~260min == 4hours+
 #
 # 100,000 lines took 73s - 77s
 # 500,000 lines took 376s (6min 16s) and resulted in 331,278 entries
@@ -40,10 +40,10 @@ def combine_tokens():
     
     db_string   = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
     
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20200715_0848.dat"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20200715_1130.dat"
     
-    PROCESS_LIMIT   = 10000000
-    OUTPUT_LIMIT    = 100000
+    PROCESS_LIMIT   = 5000000
+    OUTPUT_LIMIT    = 500000
     
     record_count    = 0
     buffer          = 0
@@ -59,22 +59,28 @@ def combine_tokens():
     
     with open(protein_dat, 'r') as file:
         for line_number, line in enumerate(file):    
+            #print('\nline:',line.strip('\n'))
             cols            = line.split('|')
             protein_id      = cols[0]
+            protein_start   = cols[1]
+            protein_end     = cols[2].strip('\n')
             last_pfam_protein_id = ""
-            token_line       = ""
+            #token_line       = ""
+            token_line = ':'.join([protein_id, protein_start, protein_end]) +'|'
+            #print('token_line start:', token_line)
             
             #
-            # GET TOKENS
+            # GET PFAM AND DISORDER TOKENS FROM DB
             #
             pfam_tokens = con.execute("SELECT * FROM PFAM_TOKEN WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
             disorder_tokens = con.execute("SELECT * FROM PROTEIN_FEATURE WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
             
-            
             #
             # PFAM TOKENS
-            #  
+            # 
+            pfam = False
             if pfam_tokens is not None and len(pfam_tokens) >0:
+                pfam = True
                 for item in pfam_tokens:
                     pfam_protein_id = item[0]
                     
@@ -82,7 +88,8 @@ def combine_tokens():
                     # and create first part of output line, 
                     if(last_pfam_protein_id == ""):
                         last_pfam_protein_id = pfam_protein_id
-                        token_line = pfam_protein_id + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
+                        #token_line = pfam_protein_id + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
+                        token_line = token_line + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
                         continue
                     
                     # if not first time through and we have already found this protein, append to line
@@ -93,7 +100,7 @@ def combine_tokens():
                     # if not first time and we have a new protein, then print the current line and start a new one
                     else:
                         last_pfam_protein_id = pfam_protein_id
-                        token_line = pfam_protein_id + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
+                        token_line = token_line + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
                 
             # A0A010PZP8 has pfam and disorder entries
             if disorder_tokens is not None and len(disorder_tokens) > 0:
@@ -101,9 +108,12 @@ def combine_tokens():
                 #print(protein_id, ' DIS:', disorder_tokens )
                 
                 if(len(token_line) == 0):
-                    disorder_entries = protein_id + '|DISORDER'
+                    disorder_entries = protein_id + 'DISORDER'
                 else:
-                    disorder_entries = '|DISORDER'
+                    if(pfam):
+                        disorder_entries = '|DISORDER'
+                    else:
+                        disorder_entries = 'DISORDER'
                 for disorder_item in disorder_tokens:
                     disorder_entries = disorder_entries + ':' + str(disorder_item[3]) + ':' + str(disorder_item[4])
                 token_line = token_line + disorder_entries
@@ -112,7 +122,7 @@ def combine_tokens():
             
             # write out current line
             if(len(token_line) > 0):
-                #print(token_line)
+                #print('final output:', token_line)
                 output_file.write(token_line +'\n')
             
                 
