@@ -16,6 +16,9 @@ import sys
 #
 # wc -l extra.xml
 # 4,007,237,378
+#
+# 
+# Time taken with index : 0.3864748477935791
 
 ''' last disprder entry in extras_01.xml
 <protein id="A0A0B1TV04" name="A0A0B1TV04_OESDE" length="107" crc64="DD962B54888583AE">
@@ -23,10 +26,6 @@ import sys
     <lcn start="1" end="25" sequence-feature="Polyampholyte"/>
     <lcn start="1" end="38" sequence-feature="Consensus Disorder Prediction"/>
     <lcn start="78" end="107" sequence-feature="Consensus Disorder Prediction"/>
-    
-    
-last in extras_024.xml
-A0A6H2DK27
 '''
 
 
@@ -151,7 +150,7 @@ def parse_extra_files():
     # close the file
     tfh.close()
     
-parse_extra_files()
+#parse_extra_files()
  
 # --------------------------------------------
     
@@ -175,30 +174,24 @@ db_string = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
 
 
 def create_table():
-    db_string   = "/Users/patrick/dev/ucl/comp0158_mscproject/database/proteins.db"
     con = duckdb.connect(database=db_string) 
-    con.execute("\
-    CREATE TABLE DISORDER_TOKEN(\
-        UNIPROT_ID VARCHAR,\
-        START USMALLINT,\
-        END USMALLINT")
+    con.execute("CREATE TABLE PROTEIN_FEATURE( UNIPROT_ID VARCHAR, FEATURE_TYPE VARCHAR, DESCRIPTION VARCHAR,START USMALLINT, END USMALLINT")
     con.close()
+#create_table()
 
 
 
 # load csv (or pipe delimited file)
 def load_disorder_dat_db():
     con = duckdb.connect(database=db_string)           
-    con.execute("CREATE TABLE DISORDER_TOKEN AS SELECT * FROM read_csv_auto('/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/disordered_tokens.dat', columns={'uniprot_id' :'VARCHAR', 'start': 'USMALLINT', 'end': 'USMALLINT'})")
-    description = con.execute("DESCRIBE DISORDER_TOKEN").fetchall()
-    print(description)
+    con.execute("CREATE TABLE PROTEIN_FEATURE AS SELECT * FROM read_csv_auto('/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/disordered_tokens_20240714_1216.dat', columns={'UNIPROT_ID' :'VARCHAR', 'FEATURE_TYPE' : 'VARCHAR', 'DESCRIPTION' :'VARCHAR','start': 'USMALLINT', 'end': 'USMALLINT'})")
     con.close()
 #load_disorder_dat_db()
 
 # check its there
 def db_test():
     con = duckdb.connect(database=db_string)           
-    count = con.execute("SELECT COUNT(*) FROM DISORDER_TOKEN").fetchall()
+    count = con.execute("SELECT COUNT(*) FROM PROTEIN_FEATURE").fetchall()
     print(count)
     con.close()
 #db_test()
@@ -206,15 +199,18 @@ def db_test():
 # apply index
 def db_index():
     con = duckdb.connect(database=db_string)          
-    res = con.execute("CREATE INDEX DS_TKN_IDX ON DISORDER_TOKEN(UNIPROT_ID)")
+    res = con.execute("CREATE INDEX PFTR_IDX ON PROTEIN_FEATURE(UNIPROT_ID)")
     print(res)
     con.close()
 #db_index()
 
 # run a query
 def db_query():
-    con = duckdb.connect(database=db_string)          
-    res = con.execute("SELECT * FROM DISORDER_TOKEN WHERE UNIPROT_ID=(?)", ['A0A0T6ANQ5']).fetchall()
+    con = duckdb.connect(database=db_string)
+    s = time.time()        
+    res = con.execute("SELECT * FROM PROTEIN_FEATURE WHERE UNIPROT_ID=(?)", ['A0A506QE59']).fetchall()
+    e = time.time()
     print(res)
+    print('Time taken :', e -s)
     con.close()
-#db_query()
+db_query()

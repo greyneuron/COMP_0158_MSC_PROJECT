@@ -4,7 +4,7 @@ import csv
 import time
 import duckdb
 
-PROCESS_LIMIT   = -1   # total lines to process (-1 to ignore)
+PROCESS_LIMIT   = 100   # total lines to process (-1 to ignore)
 OUTPUT_LIMIT    = 100000    # how often to print
 
 
@@ -16,7 +16,7 @@ OUTPUT_LIMIT    = 100000    # how often to print
 #
 def parse_protein2ipr_pfam():
     path        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr.dat"
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam.dat"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240714.dat"
     
     uniprot_id  = ""
     output_file = open(output, "w")
