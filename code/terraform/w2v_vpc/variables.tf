@@ -18,7 +18,6 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
-
 # ------------- for subnet ------------
 
 variable "public_subnet_cidr_block" {
@@ -31,7 +30,7 @@ variable "public_subnet_cidr_block" {
 variable "private_subnet_cidr_block" {
   description = "Private CIDR Block"
   type        = string
-  default     = "10.0.4.0/24"
+  default     = "10.0.101.0/24"
 }
 
 

@@ -2,9 +2,6 @@ import re
 import time
 from gensim import corpora
 
-from numpy import triu
-from scipy.linalg import get_blas_funcs
-
 debug = False
 
 # finds overlapping regions - but assumes each token is in order
@@ -58,8 +55,8 @@ def create_corpus():
     input_file      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20240715_1130.dat"
     corpus = []
     
-    PARSE_LIMIT  = 100  # number of lines to parse
-    DEBUG_LIMIT  = 10   # number of lines after which to print a debug message
+    PARSE_LIMIT  = 1000000  # number of lines to parse
+    DEBUG_LIMIT  = 1000   # number of lines after which to print a debug message
     
     start_time      = time.time()
     mid_time_start  = time.time()
@@ -151,8 +148,15 @@ def create_corpus():
 
     
 corpus = create_corpus()
-print("\n***** CORPUS *****:\n",corpus,'\n')
+#print("\n***** CORPUS *****:\n",corpus,'\n')
 
+print('Creating dictionary')
 dictionary = corpora.Dictionary(corpus)
 dictionary.save('/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/corpus.dict')  # store the dictionary, for future reference
 print(dictionary)
+
+print('Creating encoding')
+protein_doc = "DISORDER GAP PF00250 GAP"
+print('BoW for', protein_doc,':')
+protein_vec = dictionary.doc2bow(protein_doc.split())
+print(protein_vec)

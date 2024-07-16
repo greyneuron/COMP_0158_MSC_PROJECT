@@ -1,5 +1,5 @@
 #
-# This creates Terraform module creates an ec2 instance in a public subnet with ssh access.check 
+# This creates Terraform module creates an ec2 instance in a public subnet with ssh access.
 #
 # Prior to running this:
 # 1. Have an aws acount setup and generated access keys
@@ -32,7 +32,7 @@ resource "aws_instance" "w2v-server" {
   #ami                    = "ami-08ca6be1dc85b0e84"
   ami                    = "ami-0b995c42184e99f98"
   instance_type          = var.instance_type
-  vpc_security_group_ids = [aws_security_group.instance.id]
+  vpc_security_group_ids = [aws_security_group.w2v_security_group.id]
   availability_zone      = var.availabilty_zone
 
   # key-pair for this ec2

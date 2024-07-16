@@ -16,5 +16,5 @@ output "instance_public_dns" {
 
 output "security_group_id" {
   description = "Security group id"
-  value       = aws_security_group.instance.id
+  value       = aws_security_group.w2v_security_group.id
 }

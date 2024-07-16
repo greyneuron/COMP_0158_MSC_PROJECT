@@ -4,19 +4,20 @@ import csv
 import time
 import duckdb
 
-PROCESS_LIMIT   = 100   # total lines to process (-1 to ignore)
-OUTPUT_LIMIT    = 100000    # how often to print
+PROCESS_LIMIT   = -1  # total lines to process (-1 to ignore)
+OUTPUT_LIMIT    = 1000000    # how often to print
 
 
 #
-# Reads a full protein2ipr file and outputs only lines with pfam entries
+# Reads a full protein2ipr file and writes only lines with pfam entries into a dat
+# file, also includes a token identifier 'PFAM' so that these tokens and disorder
+# tokens can be loaded into the same db
 #
-# Writes about 100k lines every 1.2s
-# Took 16454s to process 1,355,591,115 records
+# 20240715.dat : 1,355,591,115 records processed in 1,3042s
 #
 def parse_protein2ipr_pfam():
     path        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr.dat"
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240714.dat"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240715.dat"
     
     uniprot_id  = ""
     output_file = open(output, "w")
@@ -37,7 +38,7 @@ def parse_protein2ipr_pfam():
                 start       = match.group(3)
                 end         = match.group(4)
                 
-                output_line = "|".join([uniprot_id, pfam_word, start, end]) + '\n'
+                output_line = "|".join([uniprot_id, 'PFAM', pfam_word, start, end]) + '\n'
                 output_file.write(output_line)
                 
             #print('input:', line)
@@ -61,7 +62,7 @@ def parse_protein2ipr_pfam():
     exec_time = end_time - start_time
     print('>>>', record_count, 'records processed in', exec_time, 's')    
 
-#parse_protein2ipr_pfam()
+parse_protein2ipr_pfam()
 
 
 # --------------------------------------------

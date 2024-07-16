@@ -23,7 +23,7 @@ variable "instance_name" {
 
 # ------------- ports ------------
 
-variable "server_port" {
+variable "web_server_port" {
   description = "Web Server port 80"
   type        = number
   default     = 80

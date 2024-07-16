@@ -12,8 +12,7 @@ provider "aws" {
   region = var.region
 }
 
-
-# ----- vpc
+# ------------------------ vpc -------------------------
 resource "aws_vpc" "w2v-dev-vpc" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
@@ -24,8 +23,10 @@ resource "aws_vpc" "w2v-dev-vpc" {
   }
 }
 
+# ------------------------ subnets -------------------------
+
 # ----- public subnet in vpc
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "w2v-public-subnet" {
   cidr_block        = var.public_subnet_cidr_block
   vpc_id            = aws_vpc.w2v-dev-vpc.id
   availability_zone = var.availabilty_zone
@@ -35,6 +36,27 @@ resource "aws_subnet" "public_subnet" {
   }
 }
 
+# ----- public subnet in vpc
+resource "aws_subnet" "w2v-private-subnet" {
+  cidr_block        = var.private_subnet_cidr_block
+  vpc_id            = aws_vpc.w2v-dev-vpc.id
+  availability_zone = var.availabilty_zone
+
+  tags = {
+    Name = "w2v-public-subnet"
+  }
+}
+
+# ----- private subnet in vpc
+resource "aws_subnet" "private_subnet" {
+  cidr_block        = var.private_subnet_cidr_block
+  vpc_id            = aws_vpc.w2v-dev-vpc.id
+  availability_zone = var.availabilty_zone
+
+  tags = {
+    Name = "w2v-private-subnet"
+  }
+}
 
 # ----- rds subnet in vpc
 resource "aws_subnet" "w2v_rds_subnet_1" {
@@ -58,19 +80,9 @@ resource "aws_subnet" "w2v_rds_subnet_2" {
   }
 }
 
-# ----- private subnet in vpc
-resource "aws_subnet" "private_subnet" {
-  cidr_block        = var.private_subnet_cidr_block
-  vpc_id            = aws_vpc.w2v-dev-vpc.id
-  availability_zone = var.availabilty_zone
+# ------------------------ igw -------------------------
 
-  tags = {
-    Name = "w2v-private-subnet"
-  }
-}
-
-
-# gateway for vpc - needed for public access to vpc
+# ----- internet gateway
 resource "aws_internet_gateway" "w2v-igw" {
   vpc_id = aws_vpc.w2v-dev-vpc.id
 
@@ -80,22 +92,37 @@ resource "aws_internet_gateway" "w2v-igw" {
 
 }
 
-# ----- route table to actually make the subnet public
-resource "aws_route_table" "w2v_rt" {
-  vpc_id = aws_vpc.w2v-dev-vpc.id
+# ------------------------ route tables -------------------------
 
+# ----- public route table
+resource "aws_route_table" "w2v-public-rt" {
+  vpc_id = aws_vpc.w2v-dev-vpc.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.w2v-igw.id
   }
-
   tags = {
     Name = "w2v-route-table"
   }
 }
-
-# ----- route table to associate public subnet with internet gateway
 resource "aws_route_table_association" "w2v_public_subnet_assoc" {
-  subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.w2v_rt.id
+  route_table_id = aws_route_table.w2v-public-rt.id
+  subnet_id = aws_subnet.w2v-public-subnet.id
+}
+
+
+# ----- private route table
+resource "aws_route_table" "w2v-private-rt" {
+  vpc_id = aws_vpc.w2v-dev-vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.w2v-igw.id
+  }
+  tags = {
+    Name = "w2v-route-table"
+  }
+}
+resource "aws_route_table_association" "w2v_private_subnet_assoc" {
+  route_table_id = aws_route_table.w2v-private-rt.id
+  subnet_id = aws_subnet.w2v-private-subnet.id
 }
