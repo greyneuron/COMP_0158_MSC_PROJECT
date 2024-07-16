@@ -1,8 +1,7 @@
 resource "aws_security_group" "w2v_security_group" {
 
   name   = "w2v-security_group"
-  #vpc_id = aws_vpc.w2v-dev-vpc.id
-  vpc_id = "vpc-011f0d152f4120d5b"
+  vpc_id = "vpc-01ede11f2f41296af"
 
   ingress {
     description = "Allow HTTP Traffic"

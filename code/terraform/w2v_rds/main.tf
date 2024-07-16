@@ -34,15 +34,15 @@ variable "rds_2_subnet_cidr_block" {
 resource "aws_security_group" "w2v_rds_sg" {
 
   name   = "w2v_rds_sg"
-  #vpc_id = aws_vpc.w2v-dev-vpc.id
-  vpc_id = "vpc-011f0d152f4120d5b"
+  vpc_id = "vpc-01ede11f2f41296af"
 
   ingress {
     description = "Allow SQL - public to private"
     from_port   = "3306"
     to_port     = "3306"
     protocol    = "tcp"
-    security_groups = [""]
+    # take from output of ec2
+    security_groups = ["sg-0d8e0648e26180b20"]
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -51,7 +51,7 @@ resource "aws_security_group" "w2v_rds_sg" {
 
 resource "aws_db_subnet_group" "w2v_db_subnet_group" {
   name = "w2v-db-subnet-group"
-  subnet_ids = ["subnet-0781c9f1e82b15266", "subnet-097332a318820a881"]
+  subnet_ids = ["subnet-0fd63075992f3e124", "subnet-013fb8a61d8259bfd"]
 
   tags = {
     Name = "W2V DB Subnet Group"
@@ -61,14 +61,17 @@ resource "aws_db_subnet_group" "w2v_db_subnet_group" {
 resource "aws_db_instance" "w2v-db" {
   allocated_storage = 10
   storage_type = "gp2"
-  engine = "postgres"
+  #engine = "postgres"
   #engine_version = "5.7"
-  instance_class = "db.r5.large"
+  #instance_class = "db.r5.large"
+  engine = "mysql"
+  engine_version = "8.0.35"
+  instance_class = "db.t3.micro"
   identifier = "w2v-dev-db"
   username = "w2v"
   password = "w0rd2v3c"
 
-  vpc_security_group_ids = ["sg-025bc1d4418edcbdf"]
+  vpc_security_group_ids = ["sg-0d8e0648e26180b20"]
   db_subnet_group_name = aws_db_subnet_group.w2v_db_subnet_group.id
   
   skip_final_snapshot = true

@@ -1,6 +1,7 @@
 import re
 import time
 from gensim import corpora
+from gensim.models import Word2Vec
 
 debug = False
 
@@ -146,10 +147,17 @@ def create_corpus():
                     return corpus
     return corpus
 
-    
-corpus = create_corpus()
-#print("\n***** CORPUS *****:\n",corpus,'\n')
 
+# this returns a list of lists
+# corpus = create_corpus()
+
+
+print("\n***** CORPUS *****:\n",corpus,'\n')
+
+w2v = Word2Vec(corpus, size=100, window=5, workers=4, iter=10, min_count=5)
+
+
+'''
 print('Creating dictionary')
 dictionary = corpora.Dictionary(corpus)
 dictionary.save('/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/corpus.dict')  # store the dictionary, for future reference
@@ -160,3 +168,4 @@ protein_doc = "DISORDER GAP PF00250 GAP"
 print('BoW for', protein_doc,':')
 protein_vec = dictionary.doc2bow(protein_doc.split())
 print(protein_vec)
+'''

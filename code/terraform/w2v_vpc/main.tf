@@ -36,19 +36,8 @@ resource "aws_subnet" "w2v-public-subnet" {
   }
 }
 
-# ----- public subnet in vpc
-resource "aws_subnet" "w2v-private-subnet" {
-  cidr_block        = var.private_subnet_cidr_block
-  vpc_id            = aws_vpc.w2v-dev-vpc.id
-  availability_zone = var.availabilty_zone
-
-  tags = {
-    Name = "w2v-public-subnet"
-  }
-}
-
 # ----- private subnet in vpc
-resource "aws_subnet" "private_subnet" {
+resource "aws_subnet" "w2v-private-subnet" {
   cidr_block        = var.private_subnet_cidr_block
   vpc_id            = aws_vpc.w2v-dev-vpc.id
   availability_zone = var.availabilty_zone
@@ -59,7 +48,7 @@ resource "aws_subnet" "private_subnet" {
 }
 
 # ----- rds subnet in vpc
-resource "aws_subnet" "w2v_rds_subnet_1" {
+resource "aws_subnet" "w2v-rds-subnet-1" {
   cidr_block        = var.rds_1_subnet_cidr_block
   vpc_id            = aws_vpc.w2v-dev-vpc.id
   availability_zone = var.availabilty_zone
@@ -70,7 +59,7 @@ resource "aws_subnet" "w2v_rds_subnet_1" {
 }
 
 # ----- rds subnet in vpc
-resource "aws_subnet" "w2v_rds_subnet_2" {
+resource "aws_subnet" "w2v-rds-subnet-2" {
   cidr_block        = var.rds_2_subnet_cidr_block
   vpc_id            = aws_vpc.w2v-dev-vpc.id
   availability_zone = var.availabilty_zone_2
@@ -89,7 +78,6 @@ resource "aws_internet_gateway" "w2v-igw" {
   tags = {
     Name = "w2v-internet_gw"
   }
-
 }
 
 # ------------------------ route tables -------------------------
