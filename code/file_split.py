@@ -1,7 +1,6 @@
 import re
 import csv
 import time
-import duckdb
 
 
 header="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
@@ -24,15 +23,28 @@ footer="</interproextra>"
 
 
 # splits an xml file into separte files each with a header and footer
-# the split is based upon the number of protein tags
-# a split of 5M proteins per xml was taking up to 10min
-# original file was 188.47GB
-# each split is about 4GB
+# the split is based upon the number of protein tags. The original file was 
+# 188.47GB, each split is about 4GB
+#
+# Macbook
+# Locally on mac: A split of 5M proteins per xml was taking up to 10min
+# and got progressively worse - should really not go through the whole
+# file each time. 
+
+#
+# EC2
+# Trying on ec2 with d2.2xlarge and ebs : 246s (4 min for 500M proteins)
+# extra_part-1.xml  : 246s
+# extra_part-2.xml  : 691s
+#
+# extra_part_6.xml : 4,510 s
+
 def split_file_from_protein(from_count, to_count, file_count):
-    path    = "/Volumes/My Passport/downloads/extra.xml"
-    #path   = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/extras_head_test.xml" # has 11 entries
-    #output  = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/extras_head_" + str(file_count) +".xml"
-    output  = "/Volumes/My Passport/downloads/extras_part_02" + str(file_count) +".xml"
+    #path    = "/Volumes/My Passport/downloads/extra.xml"
+    #output  = "/Volumes/My Passport/downloads/extras_part_02" + str(file_count) +".xml"
+    
+    path    = "/data/dev/ucl/data/disorder/extra.xml"
+    output  = "/data/dev/ucl/data/disorder/extra_part_" + str(file_count) +".xml"
     
     print('splitting from', from_count, 'to', to_count, 'file:', output)
     
@@ -87,45 +99,11 @@ def split():
     ts = time.time()
     file_count = 0
     
-    for i in range(100000000, MAX_PROTEINS, PROTEIN_LIMIT):
+    for i in range(0, MAX_PROTEINS, PROTEIN_LIMIT):
         file_count +=1
         s = time.time()
         split_file_from_protein(i, i+PROTEIN_LIMIT, file_count)
         e = time.time()
         print('split', file_count, 'in:\t', str(e-s), 's\ttotal time:\t', str(e-ts),'s')
 split()
-
-
-
-# ----------------------------------------
-
-
-
-def split_file_from_line(from_line, to_line):
-    path        = "/Volumes/My Passport/downloads/extra.xml"
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/extras_head.xml"
-    
-    uniprot_id  = ""
-    output_file = open(output, "a+")
-    
-    record_count    = 0
-    start_time      = time.time()
-    mid_time_start  = time.time()
-    
-    with open(path, 'r') as input_file:
-        for line_number, line in enumerate(input_file):
-            if line_number > from_line:
-                if to_line == -1:
-                    output_file.write(line)
-                    continue
-                elif line_number <= to_line:
-                    output_file.write(line)
-                    continue
-                else:
-                    break
-            else:
-                continue
-    output_file.close()
-#split_file_from_line(271373695)
-#split_file_from_line(271373695,-1)
 

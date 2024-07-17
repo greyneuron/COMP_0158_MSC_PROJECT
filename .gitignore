@@ -210,3 +210,13 @@ data/disordered/extras_head_test.xml
 code/terraform/w2v_rds/terraform.tfstate.backup
 code/terraform/w2v_vpc/terraform.tfstate.backup
 data/corpus/corpus.dict
+.vscode/settings.json
+.vscode/settings.json
+.vscode/settings.json
+code/cpp/extras_part_test.xml
+code/cpp/a.out
+code/cpp/split_xml.dSYM/Contents/Resources/DWARF/split_xml
+code/cpp/split_xml.dSYM/Contents/Info.plist
+.vscode/tasks.json
+.vscode/settings.json
+code/cpp/split_xml

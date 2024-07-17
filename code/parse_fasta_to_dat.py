@@ -14,13 +14,13 @@ def reduce_trembl_fasta(dom_type):
     #input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb_100_test.fasta"
     #output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb_100_test.dat"
     input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb-2759_78494531.fasta"
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb-2759_78494531_reduced.dat"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb-2759_78494531_20240714.dat"
     
     #uniprot_re  = "UniRef100_([A-Z0-9]+)" # works for UniRef100
     #uniprot_re  = "tr|([A-Z0-9]+)|" # works for TrEMBL from UniRef
     rexp  = ">tr|([A-Z0-9]+)\|" # Works for TrEMBL 
 
-    PROCESS_LIMIT   = -1 # number of lines to process, set to -1 to ignore
+    PROCESS_LIMIT   = 100 # number of lines to process, set to -1 to ignore
     OUTPUT_LIMIT    = 100000  # determines how often to print a progress message
     
     record_count = 0

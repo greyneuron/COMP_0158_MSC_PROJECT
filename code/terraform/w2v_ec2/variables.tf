@@ -9,7 +9,7 @@ variable "region" {
 # d2.xlarge
 # 
 variable "instance_type" {
-  default = "t2.micro"
+  default = "d2.xlarge"
 }
 
 variable "availabilty_zone" {
