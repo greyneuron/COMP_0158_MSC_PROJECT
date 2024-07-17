@@ -38,6 +38,47 @@ footer="</interproextra>"
 # extra_part-2.xml  : 691s
 #
 # extra_part_6.xml : 4,510 s
+'''
+[ec2-user@ip-10-0-1-15 ucl]$ sudo python3 file_split.py 
+splitting from 0 to 5000000 file: /data/dev/ucl/data/disorder/extra_part_1.xml
+split 1 in:	 246.3716413974762 s	total time:	 246.37164545059204 s
+splitting from 5000000 to 10000000 file: /data/dev/ucl/data/disorder/extra_part_2.xml
+split 2 in:	 445.18198919296265 s	total time:	 691.5549104213715 s
+splitting from 10000000 to 15000000 file: /data/dev/ucl/data/disorder/extra_part_3.xml
+split 3 in:	 650.8876001834869 s	total time:	 1342.4425621032715 s
+splitting from 15000000 to 20000000 file: /data/dev/ucl/data/disorder/extra_part_4.xml
+split 4 in:	 856.3099727630615 s	total time:	 2198.752578020096 s
+splitting from 20000000 to 25000000 file: /data/dev/ucl/data/disorder/extra_part_5.xml
+split 5 in:	 1065.350376367569 s	total time:	 3264.102992296219 s
+splitting from 25000000 to 30000000 file: /data/dev/ucl/data/disorder/extra_part_6.xml
+split 6 in:	 1255.8556699752808 s	total time:	 4519.9587025642395 s
+splitting from 30000000 to 35000000 file: /data/dev/ucl/data/disorder/extra_part_7.xml
+split 7 in:	 1459.1527664661407 s	total time:	 5979.111508607864 s
+splitting from 35000000 to 40000000 file: /data/dev/ucl/data/disorder/extra_part_8.xml
+split 8 in:	 1674.2471599578857 s	total time:	 7653.35870885849 s
+splitting from 40000000 to 45000000 file: /data/dev/ucl/data/disorder/extra_part_9.xml
+split 9 in:	 1911.2676434516907 s	total time:	 9564.628689289093 s
+splitting from 45000000 to 50000000 file: /data/dev/ucl/data/disorder/extra_part_10.xml
+split 10 in:	 2173.349065065384 s	total time:	 11737.980268001556 s
+splitting from 50000000 to 55000000 file: /data/dev/ucl/data/disorder/extra_part_11.xml
+split 11 in:	 2375.8305299282074 s	total time:	 14113.81326842308 s
+splitting from 55000000 to 60000000 file: /data/dev/ucl/data/disorder/extra_part_12.xml
+split 12 in:	 2614.4903304576874 s	total time:	 16728.307777643204 s
+splitting from 60000000 to 65000000 file: /data/dev/ucl/data/disorder/extra_part_13.xml
+split 13 in:	 2847.5823051929474 s	total time:	 19575.891444683075 s
+splitting from 65000000 to 70000000 file: /data/dev/ucl/data/disorder/extra_part_14.xml
+split 14 in:	 3073.040769338608 s	total time:	 22648.93333721161 s
+splitting from 70000000 to 75000000 file: /data/dev/ucl/data/disorder/extra_part_15.xml
+split 15 in:	 3350.9117743968964 s	total time:	 25999.849335432053 s
+splitting from 75000000 to 80000000 file: /data/dev/ucl/data/disorder/extra_part_16.xml
+split 16 in:	 3619.2104892730713 s	total time:	 29619.05987381935 s
+splitting from 80000000 to 85000000 file: /data/dev/ucl/data/disorder/extra_part_17.xml
+
+
+
+
+'''
+
 
 def split_file_from_protein(from_count, to_count, file_count):
     #path    = "/Volumes/My Passport/downloads/extra.xml"
