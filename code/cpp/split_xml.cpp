@@ -91,10 +91,14 @@ int main()
             std::string protein_id = protein.attribute("id").value();
             std::cout << "Protein id: " << protein_id << std::endl;
             //std::cout << "Child node name: " << child.name() << std::endl;
-            
             //std::cout << "Child node text: " << child.child_value() << std::endl;
             //std::cout << "Child node attribute 'id': " << child.attribute("id").value() << std::endl;
             //std::cout << std::endl;
+
+            // protein is now node with children whcih are matches
+            for (pugi::xml_node match = protein.first_child(); match; match = match.next_sibling()) {
+                std::cout << match.name() << std::endl;
+
         }
     }
 
