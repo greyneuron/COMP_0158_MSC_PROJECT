@@ -82,13 +82,13 @@ int main()
     pugi::xml_node root = doc.child("root");
     pugi::xml_node protein_root = doc.child("interproextra");
 
-    for (pugi::xml_node child = protein_root.first_child(); child; child = child.next_sibling()) {
-        std::string node_name = child.name();
+    for (pugi::xml_node protein = protein_root.first_child(); protein; protein = protein.next_sibling()) {
+        std::string node_name = protein.name();
         if(node_name != "protein"){
-            std::cout<< child.name() << "not a protein\n" ;
+            std::cout<< protein.name() << "not a protein\n" ;
         }
         else{
-            std::string protein_id = child.attribute("id").value();
+            std::string protein_id = protein.attribute("id").value();
             std::cout << "Protein id: " << protein_id << std::endl;
             //std::cout << "Child node name: " << child.name() << std::endl;
             
