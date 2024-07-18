@@ -21,7 +21,6 @@ variable "rds_1_subnet_cidr_block" {
   default     = "10.0.5.0/24"
 }
 
-
 variable "rds_2_subnet_cidr_block" {
   description = "Public CIDR Block"
   type        = string
@@ -29,7 +28,6 @@ variable "rds_2_subnet_cidr_block" {
 }
 
 # ------------------------ security group -------------------------
-
 
 resource "aws_security_group" "w2v_rds_sg" {
 
@@ -41,8 +39,8 @@ resource "aws_security_group" "w2v_rds_sg" {
     from_port   = "3306"
     to_port     = "3306"
     protocol    = "tcp"
-    # take from output of ec2
-    security_groups = ["sg-0d8e0648e26180b20"]
+    # this should be the securoty group of the ec2 server
+    security_groups = ["sg-0287bc428a99df57e"]
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -51,6 +49,7 @@ resource "aws_security_group" "w2v_rds_sg" {
 
 resource "aws_db_subnet_group" "w2v_db_subnet_group" {
   name = "w2v-db-subnet-group"
+  # subnets created for rds 1 and 2
   subnet_ids = ["subnet-0fd63075992f3e124", "subnet-013fb8a61d8259bfd"]
 
   tags = {
@@ -71,7 +70,7 @@ resource "aws_db_instance" "w2v-db" {
   username = "w2v"
   password = "w0rd2v3c"
 
-  vpc_security_group_ids = ["sg-0d8e0648e26180b20"]
+  vpc_security_group_ids = [aws_security_group.w2v_rds_sg.id]
   db_subnet_group_name = aws_db_subnet_group.w2v_db_subnet_group.id
   
   skip_final_snapshot = true

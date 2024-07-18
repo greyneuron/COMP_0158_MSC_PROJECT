@@ -21,6 +21,21 @@ mkdir /data/dev/ucl
 
 
 
+# ------------- RDS for MySQL
+
+ssh to ec2 instance
+
+sudo dnf update -y
+sudo dnf install mariadb105
+
+Get the RDS endpoint - I got it from the console. 
+For example: 
+
+w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com
+
+Now connect from an ec2 console:
+mysql -h w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com -P 3306 -u w2v -p
+
 # -------------- Setup python  --------------------
 # install python etc (note: python 3 should already be there)
 sudo yum install pip

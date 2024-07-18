@@ -26,13 +26,11 @@ variable "public_subnet_cidr_block" {
   default     = "10.0.1.0/24"
 }
 
-
 variable "private_subnet_cidr_block" {
   description = "Private CIDR Block"
   type        = string
   default     = "10.0.101.0/24"
 }
-
 
 variable "rds_1_subnet_cidr_block" {
   description = "Public CIDR Block"
@@ -40,13 +38,11 @@ variable "rds_1_subnet_cidr_block" {
   default     = "10.0.5.0/24"
 }
 
-
 variable "rds_2_subnet_cidr_block" {
   description = "Public CIDR Block"
   type        = string
   default     = "10.0.6.0/24"
 }
-
 
 # ------------- ports ------------
 
