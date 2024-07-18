@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -------------- SSH --------------------
-# % ssh -i "w2v_rsa" ec2-user@ec2-3-251-68-222.eu-west-1.compute.amazonaws.com
+# % ssh -i "w2v_rsa" ec2-user@ec2-3-251-70-140.eu-west-1.compute.amazonaws.com
 # Wel....ise
 
 # -------------- Format and mount a volume --------------------

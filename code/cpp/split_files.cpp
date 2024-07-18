@@ -7,6 +7,16 @@
 #include <iomanip>
 #include <sstream>
 
+#include <chrono>
+
+using std::chrono::high_resolution_clock;
+using std::chrono::duration_cast;
+using std::chrono::milliseconds;
+
+// To compile you need to link the pugixml lib
+// g++ split_files.cpp -o split_files
+// g++ -std=c++11 split_files.cpp -o split_files
+// sudo split_files
 
 std::string getCurrentTimestamp() {
     // Get the current time
@@ -22,18 +32,19 @@ std::string getCurrentTimestamp() {
 }
 
 
-
 int parse_file(int protein_limit, int start_line){
     // Define the path to the file
     // std::string disorder_file = "/Volumes/My Passport 3/downloads/extra.xml";
     //std::string output_file = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disorder/disorder.dat";
     
-    std::string disorder_file = "extras_part_test.xml";
-    //std::string output_file = "extras_mobidb_only.xml";
+    //std::string disorder_file = "extras_part_test.xml";
+    //std::string disorder_file = "/Volumes/My Passport 3/downloads/extra.xml";
+    std::string disorder_file = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/extras_part_20.xml";
 
     std::string timestamp = getCurrentTimestamp();
-
     std::string output_file = "extras_mobidb_" + timestamp + "_.xml";
+
+    auto start = high_resolution_clock::now();
 
     // Open the file
     std::ifstream file(disorder_file);
@@ -52,11 +63,12 @@ int parse_file(int protein_limit, int start_line){
     std::regex end_pattern("protein>");
     std::smatch matches;
 
-    bool match = false;
-    int protein_count = 0;
-    //int protein_limit = 1100;
-    int line_number = 0;
+    bool match          = false;
+    bool limit_reached  = false;
+    int protein_count   = 0;
+    int line_number     = 0;
 
+    // read each line
     while (std::getline(file, line)) {
         line_number += 1;
 
@@ -71,9 +83,12 @@ int parse_file(int protein_limit, int start_line){
             protein_count +=1;
             match = false;
 
+            // if have reached the max number of proteins to put in a file
+            // then ouput the buffer to the file and break from the loop
             if(protein_count >= protein_limit){
                 //std::cout<< "limit reached at line " << line_number << line << std::endl;
                 //of << "---------------" << std::endl;
+                limit_reached = true;
                 of << buffer;
                 break;
             }
@@ -91,22 +106,35 @@ int parse_file(int protein_limit, int start_line){
             //std::cout << "Match is false, ignoring line" << line << std::endl;
         }
     }
-    file.close();
-    of.close();
-
-    //std::cout << std::endl << "Buffer contents:\n" << buffer << std::endl;
-    //std::cout << "found " << protein_count << " from " <<  start_line << " to " << line_number << std::endl;
-
-    return line_number;
+    // check if there's anything left to ouput
+    if (! limit_reached){
+        
+        of << buffer;
+        file.close();
+        of.close();
+        auto end = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(end - start);
+        std::cout<< "Reached end of file. Protein count: " << protein_count << " time: " << duration.count() << " output: " << output_file << std::endl;
+        return -1;
+    }else{
+        file.close();
+        of.close();
+        auto end = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(end - start);
+        std::cout<< "Reached protein limit. Protein count: " << protein_count << " time: " <<  duration.count() << std::endl;
+        return line_number;
+    }
 }
 
 int main() {
-    int start_line = 0;
-    int proteins_limit = 2;
+    int proteins_limit  = 100000; // proteins in each buffer
+    int next_start      = 0;
     
-    int line_number = parse_file(proteins_limit, start_line);
-    std::cout << "Found to line " << line_number << std::endl;
+    // run first pass
+    //next_start = parse_file(proteins_limit, 0);
 
-    line_number = parse_file(proteins_limit, line_number);
-    std::cout << "Found to line " << line_number;
+    while(next_start != -1){
+        next_start = parse_file(proteins_limit, next_start);
+        //std::cout << "Found to line " << next_start << std::endl;
+    }
 }

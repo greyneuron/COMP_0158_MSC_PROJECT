@@ -10,6 +10,9 @@ gc.prt
 *.csv
 *.model
 *.png
+extras_mobidb*.xml
+extras_part*.xml
+
 
 # for terraform
 *.hcl
@@ -232,3 +235,4 @@ data/disordered/extras_part_021.xml
 data/disordered/extras_part_022.xml
 data/disordered/extras_part_023.xml
 code/cpp/extras_mobidb_only.xml
+code/cpp/extras_mobidb_20240718_1331_.xml
