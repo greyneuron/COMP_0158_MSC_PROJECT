@@ -6,19 +6,44 @@ import time
 import os
 import sys
 
-# Parses an extr.xml file to find disorder entries
+# AS OF July 19th ALL 3 DAT FILES ARE ON EC2
 #
-# The extra.xml file from ecbi is huge, so use file_split.py to split it up
-# first
+# Parses an extra.xml file to find disorder entries
 #
+# The extra.xml file from ecbi is huge (4bn lines), so use file_split.py to split it up first
+#
+# 4BN entries: wc -l extra.xml
+# 4,007,237,378
+#
+# 57mn mobidb entries (each with potentially mutlple entries)
 # grep -c "disorder_prediction\" dbname=\"MOBIDBLT\"" /Volumes/My\ Passport/downloads/extra.xml
 # 57,013,227
 #
-# wc -l extra.xml
-# 4,007,237,378
+# 81MN disorder entries
+
+# EC2 Execution time - July 19th 2024
 #
-# 
-# Time taken with index : 0.3864748477935791
+# t3.large (died)       : First 1M elements processed in 4s (40,056 proteins - 26,709 disorder records)
+#                       : Killed after 87s = 778,258 proteins
+# t3.2xlarge (died)     : First 1M elements processed in 3.8s
+#                       : 778,258 proteins after 84.45s
+#                       : 3M proteins in 308s = 5min
+#                       : Killed after 3.28M proteins (81M elements) in 352s
+# r5d.2xlarge (works)   : First 1M elements processed in 2.8s
+#                       : 778,258 proteins in 62.88s 
+#                       : 3M proteins in 239s (starts to stuggle on 3.8M proteins but then reovers)
+#                       : 4,909,040 in 382s then waits
+#                       : extra_part_01.xml = 4,998,283 proteins = 419s (7mins)
+#                       : extra_part_02.xml = 4,998,283 proteins = 346s (7mins)
+#                       : extra_part_03.xml = 4,973,799 proteins = 411s
+#                       : extra_part_04.xml = 4,976,468 proteins = 386s
+#                       : extra_part_04.xml = 4,996,557 proteins = 384s
+#                       : consistently like that until the end
+#
+# Total records found : 81,257,100
+# % wc -l disordered_tokens.dat_20240719.dat
+#
+
 
 ''' last disprder entry in extras_01.xml
 <protein id="A0A0B1TV04" name="A0A0B1TV04_OESDE" length="107" crc64="DD962B54888583AE">
@@ -29,9 +54,9 @@ import sys
 '''
 
 
-
-
-# find files in a certain folder starting with a certain name
+#
+# utility method - find files in a certain folder starting with a certain name
+#
 def find_file_names(root_folder, search_string):
     files = os.listdir(root_folder)
     filtered_files = [file for file in files if file.startswith(search_string)]
@@ -130,13 +155,19 @@ def parse_extra_file(source_folder, source_file_name, output_file):
     
     
     
-    
+#
+# THIS IS THE MAIN METHOD
+# This assumes the xml files have been split into smaler files named "extras_part_" ....
+#
 def parse_extra_files():
-    root_folder = "/Volumes/My Passport/downloads/"
-    search_string = "extras_part_"
+    #root_folder     = "/Volumes/My Passport/downloads/"
+    #target_file     = "/Volumes/My Passport/dat/disordered_tokens_20240714_1216.dat"
     
-    target_file = "/Volumes/My Passport/dat/disordered_tokens_20240714_1216.dat"
+    root_folder     = "/data/dev/ucl/data/disorder/"
+    target_file     = "/data/dev/ucl/data/disorder/dat/disordered_tokens_20240719.dat"
     
+    search_string   = "extra_part_"
+        
     sorted_files = find_file_names(root_folder, search_string)
     
     # open file for appending
@@ -162,7 +193,7 @@ def parse_extra_files():
 
 
 
-
+'''
 
 # --------------------------------------------
 
@@ -214,3 +245,4 @@ def db_query():
     print('Time taken :', e -s)
     con.close()
 db_query()
+'''

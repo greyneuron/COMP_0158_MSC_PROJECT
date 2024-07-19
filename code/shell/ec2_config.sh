@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # -------------- SSH --------------------
-ssh -i "w2v_rsa" ec2-user@ec2-3-251-70-140.eu-west-1.compute.amazonaws.com
+
+aws ec2 describe-instances | grep PublicDnsName
+
+export instance_id="ec2-63-32-44-188.eu-west-1.compute.amazonaws.com"
+
+ssh -i "w2v_rsa" ec2-user@$instance_id
 
 Wel....ise
 
@@ -9,21 +14,29 @@ Wel....ise
 # -------------- Mount to existing EBS Volume --------------------
 lsblk # get the name of the disk - you can tell it by its size
 sudo mkdir /data
-sudo mount /dev/nvme1n1 /data
+sudo mount /dev/nvme2n1 /data
+cd /data/dev/ucl
 
-# check its there
-ls /data/dev/ucl
+# activate venv - this is really weird as it doesn;t always work
+bash # had to switch to bash
+source w2v-venv/bin/activate
 
 
 # -------------- SCP A FILE --------------------
 # from directory with pem key (w2v-ec2)
 # note I did a chmod 777 on the target directory
-scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat ec2-user@ec2-3-248-197-34.eu-west-1.compute.amazonaws.com:/data/dev/ucl/data/protein
 
-scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat ec2-user@ec2-63-32-44-188.eu-west-1.compute.amazonaws.com:/data/dev/ucl/data/protein
+export instance_id="ec2-52-51-138-149.eu-west-1.compute.amazonaws.com"
 
+# uploade protein dat files (4 mins)
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat ec2-user@$instance_id:/data/dev/ucl/data/protein
 
-scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240715.dat ec2-user@ec2-63-32-44-188.eu-west-1.compute.amazonaws.com:/data/dev/ucl/data/pfam
+# upload code
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/*.py ec2-user@e$instance_id:/data/dev/ucl/code
+
+# upload pfam dat files (1 hour 10 mins)
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240715.dat ec2-user@$instance_id:/data/dev/ucl/data/pfam
+
 
 
 # -------------- FORMAT an EBS VOLUME --------------------
@@ -49,9 +62,6 @@ Now connect from an ec2 console:
 mysql -h w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com -P 3306 -u w2v -p
 
 
-
-
-
 # -------------- Setup python  --------------------
 # install python etc (note: python 3 should already be there)
 sudo yum install pip
@@ -61,7 +71,11 @@ cd /data/dev/ucl
 python3 -m venv w2v-env
 
 # activate
+bash # had to switch to bash
 source w2v-venv/bin/activate
+
+
+
 
 
 

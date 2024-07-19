@@ -6,9 +6,10 @@ variable "region" {
 # d2.xlarge = x86_64, 4 cpu, 30.5GB, Moderate N/W, HDD 6144GB,  $0.735 ph
 # d2.2xlarge = x86_64, 8 cpu, 61GB, Moderate N/W, HDD 12288GB,  $1.47 ph -> used this to process extras initially - fast but ran out of mem
 
-# t3.large = x86_64, 2 cpu, 8GB, ^5Gb,  $0.09 ph   --> fine for testing stuff
-# t3.xlarge = x86_64, 4 cpu, 16GB, ^5Gb,  $0.18 ph --> used when uploding extras and parsing extras, not great
-# t3.2xlarge = x86_64, 8 cpu, 32GB, ^5Gb,  $0.36 ph
+# t3.large    = x86_64, 2 cpu, 8GB, ^5Gb,  $0.09 ph   --> fine for testing stuff
+# t3.xlarge   = x86_64, 4 cpu, 16GB, ^5Gb,  $0.18 ph --> used when uploding extras and parsing extras, not great
+# t3.2xlarge  = x86_64, 8 cpu, 32GB, ^5Gb,  $0.36 ph
+# r5d.2xlarge = x86_64, 8 cpu, 64GB, ^12.5Gb,  $0.564 ph
 
 # Compare instance types
 # From the console - go to EC2 and select Launch instance, on the next page to the 
@@ -19,7 +20,7 @@ variable "region" {
 # https://docs.aws.amazon.com/ec2/latest/instancetypes/instance-type-names.html
 
 variable "instance_type" {
-  default = "t3.large"
+  default = "r5d.2xlarge"
 }
 
 variable "availabilty_zone" {
