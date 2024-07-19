@@ -17,10 +17,22 @@ sudo mkdir /data
 sudo mount /dev/nvme2n1 /data
 cd /data/dev/ucl
 
-# activate venv - this is really weird as it doesn;t always work
-bash # had to switch to bash
+# activate venv - this is really weird as it doesn;t always work - don't have to switch to bash
+# this worked
 source w2v-venv/bin/activate
 
+# ------------ MYSQL
+pip3 install mysql-connector-python
+
+
+# ------- anaconda - doesn;t work
+sudo wget https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh
+
+install to /data/dev/usr/locl/bin/anaonda2
+
+
+# ------------ MYSQL
+pip3 install mysql-connector-python
 
 # -------------- SCP A FILE --------------------
 # from directory with pem key (w2v-ec2)
