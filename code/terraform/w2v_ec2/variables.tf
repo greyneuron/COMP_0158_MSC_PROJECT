@@ -3,13 +3,23 @@ variable "region" {
 }
 
 
-# t4g.medium = 2 vCPU 4GB, $0.0368
-# t4g.large = 2 vCPU 8GB, $0.0736
-# t4g.xlarge = 4 vCPU 16GB, $0.1472
-# d2.xlarge
-# 
+# d2.xlarge = x86_64, 4 cpu, 30.5GB, Moderate N/W, HDD 6144GB,  $0.735 ph
+# d2.2xlarge = x86_64, 8 cpu, 61GB, Moderate N/W, HDD 12288GB,  $1.47 ph -> used this to process extras initially - fast but ran out of mem
+
+# t3.large = x86_64, 2 cpu, 8GB, ^5Gb,  $0.09 ph   --> fine for testing stuff
+# t3.xlarge = x86_64, 4 cpu, 16GB, ^5Gb,  $0.18 ph --> used when uploding extras and parsing extras, not great
+# t3.2xlarge = x86_64, 8 cpu, 32GB, ^5Gb,  $0.36 ph
+
+# Compare instance types
+# From the console - go to EC2 and select Launch instance, on the next page to the 
+# right of the instancy type dropdown there's a link to 'compare'. You might need 
+# to add the price to the column
+
+# explanation
+# https://docs.aws.amazon.com/ec2/latest/instancetypes/instance-type-names.html
+
 variable "instance_type" {
-  default = "t3.xlarge"
+  default = "t3.large"
 }
 
 variable "availabilty_zone" {

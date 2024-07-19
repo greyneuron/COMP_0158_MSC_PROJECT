@@ -1,15 +1,12 @@
 variable "region" {
   default = "eu-west-1"
 }
-
 variable "availabilty_zone" {
   default = "eu-west-1a"
 }
-
 variable "availabilty_zone_2" {
   default = "eu-west-1b"
 }
-
 # ------------- for vpc ------------
 
 variable "vpc_cidr_block" {

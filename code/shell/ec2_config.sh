@@ -1,27 +1,39 @@
 #!/bin/bash
 
 # -------------- SSH --------------------
-# % ssh -i "w2v_rsa" ec2-user@ec2-3-251-70-140.eu-west-1.compute.amazonaws.com
-# Wel....ise
+ssh -i "w2v_rsa" ec2-user@ec2-3-251-70-140.eu-west-1.compute.amazonaws.com
 
-# -------------- Format and mount a volume --------------------
-#
-# Format needed when EBS first creates - see instructions in link
-# Attach needed every time an EC2 is created
-#
+Wel....ise
+
+
+# -------------- Mount to existing EBS Volume --------------------
+lsblk # get the name of the disk - you can tell it by its size
+sudo mkdir /data
+sudo mount /dev/nvme1n1 /data
+
+# check its there
+ls /data/dev/ucl
+
+
+# -------------- SCP A FILE --------------------
+# from directory with pem key (w2v-ec2)
+# note I did a chmod 777 on the target directory
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat ec2-user@ec2-3-248-197-34.eu-west-1.compute.amazonaws.com:/data/dev/ucl/data/protein
+
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat ec2-user@ec2-63-32-44-188.eu-west-1.compute.amazonaws.com:/data/dev/ucl/data/protein
+
+
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240715.dat ec2-user@ec2-63-32-44-188.eu-west-1.compute.amazonaws.com:/data/dev/ucl/data/pfam
+
+
+# -------------- FORMAT an EBS VOLUME --------------------
+# IF YOU DESTROY A VOLUME YOU DELETE THE DATA!!! BUT YOU CAN DESTROY AN EC2 INSTANCE MANY
+# TIMES AND CONNECT IT TO A PREVIOUS EBS INSTANCE WHEN YOU RESTART
+
 https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html
 
-lsblk
-sudo mkdir /data
-sudo mount /dev/xvdh /data
 
-# make dev directory
-mkdir /data/dev
-mkdir /data/dev/ucl
-
-
-
-# ------------- RDS for MySQL
+# -------------- MYSQL RDS --------------------
 
 ssh to ec2 instance
 
@@ -35,6 +47,10 @@ w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com
 
 Now connect from an ec2 console:
 mysql -h w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com -P 3306 -u w2v -p
+
+
+
+
 
 # -------------- Setup python  --------------------
 # install python etc (note: python 3 should already be there)

@@ -1,7 +1,4 @@
-#
-# This creates Terraform module creates an ec2 instance in a public subnet with ssh access.
-#
-
+# Creates an ec2 instance in a public subnet with ssh access.
 
 terraform {
   required_providers {
@@ -12,11 +9,11 @@ terraform {
   }
   required_version = ">= 1.2.0"
 }
-
 provider "aws" {
   region = var.region
 }
 
+# --------------------------------------------
 resource "aws_instance" "w2v-server" {
   #ami                    = "ami-08ca6be1dc85b0e84"
   ami                    = "ami-0b995c42184e99f98"
