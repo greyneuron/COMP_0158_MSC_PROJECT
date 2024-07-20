@@ -8,8 +8,10 @@ from collections import defaultdict
 
 
 # ----------------------------------
+# Sat July 20 2024
 # pfam entries  : 298,766,058
 # proteins      : 78,494,529
+# disorder      : 81,257,100
 # ----------------------------------
 
 
@@ -33,16 +35,154 @@ from collections import defaultdict
 # A0A010PZP8  PF : A0A010PZP8|PF00172:16:53|PF04082:216:322
 # A0A010PZP8  DIS: [('A0A010PZP8', 'DISORDER', 'Polar', 50, 103), ('A0A010PZP8', 'DISORDER', 'Consensus Disorder Prediction', 50, 109), ('A0A010PZP8', 'DISORDER', 'Consensus Disorder Prediction', 553, 598)]
 #
+# OUtput: A0A010PZP8:1:633|PF00172:16:53|PF04082:216:322|DISORDER:50:103:50:109:553:598
+#
+
+
+
+
 def combine_tokens():
-    protein_dat     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat"
-    pfam_dat        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam.dat"
-    disorder_dat    = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/disordered_tokens_20240714_1216.dat"
+    protein_dat     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniprotkb-2759_78494531.dat"
+    pfam_dat        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240719.dat"
+    disorder_dat    = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disorder/disordered_tokens_20240719.dat"
     
-    db_string   = "/Users/patrick/dev/ucl/comp0158_mscproject/database/test.db"
+    db_string       = "/Users/patrick/dev/ucl/comp0158_mscproject/database/w2v.db"
     
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20200715_1130.dat"
+    output          = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20240720_1400.dat"
     
-    PROCESS_LIMIT   = 5000000
+    PROCESS_LIMIT   = -1 # how many proteins to parse
+    OUTPUT_LIMIT    = 500000
+    
+    record_count    = 0
+    buffer          = 0
+    start_time      = time.time()
+    mid_time_start  = time.time()
+    
+    # open a file for output
+    output_file = open(output, "w")
+
+    record_count = 0
+    
+    con = duckdb.connect(database=db_string) 
+    
+    with open(protein_dat, 'r') as file:
+        for line_number, line in enumerate(file):    
+            #print('\nline:',line.strip('\n'))
+            cols            = line.split('|')
+            protein_id      = cols[0]
+            protein_start   = cols[1]
+            protein_end     = cols[2].strip('\n')
+            last_pfam_protein_id = ""
+            #token_line       = ""
+            token_line = ':'.join([protein_id, protein_start, protein_end]) +'|'
+            #print('token_line start:', token_line)
+            
+            #
+            # GET PFAM AND DISORDER TOKENS FROM DB
+            #
+            #pfam_tokens = con.execute("SELECT * FROM PFAM_TOKEN WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
+            #disorder_tokens = con.execute("SELECT * FROM PROTEIN_FEATURE WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
+            
+            pfam_tokens = con.execute("SELECT * FROM W2V_TOKEN WHERE UNIPROT_ID = (?) AND TYPE='PFAM'", [protein_id]).fetchall()
+            disorder_tokens = con.execute("SELECT * FROM W2V_TOKEN WHERE UNIPROT_ID = (?) AND TYPE='DISORDER'", [protein_id]).fetchall()
+            
+            #
+            # PFAM TOKENS
+            # 
+            pfam = False
+            if pfam_tokens is not None and len(pfam_tokens) >0:
+                pfam = True
+                for item in pfam_tokens:
+                    pfam_protein_id = item[0]
+                    
+                    # if this is first time, remember what protein we have found
+                    # and create first part of output line, 
+                    if(last_pfam_protein_id == ""):
+                        last_pfam_protein_id = pfam_protein_id
+                        #token_line = pfam_protein_id + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
+                        token_line = token_line + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
+                        continue
+                    
+                    # if not first time through and we have already found this protein, append to line
+                    if (pfam_protein_id == last_pfam_protein_id):
+                        pfam_line_extra = '|' + item[1] + ':' + str(item[2]) + ':' + str(item[3])
+                        token_line = token_line + pfam_line_extra
+                    
+                    # if not first time and we have a new protein, then print the current line and start a new one
+                    else:
+                        last_pfam_protein_id = pfam_protein_id
+                        token_line = token_line + '|' + item[1] + ':' + str(item[2]) +  ':' + str(item[3])
+                
+            # A0A010PZP8 has pfam and disorder entries
+            if disorder_tokens is not None and len(disorder_tokens) > 0:
+                #print(protein_id, ' PF :', token_line)
+                #print(protein_id, ' DIS:', disorder_tokens )
+                
+                if(len(token_line) == 0):
+                    disorder_entries = protein_id + 'DISORDER'
+                else:
+                    if(pfam):
+                        disorder_entries = '|DISORDER'
+                    else:
+                        disorder_entries = 'DISORDER'
+                for disorder_item in disorder_tokens:
+                    disorder_entries = disorder_entries + ':' + str(disorder_item[3]) + ':' + str(disorder_item[4])
+                token_line = token_line + disorder_entries
+
+            record_count += 1
+            
+            # write out current line
+            if(len(token_line) > 0):
+                #print('final output:', token_line)
+                output_file.write(token_line +'\n')
+            
+                
+            # -------- check for termination ------------
+            if (record_count % OUTPUT_LIMIT == 0):
+                mid_time_end = time.time()
+                t = mid_time_end - mid_time_start
+                mid_time_start = mid_time_end
+                print(OUTPUT_LIMIT, 'lines processed in ', t, 's', 'total:', record_count)
+                
+            if(PROCESS_LIMIT != -1):
+                if record_count >= PROCESS_LIMIT:
+                    print('limit reached, returning')
+                    break
+                
+    con.close()
+    output_file.close()
+    
+    end_time = time.time()
+    exec_time = end_time - start_time
+    print(record_count, 'proteins processed in ', exec_time, 's')
+    
+combine_tokens()
+
+
+
+
+
+
+
+# -------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+def combine_tokens_old():
+    protein_dat     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniprotkb-2759_78494531.dat"
+    pfam_dat        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240719.dat"
+    disorder_dat    = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disorder/disordered_tokens_20240719.dat"
+    
+    db_string       = "/Users/patrick/dev/ucl/comp0158_mscproject/database/w2v.db"
+    
+    output          = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20200720.dat"
+    
+    PROCESS_LIMIT   = 10 # how many proteins to parse
     OUTPUT_LIMIT    = 500000
     
     record_count    = 0
@@ -145,7 +285,7 @@ def combine_tokens():
     exec_time = end_time - start_time
     print(record_count, 'proteins processed in ', exec_time, 's')
 
-combine_tokens()
+#combine_tokens_old()
 
 
 
