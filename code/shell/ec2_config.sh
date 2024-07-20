@@ -3,11 +3,8 @@
 # -------------- SSH --------------------
 
 aws ec2 describe-instances | grep PublicDnsName
-
-export instance_id="ec2-63-32-44-188.eu-west-1.compute.amazonaws.com"
-
-ssh -i "w2v_rsa" ec2-user@$instance_id
-
+export dns="ec2-63-32-44-188.eu-west-1.compute.amazonaws.com"
+ssh -i "w2v_rsa" ec2-user@$dns
 Wel....ise
 
 
@@ -21,13 +18,43 @@ cd /data/dev/ucl
 # this worked
 source w2v-venv/bin/activate
 
-# ------------ MYSQL
-pip3 install mysql-connector-python
+
+
+# -------------- INstall MYSQL DIRECTLY ON THE EC2 INSTANCE --------------------
+
+# https://muleif.medium.com/how-to-install-mysql-on-amazon-linux-2023-5d39afa5bf11
+sudo wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+sudo dnf install mysql80-community-release-el9-1.noarch.rpm -y
+sudo dnf install mysql-community-server -y
+# start
+sudo systemctl start mysqld
+
+sudo vi /etc/my.cnf
+# add this just after [mysqld] (Esc:wq! to save):
+skip-grant-tables
+secure-file-priv=''
+#datadir=/var/lib/mysql
+datadir=/data/dev/ucl/data/database
+
+# connect
+mysql
+
+# create database
+#CREATE DATABASE W2V_DB;
+USE W2V_DB;
+
+# create table
+CREATE TABLE W2V_TOKEN (uniprot_id VARCHAR(16), type VARCHAR(16), token VARCHAR(64), start INT, end INT);
+
+LOAD DATA INFILE '/data/dev/ucl/data/pfam/protein2ipr_pfam_20240715.dat' INTO TABLE W2V_TOKEN FIELDS TERMINATED BY '|';
+# Query OK, 296017815 rows affected (2 hours 36 min 46.31 sec)
+
+LOAD DATA INFILE '/data/dev/ucl/data/disorder/dat/disordered_tokens_20240719.dat' INTO TABLE W2V_TOKEN FIELDS TERMINATED BY '|';
 
 
 # ------- anaconda - doesn;t work
 sudo wget https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh
-
 install to /data/dev/usr/locl/bin/anaonda2
 
 
@@ -50,6 +77,11 @@ scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/*.py ec2-user@e$instance_id:
 scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240715.dat ec2-user@$instance_id:/data/dev/ucl/data/pfam
 
 
+# -------- Copy from ebs to s3
+ssh to ec2
+aws configure
+aws s3 cp disorder/dat/disordered_tokens_20240719.dat s3://w2v-bucket/disordered/disordered_tokens_20240719.dat
+
 
 # -------------- FORMAT an EBS VOLUME --------------------
 # IF YOU DESTROY A VOLUME YOU DELETE THE DATA!!! BUT YOU CAN DESTROY AN EC2 INSTANCE MANY
@@ -58,20 +90,33 @@ scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_202407
 https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html
 
 
-# -------------- MYSQL RDS --------------------
+# -------------- CONNECT MYSQL RDS --------------------
 
 ssh to ec2 instance
 
 sudo dnf update -y
 sudo dnf install mariadb105
 
-Get the RDS endpoint - I got it from the console. 
-For example: 
+#Get the RDS endpoint - I got it from the console. 
+#For example: 
 
-w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com
+export endpoint="w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
 
-Now connect from an ec2 console:
-mysql -h w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com -P 3306 -u w2v -p
+#Now connect from an ec2 console:
+mysql -h $endpoint -P 3306 -u w2v -p
+
+# create database
+CREATE DATABASE W2V_DB;
+USE W2V_DB;
+
+# create table
+CREATE TABLE W2V_TOKEN (uniprot_id VARCHAR(16), type VARCHAR(15), token VARCHAR(16), start INT, end INT);
+
+# load data - this works
+LOAD DATA INFILE '/data/dev/ucl/data/pfam/pfam_test_data.dat' INTO TABLE W2V_TOKEN FIELDS TERMINATED BY '|';
+
+LOAD DATA INFILE '/data/dev/ucl/data/pfam/protein2ipr_pfam_20240715.dat' INTO TABLE W2V_TOKEN FIELDS TERMINATED BY '|';
+
 
 
 # -------------- Setup python  --------------------
