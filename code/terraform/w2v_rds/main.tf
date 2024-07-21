@@ -41,7 +41,7 @@ resource "aws_security_group" "w2v_rds_sg" {
     protocol    = "tcp"
 
     # ****** TODO : Put security group from ec2 here (w2v_ec2_security_group_id)
-    security_groups = ["sg-0ff5b6d4352cfaa71"]
+    security_groups = ["sg-036c5a755f46b12c5"]
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -58,23 +58,22 @@ resource "aws_db_subnet_group" "w2v_db_subnet_group" {
 
 
 #https://aws.amazon.com/rds/mysql/pricing/
+# https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html
 
 resource "aws_db_instance" "w2v-db" {
-  allocated_storage = 100
-  storage_type = "gp2"
-  #engine = "postgres"
-  #engine_version = "5.7"
-  #instance_class = "db.r5.large"
+  allocated_storage = 60 # in GB
+  storage_type = "gp3" # gp = general purpose
+
   engine = "mysql"
   engine_version = "8.0.35"
-  #instance_class = "db.t3.micro"
-  instance_class = "db.t3.xlarge"
+  instance_class = "db.t4g.2xlarge"
   identifier = "w2v-dev-db"
   username = "w2v"
-  password = "w2v"
+  password = "w0rd2v3c"
 
   vpc_security_group_ids = [aws_security_group.w2v_rds_sg.id]
   db_subnet_group_name = aws_db_subnet_group.w2v_db_subnet_group.id
+  publicly_accessible = true
   
   skip_final_snapshot = true
   

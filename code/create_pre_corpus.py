@@ -37,8 +37,7 @@ from collections import defaultdict
 #
 # OUtput: A0A010PZP8:1:633|PF00172:16:53|PF04082:216:322|DISORDER:50:103:50:109:553:598
 #
-
-
+# 20 July took 591s for 100k = 10min!
 
 
 def combine_tokens():
@@ -48,10 +47,10 @@ def combine_tokens():
     
     db_string       = "/Users/patrick/dev/ucl/comp0158_mscproject/database/w2v.db"
     
-    output          = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20240720_1400.dat"
+    output          = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20240720_1600.dat"
     
     PROCESS_LIMIT   = -1 # how many proteins to parse
-    OUTPUT_LIMIT    = 500000
+    OUTPUT_LIMIT    = 50000
     
     record_count    = 0
     buffer          = 0
@@ -83,8 +82,9 @@ def combine_tokens():
             #pfam_tokens = con.execute("SELECT * FROM PFAM_TOKEN WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
             #disorder_tokens = con.execute("SELECT * FROM PROTEIN_FEATURE WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
             
-            pfam_tokens = con.execute("SELECT * FROM W2V_TOKEN WHERE UNIPROT_ID = (?) AND TYPE='PFAM'", [protein_id]).fetchall()
-            disorder_tokens = con.execute("SELECT * FROM W2V_TOKEN WHERE UNIPROT_ID = (?) AND TYPE='DISORDER'", [protein_id]).fetchall()
+            pfam_tokens = con.execute("SELECT * FROM W2V_PFAM_TOKEN WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
+            disorder_tokens = con.execute("SELECT * FROM W2V_DISORDER_TOKEN WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
+            tokens = con.execute("SELECT * FROM W2V_TOKEN WHERE UNIPROT_ID = (?)", [protein_id]).fetchall()
             
             #
             # PFAM TOKENS
