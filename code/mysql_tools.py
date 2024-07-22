@@ -131,7 +131,6 @@ def connection_test():
 #
 if __name__ == '__main__':
 
-    '''
     # create pre-corpus file in chunks of 500k proteins
     start       = 0
     chunk_size  = 500000
@@ -144,8 +143,8 @@ if __name__ == '__main__':
         iteration +=1
         start += chunk_size 
     print('...end')
-    '''
+    
     
     #get unique pfam entries
-    print('gettting unique pfam entries')
-    get_unique_pfam()
+    #print('gettting unique pfam entries')
+    #get_unique_pfam()

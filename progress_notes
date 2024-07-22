@@ -57,5 +57,7 @@ Monday 22 July
         scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@$dns:/data/dev/ucl/code
 
     - Ran mysql_tools.py in batches of 500,000 - see pre_corpus_fill_log_20240722.log
+    - Renamed those files 1 to 9 to have extension 01 to 09
+    - Also ran query to find unique pfam entries
     - Stopped RDS 
 
