@@ -16,19 +16,21 @@ Sun July 21st
     # - Created an index on that table
     # - Loaded all protein data into W2V_PROTEIN - byut there are duplicates
 
-Week commencing Monday July 22nd
-* Friday Target: Have a distance matrix for each pfam entry
+# --------------------------------------------------------------------------------
+                    Week commencing Monday July 22nd
+*       Friday Target: Have a distance matrix for each pfam entry
+# --------------------------------------------------------------------------------
 
-* Steps
-- Create pre-corpus
+* Tasks
+1. Create pre-corpus
     - For each protein query the database
-- Create corpus
-- Run word2vec on corpus
-- Get unique pfam entries
-- For each pfam entry get its vector representation
-- Determine distances between each pfam entry
+2. Create corpus
+3. Run word2vec on corpus
+4. Get unique pfam entries
+5. For each pfam entry get its vector representation from word2vec and store it
+6. Determine distances between each pfam entry
 
-Target: Create corpus by end of day (or at least pre-corpus)
+day 1 target: Create corpus by end of day (or at least pre-corpus)
 
 
 Monday 22 July
@@ -36,7 +38,15 @@ Monday 22 July
 - Had to add security groups again via the console
 - Loaded mysql client into conda on laptop
 
-conda install anaconda::mysql-connector-python
+# created venc again on ec2
+python3 -m venv w2venv
+source w2venv/bin/activate
 pip3 install mysql-connector-python
 
+# write code locally and then scp it across
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@$dns:/data/dev/ucl/code
+
+# try to connect to rds from laptop
+GO to RDS console and select secuity group - create new
+Inbound TCP/IP port 3306 I selected myip
 
