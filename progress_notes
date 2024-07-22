@@ -34,19 +34,28 @@ day 1 target: Create corpus by end of day (or at least pre-corpus)
 
 
 Monday 22 July
-- Created new rds instance from snapshot, made it publicly available
-- Had to add security groups again via the console
-- Loaded mysql client into conda on laptop
+- Created new rds instance from snapshot on 21 July, made it publicly available
+- Had to add security groups again via the console so that I could access from ec2
 
-# created venc again on ec2
-python3 -m venv w2venv
-source w2venv/bin/activate
-pip3 install mysql-connector-python
+- Tried running from laptop to RDS:
+    - Loaded mysql client into conda on laptop 0 but couldn;t connect via laptop
+    - Also tried adding a new securoty group such as in this way: https://stackoverflow.com/questions/37212945/aws-cant-connect-to-rds-database-from-my-machine
+      that didn't work
 
-# write code locally and then scp it across
-scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@$dns:/data/dev/ucl/code
+- Resorted to running python code from EC2
+    - Develped code on laptop
+    - SSH to EC2 and create a venv then pip3 install mysqlclient
 
-# try to connect to rds from laptop
-GO to RDS console and select secuity group - create new
-Inbound TCP/IP port 3306 I selected myip
+        # created venv again on ec2
+        python3 -m venv w2venv
+        source w2venv/bin/activate
+        pip3 install mysql-connector-python
+
+    - SCP code from laptop to ec2
+        export dns=<dns of ec2>
+        assumes already have setup ssh
+        scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@$dns:/data/dev/ucl/code
+
+    - Ran mysql_tools.py in batches of 500,000 - see pre_corpus_fill_log_20240722.log
+    - Stopped RDS 
 
