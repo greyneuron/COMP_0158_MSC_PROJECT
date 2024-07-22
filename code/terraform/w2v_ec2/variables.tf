@@ -7,7 +7,7 @@ variable "region" {
 # d2.2xlarge = x86_64, 8 cpu, 61GB, Moderate N/W, HDD 12288GB,  $1.47 ph -> used this to process extras initially - fast but ran out of mem
 
 # t3.large    = x86_64, 2 cpu, 8GB, ^5Gb,  $0.09 ph   --> fine for testing stuff
-# t3.xlarge   = x86_64, 4 cpu, 16GB, ^5Gb,  $0.18 ph --> used when uploding extras and parsing extras, not great
+# t3.xlarge   = x86_64, 4 cpu, 16GB, ^5Gb,  $0.18 ph --> used when uploding extras and parsing extras, not great, alos on Mon 25/7 as most of grunt needed in rds
 # t3.2xlarge  = x86_64, 8 cpu, 32GB, ^5Gb,  $0.36 ph
 # r5d.2xlarge = x86_64, 8 cpu, 64GB, ^12.5Gb,  $0.564 ph
 
@@ -20,7 +20,7 @@ variable "region" {
 # https://docs.aws.amazon.com/ec2/latest/instancetypes/instance-type-names.html
 
 variable "instance_type" {
-  default = "r5d.2xlarge"
+  default = "t3.xlarge"
 }
 
 variable "availabilty_zone" {

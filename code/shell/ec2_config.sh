@@ -11,8 +11,18 @@ Wel....ise
 # -------------- Mount to existing EBS Volume --------------------
 lsblk # get the name of the disk - you can tell it by its size
 sudo mkdir /data
-sudo mount /dev/nvme2n1 /data
+sudo mount /dev/nvme1n1 /data
 cd /data/dev/ucl
+
+sudo dnf update -y
+sudo dnf install mariadb105
+
+
+# which shell?
+echo $0
+
+# ths worked without changing shell
+. w2v-venv/bin/activate
 
 # activate venv - this is really weird as it doesn;t always work - don't have to switch to bash
 # this worked
@@ -74,7 +84,7 @@ scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb-2759_78494
 scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat ec2-user@$dns:/data/dev/ucl/data/protein
 
 # upload code
-scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/*.py ec2-user@e$dns:/data/dev/ucl/code
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@e$dns:/data/dev/ucl/code
 
 # upload pfam dat files (1 hour 10 mins)
 scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240715.dat ec2-user@$instance_id:/data/dev/ucl/data/pfam
@@ -146,18 +156,32 @@ LOAD DATA LOCAL INFILE '/data/dev/ucl/data/disorder/dat/disordered_tokens_202407
 
 #--------------------------------------------------------------------------------------------------
 
-w2v-db-2
+# ----------- CREATE RDS INSTANCE FROM AWS CONSOLE ------------
+# w2v-db
 # MySQl
+# dev/test
+# Sinlge DB instance
 # eu-west-1a
 # admin/w0rd2v3c
 
-# db.t4g.xlarge
-# 4CPU 16GB
+
+# db.t4g.xlarge (4CPU 16GB)
 # 60GiB
 # gp3
+
 # 3000 IOPS
 # 125 MiBps strage throughput
-# multi-az : no
+
+# select to connect to an instance
+
+# DB Subnet group
+# choose automatic
+# it selects rds-ec2-db-subnet-group-1
+
+# VPC security groups: 
+# w2v_rds_sg
+# rds-ec2-3 (not sure where this second one came from)
+
 
 # vpc: .....96af - same as vpc that ec2 is in
 # subnet group: w2v-dev-vpc
@@ -166,13 +190,12 @@ w2v-db-2
 # Connected compute: EC2 008c compute resource securoty group: ec2-rds-3
 
 
+# test connection
+# get endpoint name (wihtout the port number at the end)
+export endpoint=w2v-db-2.cligs4ak0dtg.eu-west-1.rds.amazonaws.com
+mysql -h $endpoint -P 3306 -u admin -p
 
-
-# also selected the vpc id, submet groups and security groups
-
-mysql -h w2v-db-2.cligs4ak0dtg.eu-west-1.rds.amazonaws.com -P 3306 -u admin -p
-
-CREATE DATABASE W2V;
+#CREATE DATABASE W2V;
 USE W2V;
 
 # ----- create tables
@@ -266,7 +289,7 @@ scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/protein/uniprotkb-2759_78494
 LOAD DATA LOCAL INFILE '/data/dev/ucl/data/protein/uniprotkb-2759_78494531.dat' INTO TABLE W2V_PROTEIN FIELDS TERMINATED BY '|'; # 5min 45s
 CREATE INDEX PTN_IDX ON W2V_PROTEIN (UNIPROT_ID);
 
-# Compared to putput I was getting on mac using python lookups across two tables
+# Compared to output I was getting on mac using python lookups across two tables
 
 
 (conda_ucl_base) patrick@Patricks-MBP code % python3 create_pre_corpus.py                                    

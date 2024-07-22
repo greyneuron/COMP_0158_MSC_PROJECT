@@ -1,0 +1,42 @@
+Sat July 20th
+- Tried mysql locally but wsa taking ages
+- At 4pm started a scrpt to create pre-corpus but it is taking 1hr to parse 1M - kept it running
+- Went to Noel Gallagher concert
+
+Sun July 21st
+- Pre-corpus script painfully slow
+- Loaded all dat files into S3 to see if I could use Glue (also loaded into EBS)
+- Got frustrated with that after a while as too much to learn and not convinced it would be fast enough or cheap enough
+- Resorted back to an RDS instance but had difficulty loading the data from my Terraform instance
+- Resorted to creating an RDS instance from the console and after some tinkering managed to get it to load my local files into W2V_TOKEN and W2V_PROTEIN
+- Loaded all sata into these tables and applied indices - showed that 1M proteins could be executed very quickly
+- Close of play:
+    # - New rds instance created and db created called W2V with user 'admin' and password 'w0rd2v3c'
+    # - Created W2V_TOKEN table and uploaded all pfam and disorder tokens
+    # - Created an index on that table
+    # - Loaded all protein data into W2V_PROTEIN - byut there are duplicates
+
+Week commencing Monday July 22nd
+* Friday Target: Have a distance matrix for each pfam entry
+
+* Steps
+- Create pre-corpus
+    - For each protein query the database
+- Create corpus
+- Run word2vec on corpus
+- Get unique pfam entries
+- For each pfam entry get its vector representation
+- Determine distances between each pfam entry
+
+Target: Create corpus by end of day (or at least pre-corpus)
+
+
+Monday 22 July
+- Created new rds instance from snapshot, made it publicly available
+- Had to add security groups again via the console
+- Loaded mysql client into conda on laptop
+
+conda install anaconda::mysql-connector-python
+pip3 install mysql-connector-python
+
+

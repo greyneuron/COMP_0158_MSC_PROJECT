@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 # --------------------------------------------
-resource "aws_instance" "w2v-server" {
+resource "aws_instance" "w2v-ec2-server" {
   #ami                    = "ami-08ca6be1dc85b0e84"
   ami                    = "ami-0b995c42184e99f98"
   instance_type          = var.instance_type
@@ -42,7 +42,7 @@ resource "aws_instance" "w2v-server" {
 resource "aws_volume_attachment" "w2v_ebs_att" {
   device_name = "/dev/sdh"
   volume_id   = "vol-05f27d34631d31dd8"
-  instance_id = aws_instance.w2v-server.id
+  instance_id = aws_instance.w2v-ec2-server.id
 }
 
 

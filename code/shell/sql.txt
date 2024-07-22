@@ -1,0 +1,6 @@
+CREATE TABLE W2V_TOKEN (uniprot_id VARCHAR(16), type VARCHAR(16), token VARCHAR(64), start INT, end INT);
+CREATE TABLE W2V_PROTEIN (uniprot_id VARCHAR(16), start INT, end INT);
+
+# load proteins - took 13mins
+LOAD DATA LOCAL INFILE '/data/dev/ucl/data/protein/uniprotkb-2759_78494531_1000.dat' INTO TABLE W2V_PROTEIN FIELDS TERMINATED BY '|';
+CREATE INDEX PTN_IDX ON W2V_PROTEIN (UNIPROT_ID);
