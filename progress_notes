@@ -58,6 +58,19 @@ Monday 22 July
 
     - Ran mysql_tools.py in batches of 500,000 - see pre_corpus_fill_log_20240722.log
     - Renamed those files 1 to 9 to have extension 01 to 09
-    - Also ran query to find unique pfam entries
-    - Stopped RDS 
+    - Also ran query to find unique pfam entries (also in mysql_tools.py) [20,725 unique pfams]
+
+    - Tar'd up the files
+        - cd to precorpus
+        - tar -czvf archive_name.tar.gz precorpus.tar.gz
+
+    - Copied them and the unique pfam entires to s3
+        - aws configure
+        - aws s3 cp precorpus.tar.gz s3://w2v-bucket/corpus/precorpus.tar.gz
+
+        - aws s3 cp unique_corpus_pfam_20240722.dat s3://w2v-bucket/pfam/unique_corpus_pfam_20240722.dat
+
+    - Created RDS Snapshot RDS
+    - Stopped EC2
+    - Stopped RDS TODO
 
