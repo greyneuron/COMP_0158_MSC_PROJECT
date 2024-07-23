@@ -101,11 +101,12 @@ def test_chunk(fr, size, iteration):
 
 
 #
-# WORKS - Used on 22 July to create pre-cprpus but doesn;t include the protein info
+# WORKS - Used on 22 July and modified to include protein info
+# for some reason the query to include orotein info runs a lot slower
 #
 def create_pre_corpus(from_record, chunk_size, iteration):
     
-    output_name     = "precorpus/pre_corpus_20240723_" + str(iteration) + '.dat'
+    output_name     = "precorpus/pre_corpus_20240724a_" + str(iteration) + '.dat'
     
     print('pre-corpus creation, iteration', iteration, 'from protein', from_record,'output file:', output_name)
     
@@ -120,9 +121,10 @@ def create_pre_corpus(from_record, chunk_size, iteration):
         #print('...connected')
         cursor = con.cursor()
         
-        # SHANGED THIS
+        # CHANGED THIS
         #query = f"SELECT W2V_PROTEIN.UNIPROT_ID, W2V_TOKEN.* FROM (SELECT UNIPROT_ID FROM W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT {fr}, {size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID"
-        query = f"SELECT T1.UNIPROT_ID, T1.START, T1.END, T2.TYPE, T2.TOKEN, T2.START, T2.END FROM W2V_PROTEIN T1 INNER JOIN W2V_TOKEN T2 ON T1.UNIPROT_ID = T2.UNIPROT_ID LIMIT {fr}, {size}"
+        
+        query = f"SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT {fr}, {size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID"
         
         cursor.execute(query)
         e = time.time()
@@ -135,9 +137,13 @@ def create_pre_corpus(from_record, chunk_size, iteration):
         if(len(results) >0):
             
             for res in results:
-                #print (res)
+                #print ('result :', res)
                 #output_line = "|".join([res[0], res[2], res[3], str(res[4]), str(res[5])]) # yesterday
-                output_line = "|".join([res[0], str(res[1]), str(res[2]), res[3], str(res[5]), str(res[6])])
+                token_type = res[3]
+                if token_type == "PFAM":
+                    output_line = "|".join([res[0], str(res[1]), str(res[2]), res[4], res[5], str(res[6]), str(res[7])])
+                else:
+                    output_line = "|".join([res[0], str(res[1]), str(res[2]), res[4], str(res[6]), str(res[7])])
                 #of.write(res[0], '|', res[2], '|', res[3], '|', res[4], '|', res[5])
                 of.write(output_line + '\n')
                 #print(res[0], '|', res[2], '|', res[3], '|', res[4], '|', res[5])
@@ -190,7 +196,7 @@ if __name__ == '__main__':
     # Iteration 23 220000 10000 query time: 127.24671959877014 ms Results found: 14327 ITERATION 23  Iteration time: 127.3628249168396 ms
 
     chunk_size      = 500000
-    num_iterations  = 10
+    num_iterations  = 5
     iteration       = 1
     result          = 0
     start           = 0

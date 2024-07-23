@@ -122,3 +122,11 @@ From EC2 this worked:
 
 Changed query to inculde protein start and end but it struggled on db.t3g.xlarge
 Going to try something better?
+
+# ALTERNATIVE
+- SSH to ec2
+- create a folder and give it write access
+- the following will write 1M results to a separate file
+mysql -h $endpoint -P 3306 -u admin W2V -p -e 'SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT 0, 1000000) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID' > sql/sql_output_0_1M.txt
+
+cat sql_output_0_1M.txt | awk '{FS ="\t"} {print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}'
