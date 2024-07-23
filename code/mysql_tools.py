@@ -100,6 +100,92 @@ def test_chunk(fr, size, iteration):
 
 
 
+
+
+#
+# WORKS - Used on 22 July and modified to include protein info
+# for some reason the query to include orotein info runs a lot slower
+#
+def create_pre_corpus_v2(from_record, chunk_size, iteration):
+    
+    output_name     = "precorpus/pre_corpus_20240724_v2_" + str(iteration) + '.dat'
+    
+    print('pre-corpus creation, iteration', iteration, 'from protein', from_record,'output file:', output_name)
+    
+    s   = time.time()
+    of  = open(output_name, "w")
+    
+    size = int(chunk_size)
+    fr = int(from_record)
+    
+    try:
+        con = mysql.connector.connect(user='admin', password='w0rd2v3c', host=db_host, database='W2V')
+        cursor = con.cursor()
+        
+        query = f"SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT {fr}, {size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID"
+        
+        cursor.execute(query)
+        e = time.time()
+        
+        results = cursor.fetchall()
+        
+        last_protein    = "start"
+        current_protein = ""
+        protein_buffer  = ""
+        
+        if(len(results) > 0):
+            for res in results:
+                print(res)
+                current_protein = res[0]
+                # if the curent result line is for a new protein (ie the protine id at the start of the output has changed)
+                if (last_protein == "start" or current_protein != last_protein ):
+                    protein_start   = res[1]
+                    protein_end     = res[2]
+                    last_protein    = current_protein
+                    protein_buffer = ':'.join([current_protein, str(protein_start), str(protein_end)])
+                token_type = res[3]
+                if (token_type == "DISORDER"):
+                    protein_buffer = protein_buffer + '|' + token_type + ':' + str(res[6]) + ':' + str(res[7])
+                    #print('Token:', token_type, res[5], res[6])
+                elif (token_type == "PFAM"):
+                    #print('Token:', res[4], res[5], res[6])
+                    protein_buffer = protein_buffer + '|' + res[5] + ':' + str(res[6]) + ':' + str(res[7])
+                #print(protein_buffer)
+                of.write(protein_buffer + '\n')
+        else:
+            print('No results returned')
+            of.close()
+            con.close()
+            return -1
+        # end of results    
+        e = time.time()
+        print('entire execution took', str(e-s), 'ms end to end')
+        of.close()
+        con.close()
+        return 1
+    # exception
+    except Exception as e:
+        print('error connecting', e)
+        of.close()
+        con.close()
+        return -1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #
 # WORKS - Used on 22 July and modified to include protein info
 # for some reason the query to include orotein info runs a lot slower
@@ -163,7 +249,7 @@ def create_pre_corpus(from_record, chunk_size, iteration):
         print('error connecting', e)
         of.close()
         con.close()
-        return 
+        return -1 
 
 
 
@@ -174,29 +260,14 @@ def create_pre_corpus(from_record, chunk_size, iteration):
 # main
 #
 if __name__ == '__main__':
-    ''' from 22/07
-    # create pre-corpus file in chunks of 500k proteins
-    start       = 0
-    chunk_size  = 500000
-    iteration   = 1
-    result = 0
-    
-    print('processing in chunks of', chunk_size)
-    while(result != -1):
-        result = create_pre_corpus(start, chunk_size, iteration)
-        iteration +=1
-        start += chunk_size 
-    print('...end')
-    '''
-    
-    
+        
     # 10,000 and 50 - dies on iteration 22
     # 1000 and 100 ok
     # 1000 and 1000 - each iteration takes about 0.25s => 1M to take 250s but stopped on 221
     # Iteration 23 220000 10000 query time: 127.24671959877014 ms Results found: 14327 ITERATION 23  Iteration time: 127.3628249168396 ms
 
-    chunk_size      = 500000
-    num_iterations  = 5
+    chunk_size      = 10000
+    num_iterations  = 10
     iteration       = 1
     result          = 0
     start           = 0
@@ -206,7 +277,8 @@ if __name__ == '__main__':
 
     while(result != -1 and iteration <= num_iterations):
         #result = test_chunk(start, chunk_size, iteration)
-        result = create_pre_corpus(start, chunk_size, iteration)
+        
+        result = create_pre_corpus_v2(start, chunk_size, iteration)
         
         iteration +=1
         start += chunk_size
