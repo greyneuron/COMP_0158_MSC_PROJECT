@@ -135,15 +135,17 @@ def create_pre_corpus_v2(from_record, chunk_size, iteration):
         
         if(len(results) > 0):
             for res in results:
-                print(res)
+                #print(res)
                 current_protein = res[0]
                 # if the curent result line is for a new protein (ie the protine id at the start of the output has changed)
                 if (last_protein == "start" or current_protein != last_protein ):
+                    if(last_protein != "start"):
+                        of.write(protein_buffer + '\n')
                     protein_start   = res[1]
                     protein_end     = res[2]
                     last_protein    = current_protein
                     protein_buffer = ':'.join([current_protein, str(protein_start), str(protein_end)])
-                token_type = res[3]
+                token_type = res[4]
                 if (token_type == "DISORDER"):
                     protein_buffer = protein_buffer + '|' + token_type + ':' + str(res[6]) + ':' + str(res[7])
                     #print('Token:', token_type, res[5], res[6])
@@ -151,7 +153,7 @@ def create_pre_corpus_v2(from_record, chunk_size, iteration):
                     #print('Token:', res[4], res[5], res[6])
                     protein_buffer = protein_buffer + '|' + res[5] + ':' + str(res[6]) + ':' + str(res[7])
                 #print(protein_buffer)
-                of.write(protein_buffer + '\n')
+                #of.write(protein_buffer + '\n')
         else:
             print('No results returned')
             of.close()
@@ -266,8 +268,8 @@ if __name__ == '__main__':
     # 1000 and 1000 - each iteration takes about 0.25s => 1M to take 250s but stopped on 221
     # Iteration 23 220000 10000 query time: 127.24671959877014 ms Results found: 14327 ITERATION 23  Iteration time: 127.3628249168396 ms
 
-    chunk_size      = 10000
-    num_iterations  = 10
+    chunk_size      = 250000
+    num_iterations  = 320
     iteration       = 1
     result          = 0
     start           = 0
@@ -285,9 +287,6 @@ if __name__ == '__main__':
     e = time.time()
 
     print('COMPLETE. Total time for:', num_iterations * chunk_size, 'proteins', str(e-s), 'ms')
-
-
-
 
 
 # ---------------------------

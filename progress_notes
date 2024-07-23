@@ -111,19 +111,27 @@ Monday 22 July
 # --------------------------------------------------------------------------------
 Tuesday 23 July
 
-Restarted RDS from console and made it publisly available - just selected all the defaults
-The added new route to vpc sec groups to 0.0.0.0/0
-Was then able to connect from laptop - but connection kept dropping
+Noticed that I had left out the protein start and end lengths - took all day to fis due to weird behaviour of query
 
-Restarted again from snapshot
-Selected w2v-security-group but left all others as is
-From EC2 this worked: 
+Attempt 1 - Direct connect from macbook to RDS
+- Restarted RDS from console and made it publisly available - just selected all the defaults
+- The added new route to vpc sec groups to 0.0.0.0/0
+- Was then able to connect from laptop - but connection kept dropping
+
+Attempt 2 - Go back to EC2 connecting to RDS
+- Restarted again from snapshot
+- Selected w2v-security-group but left all others as is
+- From EC2 this worked: 
     % mysql -h $endpoint -P 3306 -u admin -p
 
 Changed query to inculde protein start and end but it struggled on db.t3g.xlarge
-Going to try something better?
 
-# ALTERNATIVE
+- Restarted with a larger db, but honestly it amde no difference
+- Eventually settled on a modified version of Mondasy's code (precorpus_v2()) but with the benefit that this combines everything into one line per protein
+- Running with a chink size of 250,000 proteins it was taking at least 2mins per chunk = 8min for 1M = 10 hours for 78M!
+- Will need 312 files of output
+
+# ALTERNATIVE - USE DIRECT SQL OUTPUT AND THE TIDY IT UP WITH AWK
 - SSH to ec2
 - create a folder and give it write access
 - the following will write 1M results to a separate file
