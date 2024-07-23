@@ -22,11 +22,12 @@ sudo dnf install mariadb105
 echo $0
 
 # ths worked without changing shell
-. w2v-venv/bin/activate
+. w2venv/bin/activate
 
-# activate venv - this is really weird as it doesn;t always work - don't have to switch to bash
-# this worked
-source w2v-venv/bin/activate
+# As of Tue July 23, this works without having to go to the RDS console
+# Start rds and get endpoint from output console
+export endpoint="w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
+mysql -h $endpoint -P 3306 -u w2v -p
 
 
 
@@ -101,6 +102,15 @@ aws s3 cp disorder/dat/disordered_tokens_20240719.dat s3://w2v-bucket/disordered
 # TIMES AND CONNECT IT TO A PREVIOUS EBS INSTANCE WHEN YOU RESTART
 
 https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html
+
+
+
+# -------------- CONNECT MYSQL TO TERRAFORM RDS INSTANCE LOCALLY --------------------
+Once data is in RDS you can just create a snapshot and restart the db but just accept
+all defaults and put it in its own default vpc, make pubicky accessible. Then just add inbound 
+rule to open 0.0.0.0/0 
+
+
 
 
 # -------------- CONNECT MYSQL TO TERRAFORM RDS INSTANCE --------------------

@@ -16,6 +16,35 @@ Sun July 21st
     # - Created an index on that table
     # - Loaded all protein data into W2V_PROTEIN - byut there are duplicates
 
+
+
+# --------------------------------------------------------------------------------
+# ssh to ecs
+export dns="ec2-63-32-44-188.eu-west-1.compute.amazonaws.com"
+ssh -i "w2v_rsa" ec2-user@$dns
+
+# after restart of ec2
+lsblk
+sudo mkdir /data
+sudo mount /dev/nvme1n1 /data
+cd /data/dev/ucl
+
+sudo dnf update -y
+sudo dnf install mariadb105
+
+# to activate venv
+cd /data/dev/ucl
+. w2venv/bin/activate
+
+# to execute code (activate venv first)
+export dns=
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@$dns:/data/dev/ucl/code
+cd code
+
+# mysql from ec2 ssh
+export endpoint="w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
+mysql -h $endpoint -P 3306 -u w2v -p
+
 # --------------------------------------------------------------------------------
                     Week commencing Monday July 22nd
 *       Friday Target: Have a distance matrix for each pfam entry
@@ -33,7 +62,10 @@ Sun July 21st
 day 1 target: Create corpus by end of day (or at least pre-corpus)
 
 
+
+# --------------------------------------------------------------------------------
 Monday 22 July
+
 - Created new rds instance from snapshot on 21 July, made it publicly available
 - Had to add security groups again via the console so that I could access from ec2
 
@@ -52,6 +84,8 @@ Monday 22 July
         pip3 install mysql-connector-python
 
     - SCP code from laptop to ec2
+        cd to terraform/w2v_ec2 (thats where the key is)
+        get dns of ec2 instance
         export dns=<dns of ec2>
         assumes already have setup ssh
         scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@$dns:/data/dev/ucl/code
@@ -74,3 +108,17 @@ Monday 22 July
     - Stopped EC2
     - Stopped RDS TODO
 
+# --------------------------------------------------------------------------------
+Tuesday 23 July
+
+Restarted RDS from console and made it publisly available - just selected all the defaults
+The added new route to vpc sec groups to 0.0.0.0/0
+Was then able to connect from laptop - but connection kept dropping
+
+Restarted again from snapshot
+Selected w2v-security-group but left all others as is
+From EC2 this worked: 
+    % mysql -h $endpoint -P 3306 -u admin -p
+
+Changed query to inculde protein start and end but it struggled on db.t3g.xlarge
+Going to try something better?

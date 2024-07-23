@@ -1,6 +1,9 @@
 resource "aws_security_group" "w2v_security_group" {
 
-  name   = "w2v-security_group"
+  name   = "w2v-security-group"
+
+
+  # ------ TODO: Put vpc id here
   vpc_id = "vpc-01ede11f2f41296af"
 
   ingress {
@@ -16,7 +19,13 @@ resource "aws_security_group" "w2v_security_group" {
     to_port     = var.ssh_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    #cidr_blocks = ["${var.my_ip}/32"]
+  }
+  ingress {
+    description = "Allow DB"
+    from_port   = var.db_port
+    to_port     = var.db_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     description = "Allow HTTPS Traffic"

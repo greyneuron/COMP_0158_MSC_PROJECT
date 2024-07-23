@@ -30,7 +30,7 @@ variable "availabilty_zone" {
 variable "instance_name" {
   description = "Name for EC2 instance"
   type        = string
-  default     = "Word2Vec Server"
+  default     = "Word2Vec EC2 Server"
 }
 
 
@@ -54,6 +54,12 @@ variable "https_port" {
   default     = 443
 }
 
+variable "db_port" {
+  description = "Database Port"
+  type        = number
+  default     = 3306
+}
+
 # ------------- key pair ------------
 variable "key_pair_name" {
   description = "key_pair_name"
@@ -69,8 +75,9 @@ variable "file_name" {
 
 # ------------- for vpc ------------
 
-variable "cidr_block" {
-  description = "CIDR Block"
-  type        = string
-  default     = "10.0.0.0/16"
-}
+
+# variable "cidr_block" {
+#  description = "CIDR Block"
+#  type        = string
+#  default     = "10.0.0.0/16"
+# }
