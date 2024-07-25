@@ -13,62 +13,38 @@
 #
 
 # TODO: SET THESE VARIABLES
+
 endpoint="w2v-db-1.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
-start=0
-chunk=10
-id="A0A074Y5L9"
-
-'''
-# works - loop from 0 to 10
-for i in {0..1}
-do
-  # Create a file with the counter as its name
-    #echo "connection $i"
-    start=$((i*10))
-    grep "${i}0" test.txt
-    #export file_name=("sql_output" + $1 + "test.txt")
-    
-done
-'''
-
-
-
-# this works
-#/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "DESC W2V_TOKEN"
-
-# this also works
-#/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT * FROM W2V_TOKEN WHERE UNIPROT_ID='${id}'"
-
-# also works
-#/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT * FROM W2V_PROTEIN LIMIT ${start}, ${chunk}"
-
-'''
-# this works
-new_start=0
-new_chunk=2
-for i in {0..5}
-do
-  # Create a file with the counter as its name
-    #echo "connection $i"
-    echo "starting at" $start
-    #/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT * FROM W2V_PROTEIN LIMIT ${start}, ${chunk}"
-    /usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT * FROM W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start}, ${chunk}"
-    start=$((start + chunk))
-done
-'''
-
-
 start_pos=0
-chunk_size=2
+chunk_size=5
+num_iterations=4
 
-for i in {0..5}
-do
-    echo "starting at" $start_pos
-    # works
-    #/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT * FROM W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}"
+
+#echo "Querying database"
+#for i in $(seq 0 5); 
+#do
+#    echo "iteration" $i "starting at" $start_pos
+#    touch sql_output_${i}.txt
 
     # also works (hooray)
-    /usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID"
+#    /usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> sql_output_${i}.txt
+    
+    # cat the result and grep it
+#    cat sql_output_${i}.txt | awk '{FS ="\t"} {print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> sql_output_${i}.dat
+#
+#    start_pos=$((start_pos + chunk_size))
+#done
 
-    start_pos=$((start_pos + chunk_size))
+
+ignore_line="UNIPROT_ID"
+echo "creating dat file"
+for i in $(seq 0 1); 
+do
+echo $i
+  touch sql_output_${i}.dat
+  # works
+  #cat sql_output_${i}.txt | awk '{FS ="\t"} {print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> sql_output_${i}.dat
+  
+  # works and ignores lines beginning with the word UNIPROT_ID
+  cat sql_output_${i}.txt | awk '{FS ="\t"} {if (!($0~/^UNIPROT/)) print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> sql_output_${i}.dat
 done
