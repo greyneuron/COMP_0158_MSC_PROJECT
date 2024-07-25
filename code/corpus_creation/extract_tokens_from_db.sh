@@ -37,14 +37,13 @@ num_iterations=4
 
 
 ignore_line="UNIPROT_ID"
-echo "creating dat file"
+echo "creating dat files"
 for i in $(seq 0 1); 
 do
-echo $i
   touch sql_output_${i}.dat
-  # works
+  # works but includes some lines that aren;t needed
   #cat sql_output_${i}.txt | awk '{FS ="\t"} {print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> sql_output_${i}.dat
   
-  # works and ignores lines beginning with the word UNIPROT_ID
-  cat sql_output_${i}.txt | awk '{FS ="\t"} {if (!($0~/^UNIPROT/)) print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> sql_output_${i}.dat
+  # works and ignores lines beginning with the word UNIPROT
+  cat sql_output_${i}.txt | awk '{FS ="\t"} {if (!($1~/^UNIPROT/)) print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> sql_output_${i}.dat
 done
