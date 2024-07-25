@@ -2,9 +2,8 @@ resource "aws_security_group" "w2v_security_group" {
 
   name   = "w2v-security-group"
 
-
   # ------ TODO: Put vpc id here
-  vpc_id = "vpc-01ede11f2f41296af"
+  vpc_id = "vpc-06d9fd57c75f19aa7"
 
   ingress {
     description = "Allow HTTP Traffic"
@@ -41,4 +40,5 @@ resource "aws_security_group" "w2v_security_group" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
 }

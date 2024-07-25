@@ -27,8 +27,8 @@ resource "aws_instance" "w2v-ec2-server" {
   # need this for ssh
   associate_public_ip_address = true
 
-  # public subnet id (from output of vpc)
-  subnet_id = "subnet-0858c958d9bbbdae9"
+  # >>>>>>>>>>>> TODO - Add in public subnet id (from output of vpc)
+  subnet_id = "subnet-09fcec0d09be09cc7"
 
   tags = {
     Name = var.instance_name
@@ -37,8 +37,8 @@ resource "aws_instance" "w2v-ec2-server" {
 
 # ---------- ebs attachment
 
-# Attach EBS volume (ie disk) - get the volume_id AFTER
-# running 'terraform apply' from the w2v-ebs module
+# >>>>>>>>>>>> TODO - Add in after running 'terraform apply' from the w2v-ebs module
+
 resource "aws_volume_attachment" "w2v_ebs_att" {
   device_name = "/dev/sdh"
   volume_id   = "vol-05f27d34631d31dd8"

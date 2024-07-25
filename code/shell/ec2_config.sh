@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# ------------- Terraform
+- Create the VPC and you need to take these details for the EC2 use
+
+vpc_id = "vpc-06d9fd57c75f19aa7" ---> put this into ec2main.security_group
+w2v_public_subnet_id = "subnet-09fcec0d09be09cc7"  ---> put this into ec2main
+
+
+- 
+vpc_id = "vpc-06d9fd57c75f19aa7" ---> put this into ec2main.security_group
+w2v_private_subnet_id = "subnet-0ce2b4da449e869ac"
+w2v_public_subnet_id = "subnet-09fcec0d09be09cc7"  ---> put this into ec2main
+w2v_rds_subnet_1 = "subnet-0e31a30b4de016bc1"
+w2v_rds_subnet_2 = "subnet-08ac00d61250e3b7b"
+
 # -------------- SSH --------------------
 
 aws ec2 describe-instances | grep PublicDnsName
@@ -18,65 +32,48 @@ sudo dnf update -y
 sudo dnf install mariadb105
 
 
+# This is how I connnect to an RDS created from the console - not how I use the admin username
+# If I connect using a Terraform RDS deb I use the w2v password but don't have MySQL adminn rights
+export endpoint="w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
+mysql -h $endpoint -P 3306 -u admin -p
+
+# select database once connected
+MySQL [(none)]> use W2V;
+
+
 # which shell?
-echo $0
+#echo $0
+
+
+# -------------- Setup python  --------------------
+# install python etc (note: python 3 should already be there)
+sudo yum install pip
+
+# create venv - should be already on the ebs so only need to do this once
+cd /data/dev/ucl
+python3 -m venv w2v-env
 
 # ths worked without changing shell
+cd /data/dev/ucl
 . w2venv/bin/activate
 
-# As of Tue July 23, this works without having to go to the RDS console
-# Start rds and get endpoint from output console
-export endpoint="w2v-dev-db.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
-mysql -h $endpoint -P 3306 -u w2v -p
+export endpoint=
+mysql -h $endpoint -P 3306 -u admin -p
+use W2V
 
 
 
-# -------------- INstall MYSQL DIRECTLY ON THE EC2 INSTANCE --------------------
+# -------------- FORMAT an EBS VOLUME ----------------------------
+# IF YOU DESTROY A VOLUME YOU DELETE THE DATA!!! BUT YOU CAN DESTROY AN EC2 INSTANCE MANY
+# TIMES AND CONNECT IT TO A PREVIOUS EBS INSTANCE WHEN YOU RESTART
 
-# https://muleif.medium.com/how-to-install-mysql-on-amazon-linux-2023-5d39afa5bf11
-sudo wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
-sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
-sudo dnf install mysql80-community-release-el9-1.noarch.rpm -y
-sudo dnf install mysql-community-server -y
-# start
-sudo systemctl start mysqld
-
-sudo vi /etc/my.cnf
-# add this just after [mysqld] (Esc:wq! to save):
-skip-grant-tables
-secure-file-priv=''
-#datadir=/var/lib/mysql
-datadir=/data/dev/ucl/data/database
-
-# connect
-mysql
-
-# create database
-#CREATE DATABASE W2V_DB;
-USE W2V_DB;
-
-# create table
-CREATE TABLE W2V_TOKEN (uniprot_id VARCHAR(16), type VARCHAR(16), token VARCHAR(64), start INT, end INT);
-
-# Load PFAM test data
-# 100 rows took 0.013s => 13s for 100,000 => 130s for 1M? => 40min for 18M => 2.8hrs for 296M?
-
-LOAD DATA LOCAL INFILE '/data/dev/ucl/data/pfam/protein2ipr_pfam_20240715.dat' INTO TABLE W2V_TOKEN FIELDS TERMINATED BY '|';
-# Query OK, 296017815 rows affected (2 hours 36 min 46.31 sec)
-
-# DISORDER HAS 81M entries
-LOAD DATA LOCAL INFILE '/data/dev/ucl/data/disorder/dat/disordered_tokens_20240719.dat' INTO TABLE W2V_TOKEN FIELDS TERMINATED BY '|';
-#Query OK, 81257100 rows affected (7 min 48.900 sec)
-
-# ------- anaconda - doesn;t work
-sudo wget https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh
-install to /data/dev/usr/locl/bin/anaonda2
+https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html
 
 
 
-# -------------- SCP A FILE --------------------
-# from directory with pem key (w2v-ec2)
-# note I did a chmod 777 on the target directory
+
+# -------------- SCP A FILE ------------------------------------
+# from directory with pem key (w2v-ec2) - note I did a chmod 777 on the target directory
 
 export dns="ec2-52-51-138-149.eu-west-1.compute.amazonaws.com"
 
@@ -85,23 +82,29 @@ scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb-2759_78494
 scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat ec2-user@$dns:/data/dev/ucl/data/protein
 
 # upload code
-scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@e$dns:/data/dev/ucl/code
-
-# upload pfam dat files (1 hour 10 mins)
-scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240715.dat ec2-user@$instance_id:/data/dev/ucl/data/pfam
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@$dns:/data/dev/ucl/code
 
 
-# -------- Copy from ebs to s3
+
+# -------- Copy from ebs to s3 --------------------------------
 ssh to ec2
 aws configure
 aws s3 cp disorder/dat/disordered_tokens_20240719.dat s3://w2v-bucket/disordered/disordered_tokens_20240719.dat
 
 
-# -------------- FORMAT an EBS VOLUME --------------------
-# IF YOU DESTROY A VOLUME YOU DELETE THE DATA!!! BUT YOU CAN DESTROY AN EC2 INSTANCE MANY
-# TIMES AND CONNECT IT TO A PREVIOUS EBS INSTANCE WHEN YOU RESTART
 
-https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html
+# -------------- Download data --------------------------------
+# download data
+mkdir /data/dev/ucl/data/disorder
+cd /data/dev/ucl/data/disorder
+
+# this download took about 50mins
+sudo curl --location https://ftp.ebi.ac.uk:443/pub/databases/interpro/releases/100.0/extra.xml.gz --output my_extra.xml.gz
+sudo gzip -d my_extra.xml.dz
+
+
+
+
 
 
 
@@ -347,18 +350,48 @@ CREATE INDEX PTN_IDX ON W2V_PROTEIN (UNIPROT_ID);
 
 
 
-# -------------- Setup python  --------------------
-# install python etc (note: python 3 should already be there)
-sudo yum install pip
 
-# create venv
-cd /data/dev/ucl
-python3 -m venv w2v-env
 
-# activate
-bash # had to switch to bash
-source w2v-venv/bin/activate
+# -------------- IGNORE - Install MYSQL DIRECTLY ON THE EC2 INSTANCE --------------------
 
+# https://muleif.medium.com/how-to-install-mysql-on-amazon-linux-2023-5d39afa5bf11
+sudo wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+sudo dnf install mysql80-community-release-el9-1.noarch.rpm -y
+sudo dnf install mysql-community-server -y
+# start
+sudo systemctl start mysqld
+
+sudo vi /etc/my.cnf
+# add this just after [mysqld] (Esc:wq! to save):
+skip-grant-tables
+secure-file-priv=''
+#datadir=/var/lib/mysql
+datadir=/data/dev/ucl/data/database
+
+# connect
+mysql
+
+# create database
+#CREATE DATABASE W2V_DB;
+USE W2V_DB;
+
+# create table
+CREATE TABLE W2V_TOKEN (uniprot_id VARCHAR(16), type VARCHAR(16), token VARCHAR(64), start INT, end INT);
+
+# Load PFAM test data
+# 100 rows took 0.013s => 13s for 100,000 => 130s for 1M? => 40min for 18M => 2.8hrs for 296M?
+
+LOAD DATA LOCAL INFILE '/data/dev/ucl/data/pfam/protein2ipr_pfam_20240715.dat' INTO TABLE W2V_TOKEN FIELDS TERMINATED BY '|';
+# Query OK, 296017815 rows affected (2 hours 36 min 46.31 sec)
+
+# DISORDER HAS 81M entries
+LOAD DATA LOCAL INFILE '/data/dev/ucl/data/disorder/dat/disordered_tokens_20240719.dat' INTO TABLE W2V_TOKEN FIELDS TERMINATED BY '|';
+#Query OK, 81257100 rows affected (7 min 48.900 sec)
+
+# ------- anaconda - doesn;t work
+sudo wget https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh
+install to /data/dev/usr/locl/bin/anaonda2
 
 
 

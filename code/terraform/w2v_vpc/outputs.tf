@@ -1,5 +1,5 @@
 output "vpc_id" {
-  description = "vpc id"
+  description = "w2v vpc id"
   value       = aws_vpc.w2v-dev-vpc.id
 }
 
@@ -14,11 +14,11 @@ output "w2v_private_subnet_id" {
 }
 
 output "w2v_rds_subnet_1" {
-  description = "w2v rds 1 subnet id"
+  description = "w2v rds subnet-1 id"
   value       = aws_subnet.w2v-rds-subnet-1.id
 }
 
 output "w2v_rds_subnet_2" {
-  description = "w2v rds 2 subnet id"
+  description = "w2v rds subnet-2 id"
   value       = aws_subnet.w2v-rds-subnet-2.id
 }

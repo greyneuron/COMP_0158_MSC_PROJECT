@@ -138,3 +138,92 @@ Changed query to inculde protein start and end but it struggled on db.t3g.xlarge
 mysql -h $endpoint -P 3306 -u admin W2V -p -e 'SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT 0, 1000000) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID' > sql/sql_output_0_1M.txt
 
 cat sql_output_0_1M.txt | awk '{FS ="\t"} {print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}'
+
+# Close of play
+- Have left create_pre_corpus_v2 runnig this evening from about 1830 - taking 2.5min for 250k proteins - 10min per 1M proteins = 13 hours
+- Used the following:
+    
+    chunk_size      = 250000
+    num_iterations  = 320
+    iteration       = 1
+    result          = 0
+    start           = 0
+
+created a new file for each iteration
+
+- 10M target = 40 x 2.5min = 1hr 3/4 = ideally by 8pm get to v2_40
+    18:48:30    : v2_12
+    20:26:30      : v2_44 = 1hr 40 for 32 iterations
+
+
+
+ # --------------------------------------------------------------------------------
+Wed 24 July
+
+Dublin
+
+
+# --------------------------------------------------------------------------------
+Thurs 25 July
+
+- Tried to restart DB form snapshot with local access but couldn;t add 0.0.0.0/0 due to conflict
+- There are loads of child subnets and securoty groups already
+- decided to delete and recreate the vpc!
+- done
+
+# restore snapshot rds from console
+- w2v-db-1
+
+- db.t4g.medium (2 CPU 4 GiB)  (could this be too small - previoulsy used db.t4g.xlarge : 4 cpu 16Gb)
+
+- Single instance
+- vpc: used default vpc
+- vpc sec group: use existing (which is default)
+- make public
+- eu-west-1a
+
+- didn;t have to do this next bit for some reason as rule was already there
+- once says 'backing up' go to db instance and select vpc-sec-group
+- select the sec group add new inbound for 0.0.0.0/0 on 3306
+- copy endpoint
+
+- db slow - not enough RAM?
+
+brew install mysql-client
+/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c
+
+echo endpoint=""
+/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c
+
+
+Was using t3.xlarge as opposed to 
+
+
+db.t4g.xlarge is haning again - especially on 221000 proteins
+runs fast even from local pythin up to that point
+locally it did 100k proteins in 27s
+
+
+start_pos=0
+chunk_size=2
+
+for i in {0..5}
+do
+    echo "starting at" $start_pos
+    # works
+    #/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT * FROM W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}"
+
+    # also works (hooray)
+    /usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID"
+
+    start_pos=$((start_pos + chunk_size))
+done
+
+
+going to revert to the shell script above, querying a db.t4g.large
+
+1. Strt the rds on db.t4g.large
+2. Change the endpoint variable in extract_tokens_from_db.sh
+3. Change the params in extract_tokens_from_db.sh
+4. Run extract_tokens_from_db.sh
+5. Convert tokens to a single line per protein
