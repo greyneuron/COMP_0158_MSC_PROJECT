@@ -11,6 +11,8 @@
 # W2V_PROTEIN (uniprot_id VARCHAR(16), start INT, end INT);
 #
 #
+
+# TODO: SET THESE VARIABLES
 endpoint="w2v-db-1.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
 start=0
 chunk=10
