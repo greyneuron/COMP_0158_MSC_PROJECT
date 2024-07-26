@@ -28,9 +28,12 @@ lsblk
 sudo mkdir /data
 sudo mount /dev/nvme1n1 /data
 cd /data/dev/ucl
+. w2venv/bin/activate
 
 sudo dnf update -y
 sudo dnf install mariadb105
+
+. w2venv/bin/activate
 
 # to activate venv
 cd /data/dev/ucl
@@ -155,7 +158,8 @@ created a new file for each iteration
     18:48:30    : v2_12
     20:26:30      : v2_44 = 1hr 40 for 32 iterations
 
-
+- Stopped on 90
+- Need to redo number 1
 
  # --------------------------------------------------------------------------------
 Wed 24 July
@@ -222,8 +226,28 @@ done
 
 going to revert to the shell script above, querying a db.t4g.large
 
-1. Strt the rds on db.t4g.large
+1. Start the rds on db.t4g.large
 2. Change the endpoint variable in extract_tokens_from_db.sh
 3. Change the params in extract_tokens_from_db.sh
 4. Run extract_tokens_from_db.sh
 5. Convert tokens to a single line per protein
+
+# --------------------------------------------------------------------------------
+Fiday
+
+CONTINUE WITH DB EXTRACT APPROACH
+
+- Updated extract_tokens_from_db.sh to loop
+- Restarted DB used db.m6 or somethinng > it was quite slow
+- Restarted DB used db.t4g.2xlarge > not sure it really makes a difference
+
+Have 0 - 10,000,000 from Thursday
+Started at 12,000,000 in 250k chunks - but set iterator to 9 instead of 
+
+Want to do batches of 10M in chunks of 250k - thus 40 iterations
+
+Noticed that batch size of 250k takes 3min - but so does batch size of 500k
+
+Finished 10M - 20M but there are different batch sizes so that are not 20 files
+
+10:50 - Started 20M to 30M in batches of 500k over 0 .. 9 iterations : each is taking about 3min 30 +> 10M will take about 38min

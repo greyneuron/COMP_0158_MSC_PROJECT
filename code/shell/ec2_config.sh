@@ -84,6 +84,8 @@ scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/data/uniprot/proteins_ordered.dat
 # upload code
 scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/mysql_tools.py ec2-user@$dns:/data/dev/ucl/code
 
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/corpus_creation/extract_tokens_from_db.sh ec2-user@$dns:/data/dev/ucl/code
+
 
 
 # -------- Copy from ebs to s3 --------------------------------

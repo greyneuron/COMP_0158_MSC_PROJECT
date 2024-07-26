@@ -12,6 +12,7 @@ gc.prt
 *.png
 extras_mobidb*.xml
 extras_part*.xml
+sql_output_*
 
 
 # for terraform
@@ -244,3 +245,4 @@ code/corpus_creation/sql_output_2.txt
 code/corpus_creation/sql_output_3.txt
 code/corpus_creation/sql_output_4.txt
 code/corpus_creation/sql_output_5.txt
+data/corpus/20240715_w2v1/corpus.dict
