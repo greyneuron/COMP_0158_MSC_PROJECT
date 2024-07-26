@@ -251,3 +251,10 @@ Noticed that batch size of 250k takes 3min - but so does batch size of 500k
 Finished 10M - 20M but there are different batch sizes so that are not 20 files
 
 10:50 - Started 20M to 30M in batches of 500k over 0 .. 9 iterations : each is taking about 3min 30 +> 10M will take about 38min
+12:49 - Started 30M to 40M in batches of 500k again about 3'30 per 500k
+
+Also created/modified
+- convert_db_tokens_dat.sh to convert the raw sql output into dat fils
+- combine_db_dat_tokens.py which will create one long line
+
+

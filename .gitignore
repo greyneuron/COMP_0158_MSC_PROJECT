@@ -246,3 +246,5 @@ code/corpus_creation/sql_output_3.txt
 code/corpus_creation/sql_output_4.txt
 code/corpus_creation/sql_output_5.txt
 data/corpus/20240715_w2v1/corpus.dict
+code/corpus/output/sqloutput_0.txt
+code/corpus/output/sqloutput_1.txt

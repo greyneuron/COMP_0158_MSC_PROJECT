@@ -8,7 +8,7 @@
 #    You need to change the start poisitoin and chunk size and number of iterations
 #    I found that it would iterate through 500k proteins in about 3.5mins so I would set the chunk size to 500000 and iterate from 0..9 to get 10M
 # 2. convert_db_tokens_dat.sh converts each of the txt outputs from step 1 into a dat file of pipe separated tokens - each line has a token and its corresponding uniprot id
-# 3. The next script then converts those lines into a single line per protein
+# 3. combine_dat_tokens_py : sudo The next script then converts those lines into a single line per protein
 # 4. The final script then creates a sentence for each protein with GAP DISORDER and PFAM
 
 # This script queries mysql directly to find all tokens for a set of proteins
@@ -25,33 +25,39 @@
 
 # TODO: SET THESE VARIABLES
 
+#  **** NB : 3 x CHANGE THESE 3 ITEMS 
+#  **** NB : 1 x CHANGE THE ITERATIONS
+#  **** NB : 2 x CHANGE OUTPUT FILE NAME
 endpoint="w2v-db-1.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
-start_pos=30000000
+start_pos=0
 chunk_size=500000
-output_dir="output"
 
+output_dir="output"
 file_start=${start_pos}
 
-#echo "Querying database"
+# **** NB : CHANGE THE ITERATION (I.E. END OF THE LOOP)
 for i in $(seq 0 19); 
 do  
     SECONDS=0
     echo "iteration" $i ": starting at" $start_pos
 
     # create emty target files
-    touch ${output_dir}/sql_output_${file_start}_${i}.txt
+    #touch ${output_dir}/sql_output_${file_start}_${i}.txt
+
+    touch output/sql_output_00M_${i}.txt
 
     # for local
-    #/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> ${output_dir}/sql_output_${file_start}_${i}.txt
+    #/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> output/sqloutput_${i}.txt
+    #/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID"
     
     
     # for aws ec2 and rds
-    mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> ${output_dir}/sql_output_${file_start}_${i}.txt
+    mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> output/sql_output_00M_${i}.txt
     
     # cat the result and grep it
     #cat sql_output_${i}.txt | awk '{FS ="\t"} {print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> sql_output_${i}.dat
     duration=$SECONDS
-    echo "iteration ${i} duration : $((duration / 60)) min $((duration % 60)) s."
+    echo "iteration ${i} duration : $((duration / 60))min $((duration % 60))s."
 
     start_pos=$((start_pos + chunk_size))
 done
