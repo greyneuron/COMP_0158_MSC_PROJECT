@@ -11,7 +11,7 @@
 # 3. The next script then converts those lines into a single line per protein
 # 4. The final script then creates a sentence for each protein with GAP DISORDER and PFAM
 
-directory="/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/output"
+directory="/data/dev/ucl/data/precorpus/0M_10M"
 extension="txt"
 
 # single quotes '...' doesn't further interpret whats between the quotes
@@ -32,6 +32,5 @@ for file in $file_list; do
     #echo "base:" $name_without_extension
 
     # convert
-    cat ${file} | awk '{FS ="\t"} {if (!($1~/^UNIPROT/)) print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> $name_without_extension.dat
-
+    #cat ${file} | awk '{FS ="\t"} {if (!($1~/^UNIPROT/)) print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> $name_without_extension.dat
 done

@@ -1,5 +1,42 @@
 #!/bin/bash
 
+# -----------------------------------
+#           Regular scripts
+# -----------------------------------
+export dns=""
+ssh -i "w2v_rsa" ec2-user@$dns
+
+# only need to do once per ec2 instance (as opposed to once per ssh session)
+lsblk
+sudo mkdir /data
+sudo mount /dev/nvme1n1 /data
+
+
+# ---- if you need to access MySQL from the command line (run on EC2)
+sudo dnf update -y
+sudo dnf install mariadb105
+
+# -- to activate venc
+
+
+
+ls
+cd /data/dev/ucl
+. w2venv/bin/activate
+
+# ---- scp files (run this from your laptop)
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/corpus/rename.sh ec2-user@$dns:/data/dev/ucl/code
+scp -i "w2v_rsa" ~/dev/ucl/comp0158_mscproject/code/corpus/extract_tokens_from_db.sh ec2-user@$dns:/data/dev/ucl/code
+
+
+# ---- send to s3
+ssh to ec2
+aws configure
+aws s3 cp /data/dev/ucl/data/precorpus_78M_sql_extract.tar.gz s3://w2v-bucket/corpus/precorpus_78M_sql_extract.tar.gz
+
+
+
+
 # ------------- Terraform
 - Create the VPC and you need to take these details for the EC2 use
 

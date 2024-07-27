@@ -29,7 +29,7 @@
 #  **** NB : 1 x CHANGE THE ITERATIONS
 #  **** NB : 2 x CHANGE OUTPUT FILE NAME
 endpoint="w2v-db-1.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
-start_pos=0
+start_pos=20000000
 chunk_size=500000
 
 output_dir="output"
@@ -44,7 +44,7 @@ do
     # create emty target files
     #touch ${output_dir}/sql_output_${file_start}_${i}.txt
 
-    touch output/sql_output_00M_${i}.txt
+    touch output/sql_output_20M_${i}.txt
 
     # for local
     #/usr/local/opt/mysql-client/bin/mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> output/sqloutput_${i}.txt
@@ -52,7 +52,7 @@ do
     
     
     # for aws ec2 and rds
-    mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> output/sql_output_00M_${i}.txt
+    mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> output/sql_output_20M_${i}.txt
     
     # cat the result and grep it
     #cat sql_output_${i}.txt | awk '{FS ="\t"} {print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> sql_output_${i}.dat

@@ -14,6 +14,9 @@ from collections import defaultdict
 # disorder      : 81,257,100
 # ----------------------------------
 
+''' NOT USED???
+
+
 
 #
 # PARSES FASTA DAT FILE AND LOOKS UP PFAM TOKENS AND DISORDER TOKENS FROM DATABASE

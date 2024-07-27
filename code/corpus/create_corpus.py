@@ -53,39 +53,81 @@ def remove_overlaps(tokens):
 
 
 def create_corpus():
-    input_file      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/pre_corpus_20240715_1130.dat"
+    input_file = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/output/precorpus_00M_00.dat"
     corpus = []
+    debug = True
     
-    PARSE_LIMIT  = 1000000  # number of lines to parse
-    DEBUG_LIMIT  = 1000   # number of lines after which to print a debug message
+    PARSE_LIMIT  = 10  # number of lines to parse
     
-    start_time      = time.time()
-    mid_time_start  = time.time()
-    
-    corpus = []
-    
-    # parse all lines in the pre-corpus (each represents a protein) and build up
-    # the tokens for each - reminv overlaps
+    # EXAMPLE INPUT:
+    # A0A010PZK3:1:513:1:4|DISORDER:414:512|DISORDER:417:433|DISORDER:445:462|DISORDER:491:505|PF00722:58:224
     with open(input_file, 'r') as input:
         for line_number, line in enumerate(input): # one line number per protein
             
-            # protein details, pfam tokens and disordered tokens are separated by |
-            # within that are the start and end poisitions
-            # e.g. A0A010PZP8:1:633|PF00172:16:53|PF04082:216:322|DISORDER:50:103:50:109:553:598
-            # 1 protein, 2 pfam tokens, 3 disordered regions
+            cols    = line.split('|')
             
-            cols  = line.split('|')
-            token_idx = 0
+            num_cols = len(cols)
+            protein_section = cols[0].rstrip("\n")
+            protein_pieces = protein_section.split(':')
             
-            if(debug): print('\nline >', line.strip('\n'), '<')
-            #print(len(cols), '> entries')
+            protein_id      = protein_pieces[0]
+            protein_start   = protein_pieces[1]
+            protein_end     = protein_pieces[2]
+            num_pfam_tokens = protein_pieces[3]
+            num_disorder_tokens = protein_pieces[4]
             
+            print('\nline:', line.rstrip('\n'), '>', num_cols -1, 'tokens')
+            #print(protein_id, protein_start, protein_end, num_pfam_tokens, num_disorder_tokens)                                              
+                                                 
             # tokens for the current line
             tokens = []
 
+            if(num_cols > 1):
+                for i in range(1, num_cols):
+                    #print(cols[i])
+                    
+                    token_elements  = cols[i].split(':')
+                    token_item      = token_elements[0]
+                    token_start     = token_elements[1]
+                    token_end       = token_elements[2].rstrip('\n')
+                    
+                    #print(i-1, token_item, token_start, token_end)
+                    
+                    if token_item.startswith('PF'):
+                        tuple = (i-1, token_item, int(token_start), int(token_end))
+                        tokens.append(tuple)
+
+                    elif token_item.startswith('DIS'):
+                        tuple = (i-1, token_item, int(token_start), int(token_end))
+                        tokens.append(tuple)
+                        
+            print('tokens:', tokens)
+            # sort the tokens by start point (second item)
+            sorted_tokens = sorted(tokens, key=lambda x: x[2])
+            sorted_tokens_no_overlap = remove_overlaps(sorted_tokens)
+            
+            if(debug): 
+                print('unsorted', tokens)
+                print('sorted:', sorted_tokens)
+                print('no overlaps',sorted_tokens_no_overlap)
+            
+            sentence = []
+            for token in sorted_tokens_no_overlap:
+                sentence.append(token[1])
+                sentence.append('GAP')
+            if(debug): print('final sentence:', sentence)
+            
+            
+                    
+            if(PARSE_LIMIT != -1):            
+                if(line_number == PARSE_LIMIT):
+                    print('\n------', PARSE_LIMIT, 'lines processed, terminating.')
+                    return corpus
+
+            '''
             # each col is a section - either being the uniptor part, pfam or disoreded reginos
             for col in cols:
-                col = col.rstrip("\n\s\t")
+                col = col.rstrip("\n\t")
                 # just in case
                 if col == None or col == "":
                     continue
@@ -145,16 +187,17 @@ def create_corpus():
                     tot_time = end_time - start_time
                     print(PARSE_LIMIT, 'lines processed, terminating....')
                     return corpus
+            '''
     return corpus
 
 
 # this returns a list of lists
-# corpus = create_corpus()
+corpus = create_corpus()
 
 
-print("\n***** CORPUS *****:\n",corpus,'\n')
+#print("\n***** CORPUS *****:\n",corpus,'\n')
 
-w2v = Word2Vec(corpus, size=100, window=5, workers=4, iter=10, min_count=5)
+#w2v = Word2Vec(corpus, size=100, window=5, workers=4, iter=10, min_count=5)
 
 
 '''

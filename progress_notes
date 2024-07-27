@@ -168,7 +168,30 @@ Dublin
 
 
 # --------------------------------------------------------------------------------
-Thurs 25 July
+Thurs 25 July - Nightmare day
+
+- Summary: Simply tried to redo what I'd done on Tuesday and finish it (as I had stopped after onlu 90
+  of 360 iterations - because it was going to take 12hours and Ihad to get up at 0600 Wed to go to Dublin)
+  Anyway, when I retried it was SOOO slow and I began to lose confidence in this approach. So I made the 
+  decision to just use the SQL script direct from a MySQL connection (this is the one that does a join between
+  W2V_PROEIN and W2V_TOKEN and which I worked out how to do in chunks and output to a file). The positive side to this
+  approach is that the sql is much faster to execute, but the if you want to output to a file on your clien you cannot 
+  format it.
+
+ mysql -h $endpoint -P 3306 -u admin W2V -pw0rd2v3c -e "SELECT W2V_PROTEIN.*, W2V_TOKEN.* FROM ( SELECT UNIPROT_ID, START, END FROM W2V_PROTEIN W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT ${start_pos}, ${chunk_size}) AS W2V_PROTEIN INNER JOIN W2V_TOKEN AS W2V_TOKEN ON W2V_PROTEIN.UNIPROT_ID = W2V_TOKEN.UNIPROT_ID" >> output/sql_output_20M_${i}.txt
+
+Nevertheless I realised that the ouput is tab delimted so was realised I could use awk to modify it into a tab
+delimited .dat file:
+
+cat ${file} | awk '{FS ="\t"} {if (!($1~/^UNIPROT/)) print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}'
+
+Although the database was slow, I eventually found a process that worked and started to execute the sql in chunks of 250k - this seemed ot work but it had taken me the whole day to work out
+how to do it and I was pretty stressed as every step forward takes ages. I did this for about 20M proteins and called it a day, reasonably happy that I could pick it up again on Friday.
+
+I went for a pint to destress
+
+-------------
+
 
 - Tried to restart DB form snapshot with local access but couldn;t add 0.0.0.0/0 due to conflict
 - There are loads of child subnets and securoty groups already
@@ -186,7 +209,7 @@ Thurs 25 July
 - make public
 - eu-west-1a
 
-- didn;t have to do this next bit for some reason as rule was already there
+- didn't have to do this next bit for some reason as rule was already there
 - once says 'backing up' go to db instance and select vpc-sec-group
 - select the sec group add new inbound for 0.0.0.0/0 on 3306
 - copy endpoint
@@ -233,13 +256,19 @@ going to revert to the shell script above, querying a db.t4g.large
 5. Convert tokens to a single line per protein
 
 # --------------------------------------------------------------------------------
-Fiday
+Friday 27th July
 
 CONTINUE WITH DB EXTRACT APPROACH
+
+SUMMARY: I picked up where I'd left off on Thursday evening, all I ha to do was write a script to execute the sql in chunks, rather than me having to watch the command line. I also made some tests to check that the script was working as expected - for example, the very first protein A0A0A10PZJ8 should have 4 tokens (3 disorded and 1 pfam) - which it did! Hooray
+
+I then had the usual issues with dtabase and ec2 instances that seem to sometimes be better than others. I initialy started to do batches of 10M proteins in chuinks of 250k - thus resulting in 40 output files per batch (10M / 250k = 40). This was taking 3 1/2 mins per query. I tried it with a chunk size of 500k and this was also taking 3 1/2 mins - so I went with that. I started in earnest at about 1pm and it was taking an hour for each block of 10M. Hoever the first 2 blocks stalled and i had to restar which was a faff. By the end of the day I had done all 7 blocks of 10M, backed up my EBS and left it at that.
+
 
 - Updated extract_tokens_from_db.sh to loop
 - Restarted DB used db.m6 or somethinng > it was quite slow
 - Restarted DB used db.t4g.2xlarge > not sure it really makes a difference
+- Used t3.xlarge EC2 whch seemed fine (4 CPU 16G - $0.182 per hour)
 
 Have 0 - 10,000,000 from Thursday
 Started at 12,000,000 in 250k chunks - but set iterator to 9 instead of 
@@ -258,3 +287,28 @@ Also created/modified
 - combine_db_dat_tokens.py which will create one long line
 
 
+# --------------------------------------------------------------------------------
+Sat 28th July
+
+Today is about getting my sql output into a set of dat fioles with one protein per line
+
+I noticed some issue with the 20M_30M block from Friday so started RDS reran that and then killed RDS
+
+All 500k sql txt output files are now in directores 00M_10M 10M_20M
+Modified my script to convert these to propoer dat files and moved them to a separate folder:
+
+/data/dev/ucl/data/precorpus_token_dat
+
+I tar'd these up and copied them to s3
+
+aws s3 cp /data/dev/ucl/data/precorpus_token_dat.tar.gz s3://w2v-bucket/corpus/precorpus_token_dat.tar.gz
+
+Then I downloaded these to my laptop asI can convert them relatively quickly to a precorpus and then a corpus!
+
+Example pre-corpus
+First section has the uniprot id : start : end : num pfam tokens : num disorder tokens
+Subsequent sections are either for pfam or disorder entries giving the start and end poisitions plus the PFAM token
+
+
+A0A010PZJ8:1:494:1:3|DISORDER:1:30|DISORDER:1:32|DISORDER:468:493|PF01399:335:416
+A0A010PZN2:1:354:0:4|DISORDER:225:353|DISORDER:227:304|DISORDER:307:325|DISORDER:326:353 
