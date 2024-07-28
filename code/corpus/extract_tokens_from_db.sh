@@ -1,41 +1,53 @@
 #!/bin/bash
 
-# This script is step 1 of 4 to get a sentence to pass into word2vec
-# It assumes there is a database with two tables :W2V_PROTEIN and W2V_TOKEN
+# ------ Background------ 
 #
-# 4 steps:
-# 1. ** THIS SCRIPT ** : Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
-#    You need to change the start poisitoin and chunk size and number of iterations
-#    I found that it would iterate through 500k proteins in about 3.5mins so I would set the chunk size to 500000 and iterate from 0..9 to get 10M
-# 2. convert_db_tokens_dat.sh converts each of the txt outputs from step 1 into a dat file of pipe separated tokens - each line has a token and its corresponding uniprot id
-# 3. combine_dat_tokens_py : sudo The next script then converts those lines into a single line per protein
-# 4. The final script then creates a sentence for each protein with GAP DISORDER and PFAM
+# This script is step 1 of 5 to create sentences to form a corpus for word2vec
+#
+# 5 steps:
+# 1. extract_tokens_from_db.sh : Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
+# 2. convert_db_tokens_dat.sh  : Converts each of the txt outputs from step 1 into a dat file of pipe separated tokens.
+#    Each line consists of information about a token and its corresponding uniprot id
+# 3. combine_db_tokens_dat.py : Converts each lines (one per token) into a single line per protein (each line with multiple tokens for that protein plus metadata)
+# 4. create_corpus.py : Creates a sentence for each protein with GAP DISORDER and PFAM 'words', orders the tokens and removes overlaps
+# 5. run_word2vec.py  : Calls word2vec with the corpus
 
-# This script queries mysql directly to find all tokens for a set of proteins
-# It takes about 3min to find ll tokens for 1M proteins and outputs to a file
-# the file has one line per row returned- i e multiple proteins duplicated
-# the file is tab delimeted but you cnnot change the delimeter
-
+# ------ Pre-requisites for this script ------ 
+# Protein and token information is stored in a database in W2V_PROTEIN and W2V_TOKEN tables
 # It assume there are 2 tables in the database: W2V_PROTEIN and W2V_TOKEN
 # 
 # W2V_TOKEN (uniprot_id VARCHAR(16), type VARCHAR(16), token VARCHAR(64), start INT, end INT);
 # W2V_PROTEIN (uniprot_id VARCHAR(16), start INT, end INT);
-#
-#
 
-# TODO: SET THESE VARIABLES
+# ------ Instructions for this script ------ 
+# Assumed there is a database with data in it and that you can connect and query it from python
+# You need to modify this script and change the start poisition, chunk size and number of iterations
+#     - I executed this script on an EC2 instance connected to RDS
+#     - INitially I created an RDS instance with Terraform, but it actually was a lot easier to do it
+#       through the AWS console and make sure it is set to 'public'. I used a single AZ instance
+#     - I found that an AWS RDS instance of tyoe db.t4g.2xlarge  would iterate through 500k proteins in about 3.5mins.
+#     - Thus I would set the chunk size to 500000 and iterate from 0..19 to get 10M proteins in each invocation of his script
+# The script produces one file per 'chunk' - I did it this way to avoid the files getting too large and slowing down
+# the write time. It took a lot of trail and error to get this to work so I just went with this approach as it worked.
 
-#  **** NB : 3 x CHANGE THESE 3 ITEMS 
-#  **** NB : 1 x CHANGE THE ITERATIONS
-#  **** NB : 2 x CHANGE OUTPUT FILE NAME
-endpoint="w2v-db-1.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
-start_pos=20000000
-chunk_size=500000
+# Each file has one line per row returned from the database, the results are not tab delimeted becuase you cannot dictae the 
+# SQL output in this way. You could do if you were executing the SQL directly on the database and could save a file loaclly on
+# that database.
+
+
+# -------------- TODO BEFORE EXECUTING : SET THESE VARIABLES ---------------
+
+#  **** NB : 3 x CHANGES ToO THESE 3 ITEMS : endpoint, start_pos, chunk_size
+#  **** NB : 1 x CHANGE THE ITERATION LOOP
+#  **** NB : 2 x CHANGES TO OUTPUT FILE NAME
+endpoint="w2v-db-1.cligs4ak0dtg.eu-west-1.rds.amazonaws.com" # database endpoint (can get this from the AWS RDS console)
+start_pos=20000000 # which protein you would like to start from - I had to proccess 78,000,000 proteins
+chunk_size=500000  # how many proteins to query each time (and how many will be put in a file)
 
 output_dir="output"
 file_start=${start_pos}
 
-# **** NB : CHANGE THE ITERATION (I.E. END OF THE LOOP)
+# **** NB : CHANGE THE ITERATION (I.E. END OF THE LOOP ON THIS NEXT LINE)
 for i in $(seq 0 19); 
 do  
     SECONDS=0

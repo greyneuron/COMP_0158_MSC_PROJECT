@@ -1,24 +1,25 @@
 #!/bin/bash
 
-# This script is step 2 of 4 to get a sentence to pass into word2vec
-# It assumes there is a database with two tables :W2V_PROTEIN and W2V_TOKEN
+# ------ Background------ 
 #
-# 4 steps:
-# 1. Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
-#    You need to change the start poisitoin and chunk size and number of iterations
-#    I found that it would iterate through 500k proteins in about 3.5mins so I would set the chunk size to 500000 and iterate from 0..9 to get 10M
-# 2. ** THIS SCRIPT ** : convert_db_tokens_dat.sh converts each of the txt outputs from step 1 into a dat file of pipe separated tokens - each line has a token and its corresponding uniprot id
-# 3. The next script then converts those lines into a single line per protein
-# 4. The final script then creates a sentence for each protein with GAP DISORDER and PFAM
+# This script is step 2 of 5 to create sentences to form a corpus for word2vec
+#
+# 5 steps:
+# 1. extract_tokens_from_db.sh : Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
+# 2. convert_db_tokens_dat.sh  : Converts each of the txt outputs from step 1 into a dat file of pipe separated tokens.
+#    Each line consists of information about a token and its corresponding uniprot id
+# 3. combine_db_tokens_dat.py : Converts each lines (one per token) into a single line per protein (each line with multiple tokens for that protein plus metadata)
+# 4. create_corpus.py : Creates a sentence for each protein with GAP DISORDER and PFAM 'words', orders the tokens and removes overlaps
+# 5. run_word2vec.py  : Calls word2vec with the corpus
+#
+# ------ Instructions for this script ------ 
+# Just set the directory where the sql ouput is
+# UNcomment the last line when you want ot actuall run the script - without that it will just print out
+# the files it is going to parse (useful as a test)
+#
 
 directory="/data/dev/ucl/data/precorpus/0M_10M"
 extension="txt"
-
-# single quotes '...' doesn't further interpret whats between the quotes
-# double quotes "..." interprets $, `" \ !
-#name=patrick
-#echo '$name' # -> prints out $name
-#echo "$name" # -> prints out patrick
 
 # Get the list of files in numerical order
 file_list=$(ls "$directory"/*"$extension" | sort -n)
@@ -29,8 +30,7 @@ for file in $file_list; do
 
     base_name=$(basename ${file})
     name_without_extension="${file%.*}"
-    #echo "base:" $name_without_extension
 
-    # convert
+    # TODO: UNCOMMENT THIS TO RUN
     #cat ${file} | awk '{FS ="\t"} {if (!($1~/^UNIPROT/)) print $1 ":" $2 ":" $3 "|" $5 ":" $6 ":" $7 ":" $8}' >> $name_without_extension.dat
 done

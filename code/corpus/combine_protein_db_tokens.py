@@ -4,19 +4,19 @@ import csv
 import time
 import os
 
-# This script is step 3 of 4 to get a sentence to pass into word2vec
-# It assumes there is a database with two tables :W2V_PROTEIN and W2V_TOKEN
+# ------ Background------ 
 #
-# 4 steps:
-# 1. Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
-#    You need to change the start poisitoin and chunk size and number of iterations
-#    I found that it would iterate through 500k proteins in about 3.5mins so I would set the chunk size to 500000 and iterate from 0..9 to get 10M
-# 2. convert_db_tokens_dat.sh converts each of the sql txt outputs from step 1 into a dat file of pipe separated tokens - each line has a token and its corresponding uniprot id
-# 3. ** THIS SCRIPT ** : Combines the lines from step 2 into a single line per protein - containing al token info
-# 4. The final script then creates a sentence for each protein with GAP DISORDER and PFAM
-
+# This script is step 3 of 5 to create sentences to form a corpus for word2vec
 #
-# combines multiple protein token entries into a single line per protein.
+# 5 steps:
+# 1. extract_tokens_from_db.sh : Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
+# 2. convert_db_tokens_dat.sh  : Converts each of the txt outputs from step 1 into a dat file of pipe separated tokens.
+#    Each line consists of information about a token and its corresponding uniprot id
+# 3. combine_db_tokens_dat.py : Converts each lines (one per token) into a single line per protein (each line with multiple tokens for that protein plus metadata)
+# 4. create_corpus.py : Creates a sentence for each protein with GAP DISORDER and PFAM 'words', orders the tokens and removes overlaps
+# 5. run_word2vec.py  : Calls word2vec with the corpus
+#
+# This script combines multiple protein token entries into a single line per protein.
 # Example of input:
 #  A0A010PZP8:1:633|DISORDER:Polar:50:103
 #  A0A010PZP8:1:633|DISORDER:Consensus Disorder Prediction:50:109
@@ -25,10 +25,11 @@ import os
 #  A0A010PZP8:1:633|PFAM:PF04082:216:322
 
 # Example of output:
-#  A0A010PZP8:1:633:5:2:3|DISORDER:50:103|DISORDER:50:109|DISORDER:553:598|PF00172:16:53|PF04082:216:322
-#
 #  protein_id:start:end:num tokens:numpfam tokens : num disorder tokens | disorder or pfam entries with start and end point
 #
+#  A0A010PZP8:1:633:5:2:3|DISORDER:50:103|DISORDER:50:109|DISORDER:553:598|PF00172:16:53|PF04082:216:322
+
+# does the heavy lifting of combining pfam and disorder tokens into a single line per protein
 def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
     
     input_dat     = input_dir + '/' + input_file_root + input_file_ext
@@ -102,7 +103,8 @@ def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
 
 
 
-
+# intermediate method that simply loops through a directory of input files and, for each  file
+# calls the combine_tokens() method to combine the elements
 def combine_token_files(input_dir, output_dir):
     try:
         # Get a list of all files in the directory
@@ -121,16 +123,15 @@ def combine_token_files(input_dir, output_dir):
                     combine_tokens(root, file_name, file_extension, output_dir)
                     e = time.time()
                     print(f"processed : {file_name}{file_extension} time taken {e - s}" )
-                    
-                
-        return files
+        return
     except Exception as e:
         print(f"An error occurred: {e}")
-        return []
+        return
 
 
-input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/input/"
-#input_dir       = "/Volumes/My Passport/data/corpus/precorpus_token_dat"
+# TODO: CHANGE THESE VALUES input_dir and output_dir
+#input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/input/"
+input_dir       = "/Volumes/My Passport/data/corpus/precorpus_token_dat"
 output_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/output"
 
 combine_token_files(input_dir, output_dir)
