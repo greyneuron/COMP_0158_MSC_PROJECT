@@ -12,24 +12,32 @@ import os
 #    You need to change the start poisitoin and chunk size and number of iterations
 #    I found that it would iterate through 500k proteins in about 3.5mins so I would set the chunk size to 500000 and iterate from 0..9 to get 10M
 # 2. convert_db_tokens_dat.sh converts each of the sql txt outputs from step 1 into a dat file of pipe separated tokens - each line has a token and its corresponding uniprot id
-# 3. ** THIS SCRIPT ** : Converts the lines from step 2 into a single line per protein - containing al token info
+# 3. ** THIS SCRIPT ** : Combines the lines from step 2 into a single line per protein - containing al token info
 # 4. The final script then creates a sentence for each protein with GAP DISORDER and PFAM
-'''
-Combines token lines such as the below into a single line per protein id
-A0A010PZP8:1:633|DISORDER:Polar:50:103
-A0A010PZP8:1:633|DISORDER:Consensus Disorder Prediction:50:109
-A0A010PZP8:1:633|DISORDER:Consensus Disorder Prediction:553:598
-A0A010PZP8:1:633|PFAM:PF00172:16:53
-A0A010PZP8:1:633|PFAM:PF04082:216:322
-'''
 
+#
+# combines multiple protein token entries into a single line per protein.
+# Example of input:
+#  A0A010PZP8:1:633|DISORDER:Polar:50:103
+#  A0A010PZP8:1:633|DISORDER:Consensus Disorder Prediction:50:109
+#  A0A010PZP8:1:633|DISORDER:Consensus Disorder Prediction:553:598
+#  A0A010PZP8:1:633|PFAM:PF00172:16:53
+#  A0A010PZP8:1:633|PFAM:PF04082:216:322
+
+# Example of output:
+#  A0A010PZP8:1:633:5:2:3|DISORDER:50:103|DISORDER:50:109|DISORDER:553:598|PF00172:16:53|PF04082:216:322
+#
+#  protein_id:start:end:num tokens:numpfam tokens : num disorder tokens | disorder or pfam entries with start and end point
+#
 def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
-    input_dat     = input_dir + input_file_root + input_file_ext
+    
+    input_dat     = input_dir + '/' + input_file_root + input_file_ext
     
     output_name = re.sub("sql_output", "precorpus", input_file_root)
     output_dat    = output_dir + '/' + output_name + ".dat"
     
-    print('processing input:', input_dat, 'output to:', output_dat)
+    #print('processing input:', input_dat)
+    #print('output to:', output_dat)
     
     last_protein    = "start"
     current_protein = ""
@@ -70,7 +78,7 @@ def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
 
                     # if we have a new protein thats not the start, output the buffer
                     if(last_protein != "start"):
-                        combined_line = protein_start_buffer + ':' + str(protein_pfam_count) + ':' + str(protein_disorder_count) + protein_buffer
+                        combined_line = protein_start_buffer + ':' + str(protein_pfam_count + protein_disorder_count) + ':' + str(protein_pfam_count) + ':' + str(protein_disorder_count) + protein_buffer
                         of.write(combined_line +'\n')
                         #of.write(protein_buffer + '\n')
                         #print('combined line :', combined_line, '\n')
@@ -94,9 +102,35 @@ def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
 
 
 
-input_file_root = "sql_output_00M_00"
-input_file_ext = ".dat"
+
+def combine_token_files(input_dir, output_dir):
+    try:
+        # Get a list of all files in the directory
+        files = []
+        for root, dirs, files in os.walk(input_dir):
+            for file in files:
+                #files.append(os.path.join(root, filename))
+                file_path = os.path.join(root, file)
+                file_name, file_extension = os.path.splitext(file)
+                
+                
+                if ("dat" in file_extension):
+                    s = time.time()
+                    #print(f"processing : {file_name}{file_extension}")
+                    
+                    combine_tokens(root, file_name, file_extension, output_dir)
+                    e = time.time()
+                    print(f"processed : {file_name}{file_extension} time taken {e - s}" )
+                    
+                
+        return files
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return []
+
+
 input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/input/"
+#input_dir       = "/Volumes/My Passport/data/corpus/precorpus_token_dat"
 output_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/output"
 
-combine_tokens(input_dir, input_file_root, input_file_ext, output_dir)
+combine_token_files(input_dir, output_dir)
