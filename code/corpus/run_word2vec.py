@@ -2,6 +2,7 @@ import re
 import time
 from gensim import corpora
 from gensim.models import Word2Vec
+from datetime import datetime
 import os
 import glob
 
@@ -30,14 +31,15 @@ import glob
 # Locally (2020 Macbook) it took 6s to parse 10 corpus files (ie 10M proteins)
 # and a further 61s to create the model
 #
-def create_w2v():
+def create_w2v(corpus_dir, model_name, vector_size, window_size):
     FILE_LIMIT = 10
-    corpus_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/test"
-    model_name      = "my_w2v_model.model"
+    
+    current_date = datetime.now().strftime('%Y%m%d')
+    model_name      = model_name + ".model"
     
     # find the files in the target directory
     print('Searching for corpi files in:', corpus_dir)
-    file_list = glob.glob(os.path.join(corpus_dir, '*corpus*.txt'))
+    file_list = glob.glob(os.path.join(corpus_dir, '*corpus_00M_*.txt'))
     
     # initialise
     s = time.time()
@@ -56,8 +58,8 @@ def create_w2v():
     print(f"Sentence parse time taken {e - s}" )
     
     # create model from sentences
-    print('Creating model.....')           
-    w2v = Word2Vec(sentences, vector_size=100, window=5, workers=4, epochs=10, min_count=5)
+    print(f"Creating model {model_name}.....")           
+    w2v = Word2Vec(sentences, vector_size=vector_size, window=window_size, workers=4, epochs=10, min_count=5)
     
     # time check
     e2 = time.time()
@@ -67,18 +69,18 @@ def create_w2v():
     w2v.save(model_name)
     print(f"Model saved to {model_name}")
 
-create_w2v()
+
+corpus_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/corpus"
+vector_size     = 10
+window          = 5
+current_date    = datetime.now().strftime('%Y%m%d')
+model_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/model/"
+model_name      = model_dir+"w2v_"+current_date + "_vs"+str(vector_size)+"_w"+str(window)+"_00M_2"
+print(model_name)
 
 
-'''
-print('Creating dictionary')
-dictionary = corpora.Dictionary(corpus)
-dictionary.save('/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/corpus.dict')  # store the dictionary, for future reference
-print(dictionary)
+create_w2v(corpus_dir, model_name, vector_size, window )
 
-print('Creating encoding')
-protein_doc = "DISORDER GAP PF00250 GAP"
-print('BoW for', protein_doc,':')
-protein_vec = dictionary.doc2bow(protein_doc.split())
-print(protein_vec)
-'''
+
+
+
