@@ -241,3 +241,4 @@ code/corpus/output/sqloutput_1.txt
 sandpit/output/00M_0M/sqloutput_00M_00.txt
 corpus_*.txt
 vectors*.txt
+.DS_Store

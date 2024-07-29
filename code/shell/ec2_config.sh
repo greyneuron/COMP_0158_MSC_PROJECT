@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+tar -czvf archive_name.tar.gz /path/to/file1 /path/to/file2 /path/to/file3
+
 # -----------------------------------
 #           Regular scripts
 # -----------------------------------
