@@ -3,6 +3,7 @@ import time
 from gensim import corpora
 from gensim.models import Word2Vec
 import os
+import glob
 
 # ------ Background------ 
 #
@@ -18,27 +19,55 @@ import os
 #
 
 
+# documentation : https://github.com/piskvorky/gensim#documentation
 
-#print("\n***** CORPUS *****:\n",corpus,'\n')
 
-# documentation
-# https://github.com/piskvorky/gensim#documentation
+# Creates a word2vec model
+# opens a folder with corpus files, for each file it tokenises the words in each 
+# and adds ech token to the sentecnes required for word2vec. It then creates and saves 
+# the model.
 #
-# also
+# Locally (2020 Macbook) it took 6s to parse 10 corpus files (ie 10M proteins)
+# and a further 61s to create the model
+#
+def create_w2v():
+    FILE_LIMIT = 10
+    corpus_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/test"
+    model_name      = "my_w2v_model.model"
+    
+    # find the files in the target directory
+    print('Searching for corpi files in:', corpus_dir)
+    file_list = glob.glob(os.path.join(corpus_dir, '*corpus*.txt'))
+    
+    # initialise
+    s = time.time()
+    sentences = []
+    
+    # parse each corpus file to build up the sentences
+    for file_path in file_list:
+        with open(file_path, 'r') as file:
+            print(f'Parsing file: {file_path}')
+            for line in file:
+                tokens = line.split()
+                sentences.append(tokens)       
+    
+    # time check
+    e = time.time()
+    print(f"Sentence parse time taken {e - s}" )
+    
+    # create model from sentences
+    print('Creating model.....')           
+    w2v = Word2Vec(sentences, vector_size=100, window=5, workers=4, epochs=10, min_count=5)
+    
+    # time check
+    e2 = time.time()
+    print(f"Model creation time {e2 - e}")
+          
+    # save model      
+    w2v.save(model_name)
+    print(f"Model saved to {model_name}")
 
-
-
-# https://www.geeksforgeeks.org/nlp-gensim-tutorial-complete-guide-for-beginners/
-
-#w2v = Word2Vec(corpus, size=100, window=5, workers=4, iter=10, min_count=5)
-
-corpus_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/corpus/corpus_00M_00.txt"
-output_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/w2v_vectors/vectors_00M_00.txt"
-
-w2v = Word2Vec(sentences = corpus_file, vector_size=100, window=5, workers=4, epochs=10, min_count=5)
-model = w2v.load("word2vec.model")
-model.train(corpus_file)
-w2v.save("word2vec.model")
+create_w2v()
 
 
 '''
