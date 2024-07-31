@@ -21,23 +21,34 @@ header="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
 
 footer="</interproextra>"
 
-
-# splits an xml file into separte files each with a header and footer
-# the split is based upon the number of protein tags. The original file was 
-# 188.47GB, each split is about 4GB
+# This script splits an extra.xml file containing disorder information. The
+# original file was too large and crashed my laptop and 2 AWS EC@ instances
+# Despite using the 
+#
+# This script splits an xml file into separate files, each with a header and footer
+# for adherence to the dtd. The split is based upon the number of protein elements to include
+# in each child file. 
+# 
+# The original file was, 188.47GB, each split of 5M <protein> elements is about 4GB -
 #
 # Macbook
-# Locally on mac: A split of 5M proteins per xml was taking up to 10min
-# and got progressively worse - should really not go through the whole
-# file each time. 
+# Locally on mac: A split of 5M proteins per xml was taking up to 10min and got progressively worse
+# as the code parses back through the parent file after each split in order to return
+# to the last cutoff point. No doubt there are better ways to do this.
+# 
+# In the end I also rewrote this in C++ for which I improved the algorithm (see split_files.cpp)
 
+# However, I also loaded this version onto an EC@ instance to simply throw hardware at the 
+# problem. After killing 2 EC2 instances with out of memory errors, I upped the CPU
 #
-# EC2
+# EC2 PERFORMACE
 # Trying on ec2 with d2.2xlarge and ebs : 246s (4 min for 500M proteins)
 # extra_part-1.xml  : 246s
 # extra_part-2.xml  : 691s
 #
 # extra_part_6.xml : 4,510 s
+#
+# Sample log for how slow it was and how the timings got progressively worse
 '''
 [ec2-user@ip-10-0-1-15 ucl]$ sudo python3 file_split.py 
 splitting from 0 to 5000000 file: /data/dev/ucl/data/disorder/extra_part_1.xml
@@ -74,11 +85,7 @@ splitting from 75000000 to 80000000 file: /data/dev/ucl/data/disorder/extra_part
 split 16 in:	 3619.2104892730713 s	total time:	 29619.05987381935 s
 splitting from 80000000 to 85000000 file: /data/dev/ucl/data/disorder/extra_part_17.xml
 
-
-
-
 '''
-
 
 def split_file_from_protein(from_count, to_count, file_count):
     #path    = "/Volumes/My Passport/downloads/extra.xml"
@@ -146,5 +153,5 @@ def split():
         split_file_from_protein(i, i+PROTEIN_LIMIT, file_count)
         e = time.time()
         print('split', file_count, 'in:\t', str(e-s), 's\ttotal time:\t', str(e-ts),'s')
-split()
+#split()
 

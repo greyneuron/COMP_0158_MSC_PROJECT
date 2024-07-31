@@ -4,23 +4,31 @@ import csv
 import time
 import duckdb
 
-PROCESS_LIMIT   = -1  # total lines to process (-1 to ignore)
-OUTPUT_LIMIT    = 1000000    # how often to print
 
 
 #
-# Reads a full protein2ipr file and writes only lines with pfam entries into a dat
-# file, also includes a token identifier 'PFAM' so that these tokens and disorder
-# tokens can be loaded into the same db
+# Reads a full protein2ipr file and writes only lines with pfam entries into a new dat
+# file. The outputs include the uniprot id, the word 'PFAM', the PFAM id and the 
+# start and end point of the pfam entry on the protein. The word 'PFAM" is included
+# to distinguish it from the other tokens that will be processed - these will be identified
+# by the word 'DISPORDER'.
 #
-# 20240715.dat : 1,355,591,115 records processed in 1,3042s
+# SAMPLE OUTPUT: A0A001|PFAM|PF00664|17|276
+#
+# Performance: 20240715.dat : 1,355,591,115 records processed in 1,3042s
+#
+# In order to test the file, set the PROCESS_LIMIT to 10 - and it will only process 10 entries
 #
 def parse_protein2ipr_pfam():
-    path        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr.dat"
-    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/protein2ipr_pfam_20240715.dat"
+    path        = "/Volumes/My Passport/data/pfam/protein2ipr.dat"
+    output      = "/Volumes/My Passport/data/pfam/protein2ipr_pfam_20240715_test.dat"
     
     uniprot_id  = ""
     output_file = open(output, "w")
+    
+    PROCESS_LIMIT   = 10         # total lines to process (-1 to ignore)
+    OUTPUT_LIMIT    = 1000000    # how often to print
+
     
     record_count    = 0
     start_time      = time.time()

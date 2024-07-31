@@ -311,4 +311,20 @@ Subsequent sections are either for pfam or disorder entries giving the start and
 
 
 A0A010PZJ8:1:494:1:3|DISORDER:1:30|DISORDER:1:32|DISORDER:468:493|PF01399:335:416
-A0A010PZN2:1:354:0:4|DISORDER:225:353|DISORDER:227:304|DISORDER:307:325|DISORDER:326:353 
+A0A010PZN2:1:354:0:4|DISORDER:225:353|DISORDER:227:304|DISORDER:307:325|DISORDER:326:353
+
+
+# --------------------------------------------------------------------------------
+Mon 29th July
+
+IMproved creation of moel from sentences
+Wrote script to buils sentences from corpus
+Write script to get pfam encodings from model
+
+Tues 30th July
+- Revision for Stats and Intro to ML
+
+Wed 31st July
+- Revision for Stats (AM)
+- Started write up (PM)
+- Started testing code again - especially dat prep whilst still fresh

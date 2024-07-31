@@ -2,14 +2,25 @@ import mysql.connector
 import time
 import sys
 
+#
+# This set of scripts was used to extract all tokens and protein information from the 
+# database. I used an AWS RDS instance for this and connected over EC2.
+#
+# For some reason this script was incredibly slow compared to executing the same SQL 
+# directly through a SQL command line on EC2 connecting to the separate RDS instance.
+# I also tried loading MySQL onto the same EC@ instance but that was even slower.
+#
+# After much trial and error I eventally switched to using shell scripts in the 'corpus' directory instead
+# I also created an RDS instance from the AWS console instead of from Terraform - this seemed to 
+# work better, probably due to some missing config that wasn;t included in Terraform
+
+
 
 # get this info from the RDS DATABASE console in AWS
 db_host     ="w2v-db-1.cligs4ak0dtg.eu-west-1.rds.amazonaws.com"
 db_user     = "admin"
 db_password = "w0rd2v3c"
 db_database = "W2V"
-
-
 
 #
 # returns a connection
@@ -31,7 +42,7 @@ def create_precorpus_from_sql():
 
 #
 # WORKS - Used on 22 July and modified to include protein info
-# for some reason the query to include orotein info runs a lot slower
+# for some reason the query to include protein info runs a lot slower
 #
 def create_precorpus(from_record, chunk_size, filename, iteration):
     s   = time.time()
@@ -185,10 +196,6 @@ def create_pre_corpus_v2(from_record, chunk_size, iteration):
 
 
 
-
-
-
-
 #
 # main
 #
@@ -198,8 +205,6 @@ if __name__ == '__main__':
     # 1000 and 100 ok
     # 1000 and 1000 - each iteration takes about 0.25s => 1M to take 250s but stopped on 221
     # Iteration 23 220000 10000 query time: 127.24671959877014 ms Results found: 14327 ITERATION 23  Iteration time: 127.3628249168396 ms
-
-    
 
     # this is what I used on Tuesday
     print("Precorpus creation - using Tuesday approach of 250k chunks")
