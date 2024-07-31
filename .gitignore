@@ -244,3 +244,7 @@ vectors*.txt
 .DS_Store
 code/corpus/model/w2v_20240729_vs10_w5_00M_encoding.npy
 code/corpus/model/w2v_20240729_vs10_w5_00M_encoding.txt
+.DS_Store
+report/dissertation.aux
+report/dissertation.fdb_latexmk
+report/dissertation.fls
