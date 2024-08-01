@@ -13,7 +13,24 @@ import duckdb
 # to distinguish it from the other tokens that will be processed - these will be identified
 # by the word 'DISPORDER'.
 #
-# SAMPLE OUTPUT: A0A001|PFAM|PF00664|17|276
+# SAMPLE INPUT Many entries against A0A001:
+'''
+A0A001	IPR003439	ABC transporter-like, ATP-binding domain	PS50893	344	573
+A0A001	IPR003593	AAA+ ATPase domain	SM00382	369	550
+A0A001	IPR011527	ABC transporter type 1, transmembrane domain	PF00664	17	276
+A0A001	IPR011527	ABC transporter type 1, transmembrane domain	PS50929	17	289
+A0A001	IPR017871	ABC transporter-like, conserved site	PS00211	478	492
+A0A001	IPR027417	P-loop containing nucleoside triphosphate hydrolase	G3DSA:3.40.50.300	341	573
+A0A001	IPR027417	P-loop containing nucleoside triphosphate hydrolase	SSF52540	342	565
+A0A001	IPR036640	ABC transporter type 1, transmembrane domain superfamily	G3DSA:1.20.1560.10	1	301
+A0A001	IPR036640	ABC transporter type 1, transmembrane domain superfamily	SSF90123	3	300
+A0A001	IPR039421	Type 1 protein exporter	PTHR24221	17	563
+'''
+
+# SAMPLE OUTPUT: Only list the PFAM rows
+''' 
+A0A001|PFAM|PF00664|17|276
+'''
 #
 # Performance: 20240715.dat : 1,355,591,115 records processed in 1,3042s
 #

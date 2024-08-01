@@ -17,9 +17,18 @@ import time
 #
 # In order to test the file, set the PROCESS_LIMIT to 10 - and it will only process 10 entries
 #
+
+''' Sample TrEMBL Entry
+>tr|A0A7C4XXW9|A0A7C4XXW9_9EURY Acetylornithine aminotransferase OS=Archaeoglobus sp. OX=1872626 GN=argD PE=3 SV=1
+MDWIEKEKKLIPQVYRRQNVVFVRGEGCYLFDTNGKRYLDLVAGIATVSIGHSHPEFIAK
+VSEQLKKLVHVSNLYYTIPQVELAEKLKGLTRMDRFFFCNSGTEAVEASLKFARRATGRK
+KFVAFTNCFHGRTMGALSVTYKEKFRKPFEPLVQPVEFSRFNDVSDLEKRVDAETAAVIL
+ELIQGEAGVYPAEKEFVKAIFELREKHGYLVIIDEVQTGFGRTGKWFAKEHYGVQPDIMA
+MAKAMGSGFPIGCTAISEEVAEKLERGDHGSTFGGNPLACAAGLATIEIMEKYRLVENSE
+KMGEYFMTRLREVFSEVRGKGLMIGVKVRNADEIVKRALEHGLVLNATSEDNLRLVPPLT
+IGKGEVDLAVGILSKICQN
+'''
 def reduce_trembl_fasta(dom_type):
-    #input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb_100_test.fasta"
-    #output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/uniprot/uniprotkb_100_test.dat"
     input        = "/Volumes/My Passport/data/protein/uniprot_trembl.fasta"
     output      = "/Volumes/My Passport/data/protein/uniprotkb-2759_78494531_20240714_test.dat"
     
@@ -67,9 +76,6 @@ def reduce_trembl_fasta(dom_type):
             error_count += 1
             continue
         
-        #print(line)
-        #print('id %s start %s end %s ' % (uniprot_id, start, end))
-        record_count += 1
         
        # -------- check for termination ------------
         if (record_count % OUTPUT_LIMIT == 0):
