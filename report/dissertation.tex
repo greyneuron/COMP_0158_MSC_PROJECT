@@ -57,9 +57,33 @@ This was an extremely time-consuimg task due to the quantity of data that had to
 
 Proteins
 Triedn Uniref format but initially had issues processsing - lots of memory issues
-Eventually switched to TrEMBL as I couldn download that format from UNiprt and at the same time parse out the eikaryotic proteins
+Eventually switched to TrEMBL as I couldn download that format from UNiprt and at the same time parse out the eukaryotic proteins
 proteins : 78,494,529 eukaryotic proteins loaded (TrEMBL)
 
 pfam - 296,017,815 entries
+
+disorder
+
+First the raw file has over 4BN rows of xml and needed ot be chunked into smaller sizes
+This was done with C++ and Python
+These xml files were then parsed to create a .dat file (parse_disordered_to_dat.py)
+This .dat file was then loaded into a database (into the W2V_TOKEN table)
+
+This was the last step in the data prep phase prior to creating the precorpus and corpus.
+extra.xml : 
+
+lines: 4BN
+4BN lines: wc -l extra.xml
+4,007,237,378
+
+protein tags: 
+
+mobdb entries : 57MN
+57MN mobidb entries (each with potentially mutliple disorder entries)
+grep -c "disorder_prediction\" dbname=\"MOBIDBLT\"" /Volumes/My\ Passport/downloads/extra.xml
+57,013,227
+
+disorder entries : 81MN
+
 
 \end{document}

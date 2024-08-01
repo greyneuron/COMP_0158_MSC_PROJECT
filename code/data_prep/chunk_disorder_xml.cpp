@@ -61,7 +61,7 @@ int parse_file(int protein_limit, int start_line, int iteration){
     
     // Define the path to the input file
     std::string disorder_file = "/Volumes/My Passport/data/disorder/raw/extra.xml";
-    std::string output_folder = "/Volumes/My Passport/data/disorder/output/";
+    std::string output_folder = "/Volumes/My Passport/data/disorder/split_output/";
     
 
     // regular expressions to find <protein>...</protein> entities 
@@ -156,6 +156,9 @@ int parse_file(int protein_limit, int start_line, int iteration){
 
 /*
 main method - set the proteins_limit here to signify how many priteins to put in each file
+
+500,000 limit takes about 5min to process on a mac - but it will get slower as it has to prse further into
+the ouptut files. 
 */
 int main() {
     int proteins_limit  = 500000; // proteins in each chunk, there are 81M protein entries

@@ -6,13 +6,14 @@ import time
 import os
 import sys
 
-# AS OF July 19th ALL 3 DAT FILES ARE ON EC2
+# Looks for chunked extra.xml files in a folder and extracts information into a single tab delimited file
+# The output .dat file can then be loaded into a database (although this was also a challenge)
+# Note that I ran this on an EC2 instance
+
+# BACKGROUND
+# The extra.xml file from ecbi is huge (4bn lines), so use chunk_disorder_xml.py (or .cpp) to split it up first
 #
-# Parses an extra.xml file to find disorder entries
-#
-# The extra.xml file from ecbi is huge (4bn lines), so use file_split.py to split it up first
-#
-# 4BN entries: wc -l extra.xml
+# 4BN lines: wc -l extra.xml
 # 4,007,237,378
 #
 # 57mn mobidb entries (each with potentially mutlple entries)
@@ -44,8 +45,7 @@ import sys
 # % wc -l disordered_tokens.dat_20240719.dat
 #
 
-
-''' last disprder entry in extras_01.xml
+''' last disorder entry in extras_01.xml
 <protein id="A0A0B1TV04" name="A0A0B1TV04_OESDE" length="107" crc64="DD962B54888583AE">
   <match id="mobidb-lite" name="disorder_prediction" dbname="MOBIDBLT" status="T" model="mobidb-lite" evd="MobiDBlite">
     <lcn start="1" end="25" sequence-feature="Polyampholyte"/>
@@ -68,12 +68,7 @@ def find_file_names(root_folder, search_string):
 #
 #
 def parse_extra_file(source_folder, source_file_name, output_file):
-    #source_file = "/Volumes/My Passport/downloads/extra.xml"
-    #output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/disordered/disordered_tokens_test.dat"
-    
-    #file        = "/data/my_extra.xml"
-    #output      = "/data/disordered_tokens.dat"
-    
+
     source_file = source_folder + source_file_name
     print('parsing file:', source_file)
     
@@ -81,9 +76,7 @@ def parse_extra_file(source_folder, source_file_name, output_file):
     start_time      = time.time()
     mid_time_start  = time.time()
     first_line      = True
-    
-    #output_file = open(output, "w")
-    
+
     # get an iterable
     context = ElementTree.iterparse(source_file, events=("start", "end"))
     # turn it into an iterator
@@ -160,9 +153,7 @@ def parse_extra_file(source_folder, source_file_name, output_file):
 # This assumes the xml files have been split into smaler files named "extras_part_" ....
 #
 def parse_extra_files():
-    #root_folder     = "/Volumes/My Passport/downloads/"
-    #target_file     = "/Volumes/My Passport/dat/disordered_tokens_20240714_1216.dat"
-    
+
     root_folder     = "/data/dev/ucl/data/disorder/"
     target_file     = "/data/dev/ucl/data/disorder/dat/disordered_tokens_20240719.dat"
     
