@@ -57,8 +57,16 @@ This was an extremely time-consuimg task due to the quantity of data that had to
 
 Proteins
 Triedn Uniref format but initially had issues processsing - lots of memory issues
-Eventually switched to TrEMBL as I couldn download that format from UNiprt and at the same time parse out the eukaryotic proteins
+Eventually switched to TrEMBL as I couldn download that format from Uniprot and at the same time parse out the eukaryotic proteins
 proteins : 78,494,529 eukaryotic proteins loaded (TrEMBL)
+
+This is what I used initially and all through July
+uniprotkb-2759_78494531.dat :   Eukaryotic TrEMBL proteins : dat file with Uniprot id, start and stop - 78,494,529 entries
+
+In August I retried this
+uniref100_tax_20240801.dat :    Full UniRef100 proteins : dat file with Uniprot id, start and stop, taxonomy id - 408,368,587 entries
+
+
 
 pfam - 296,017,815 entries
 
@@ -85,5 +93,8 @@ grep -c "disorder_prediction\" dbname=\"MOBIDBLT\"" /Volumes/My\ Passport/downlo
 
 disorder entries : 81MN
 
+
+Taxonomy
+download from here: https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/
 
 \end{document}

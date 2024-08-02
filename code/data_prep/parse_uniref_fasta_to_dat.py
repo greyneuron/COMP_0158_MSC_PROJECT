@@ -7,14 +7,38 @@ import time
 # version update: tested again on August 1st to extract taxonomy id
 #
 # Reads in a UniRef file and writes out the key tokens to a tab delimited file, unlike the TrEMBL
-# file I used, the UniRef file I am parsing doesn't have only eukaryotic proteins so I would still need
-# to find that. However, it does have the taxonomy ids so I could use that to cross reference
+# file I used, the full UniRef100 file doesn't have only eukaryotic proteins.
 #
-# uniprot id | start | end | taxonomy id
+# ---------------------------------------------------------------------------
+# 
+# Full Uniref100 file : /Volumes/My Passport/data/protein/uniref100.fasta
+#
+# This UniRef100 file has 408,368,587 entries (compared to 78,494,529 in TrEMBL)
+#
+# Output format: uniprot id | start | end | taxonomy id
 # 
 # 01/08/2024 : On a macbook, this took on average 11s to parse 1M lines
+# 01/08/2024 : On a macbook, this took on average 11s to parse 1M lines
+# 01/08/2024 : Final lines of output showing 408,368,587 entries in 4,387s
 #
-# In order to test the file, set the PROCESS_LIMIT to 10 - and it will only process 10 entries
+# 1000000 lines processed in  10.067269086837769 s 	total : 408000000
+# >>> 408368587 records processed in 4387.462231874466 s error count: 0
+#
+# Instructions - 
+# Set the directory and file name for input and output,
+# To test the scropt, set the PROCESS_LIMIT to 10 - and it will only process 10 entries
+# Otherwise set it to -1 to process eerything
+#
+# ---------------------------------------------------------------------------
+#
+# I subsequently found out that it is possible to download eukaryotic proteins only from uniprot
+# The taxonomy id to filter upon is 2759. This file can then be downloaded 
+# https://www.uniprot.org/uniref?query=%28taxonomy_id%3A2759%29
+#
+#
+# According to the uniprot site, this will have 169,760,630 entries
+# 
+# ---------------------------------------------------------------------------
 #
 
 ''' Sample UniRef100 Entry
@@ -27,7 +51,6 @@ SFRKIYTDLGWKFTPL
 '''
 def reduce_uniref_fasta(dom_type):
     input        = "/Volumes/My Passport/data/protein/uniref100.fasta"
-    #output      = "/Volumes/My Passport/data/protein/uniref100.dat"
     output      = "uniref100_tax_20240801.dat"
     
     # define regular expressions for UniRef format
