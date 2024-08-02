@@ -55,6 +55,11 @@
 #A       242703  242703
 #A       242703  666510
 
+
+
+# RECONCILIATION
+# There should be 1567316 Eukaryotic entries (first column is E)
+
 #file="/Volumes/My Passport/data/taxonomy/categories.dmp"
 #file="../../data/taxonomy/categories.dmp"
 
@@ -84,7 +89,7 @@
 # 	unique name				-- the unique variant of this name if name not unique
 # 	name class				-- (synonym, common name, ...)
 
-# Reconciliation
+# RECONCILIATION
 # There are 2,588,170 entries with the class "scientific name"
 # Command: grep -c "scientific name" "../../data/taxonomy/names.dmp"
 

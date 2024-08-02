@@ -328,3 +328,15 @@ Wed 31st July
 - Revision for Stats (AM)
 - Started write up (PM)
 - Started testing code again - especially dat prep whilst still fresh
+
+
+Thurs 1st Aug
+- Tidied up code
+- Re-ran protein load against UNiRef100 but didn;t load into db as its not all eukaryotic
+- Started taxonomy work
+
+Friday 2nd Aug
+- Parsed names, categories and nodes from taxonomy files
+- Loaded names and categories into DuckDB and added indices (duckdb_dat_loader.ipynb)
+
+- TODO: Write python script to traverse a tree
