@@ -84,6 +84,33 @@ def find_tax_for_pfam():
     con.close()
     
     
+
+
+
+
+def find_tax_for_protein():
+    print('find tax for protein')
+    offset  = 0    # start point
+    limit   = 5000000    # how many rows to return
+
+    # perform query
+    s = time.time()
+    results = con.execute(f"SELECT W2V_PROTEIN.*, W2V_PROTEIN_UNIREF_100_ALL_TAX.TAX_ID FROM ( SELECT UNIPROT_ID FROM W2V_PROTEIN ORDER BY UNIPROT_ID LIMIT {limit} OFFSET {offset}) AS W2V_PROTEIN INNER JOIN W2V_PROTEIN_UNIREF_100_ALL_TAX AS W2V_PROTEIN_UNIREF_100_ALL_TAX ON W2V_PROTEIN.UNIPROT_ID = W2V_PROTEIN_UNIREF_100_ALL_TAX.UNIPROT_ID ").fetchall()
+    e1 = time.time()
+
+    # print results
+    for res in results:
+        print(res)
+        # get tax id for protein id
+        
+    e2 = time.time()
+
+    print(f"query {len(results)} took {e1-s}s, overall took {e2-s}s")
+
+    con.close()
+
+    
+    
     
     
     
@@ -116,6 +143,10 @@ def baseline_query():
     print(f"query {len(results)} took {e1-s}s, overall took {e2-s}s")
 
     con.close()
+    
+    
+    
 
 #baseline_query()
-find_tax_for_pfam()
+#find_tax_for_pfam()
+find_tax_for_protein()

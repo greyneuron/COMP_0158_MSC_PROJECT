@@ -50,14 +50,18 @@ EKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDD
 SFRKIYTDLGWKFTPL
 '''
 def reduce_uniref_fasta(dom_type):
-    input        = "/Volumes/My Passport/data/protein/uniref100.fasta"
-    output      = "uniref100_tax_20240801.dat"
+    input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniref100_2759-169760630.fasta"
+    #input        = "/Volumes/My Passport/data/protein/uniref100.fasta"
+    output      = "uniref100_2759_20240803_20240803.dat"
     
     # define regular expressions for UniRef format
-    uniprot_re      = "UniRef100_([A-Z0-9]+)"
-    taxonomy_re     = "TaxID=([0-9]+)"
+    source_re           = "^(UniRef[0-9]*)_"
+    uniprot_re          = "UniRef[0-9]*_([A-Z0-9]+)"
+    taxonomy_id_re      = "TaxID=([0-9]+)"
+    taxonomy_name_re    = "Tax=(.*) TaxID="
+    members_re          = "n=([0-9]+)"
 
-    PROCESS_LIMIT   = -1               # number of lines to process, set to -1 to ignore
+    PROCESS_LIMIT   = -1             # number of lines to process, set to -1 to ignore
     OUTPUT_LIMIT    = 1000000                # determines how often to print a progress message
     
     record_count = 0
@@ -74,27 +78,51 @@ def reduce_uniref_fasta(dom_type):
 
     for record in SeqIO.parse(input, "fasta"):
         
-        #print(record.name, record.description)
+        #print(record)
+        #print(record.description)
+        
         
         # extract protein id and taxonomy id
+        source_res  = re.search(source_re, record.name)
+        source      = source_res.group(1)
+        
+        member_res = re.search(members_re, record.description)
+        if member_res is not None:
+            n_members = member_res.group(1)
+        else:
+            n_members = 9999999999
+        
+        
         uniprot_res = re.search(uniprot_re, record.name)
         uniprot_id  = uniprot_res.group(1)
         
-        taxonomy_res = re.search(taxonomy_re, record.description)
-        tax_id = taxonomy_res.group(1)
+        taxonomy_id_res = re.search(taxonomy_id_re, record.description)
+        if taxonomy_id_res is not None:
+            tax_id = taxonomy_id_res.group(1)
+        else:
+            tax_id = 9999999999
+        
+        taxonomy_name_res = re.search(taxonomy_name_re, record.description)
+        if taxonomy_name_res is not None:
+            tax_name = taxonomy_id_res.group(1)
+        else:
+            tax_name = "undef"
+
 
         # -------- get length ------------
         start = 0
         end = 0
         for m in re.finditer(r'.{3,}', str(record.seq)):            # modified for UniRef100
-            start = str(m.start()+1)
-            end = str(m.end()+1)
+            start   = str(m.start()+1)
+            end     = str(m.end()+1)
+            len     = m.end() - m.start()
+            
         
         # create output file entry
         try:
-            line = "|".join([uniprot_id, str(start), str(end), str(tax_id)])
+            line = "|".join([source, uniprot_id, str(len), str(start), str(end), n_members, str(tax_name), str(tax_id)])
             output_file.write(line +'\n')
-            #print(line)
+            #print(">",line)
             record_count += 1
         except Exception as e:
             print('error parsing line', line, e)
