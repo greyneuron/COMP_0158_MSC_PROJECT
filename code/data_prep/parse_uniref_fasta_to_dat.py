@@ -36,8 +36,12 @@ import time
 # https://www.uniprot.org/uniref?query=%28taxonomy_id%3A2759%29
 #
 #
-# According to the uniprot site, this will have 169,760,630 entries
-# 
+# According to the uniprot site, this will have 95,272,305 entries
+# 95,272,305 records processed in 1404.2241990566254 s error count: 0
+#
+# output: 
+# line = "|".join([source, uniprot_id, str(len), str(start), str(end), n_members, str(tax_id), str(tax_name)])
+#
 # ---------------------------------------------------------------------------
 #
 
@@ -50,9 +54,9 @@ EKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDD
 SFRKIYTDLGWKFTPL
 '''
 def reduce_uniref_fasta(dom_type):
-    input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniref100_2759-169760630.fasta"
+    input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniref_100only_2759-95272305_0804.fasta" # note that this file has loads of 90% entries
     #input        = "/Volumes/My Passport/data/protein/uniref100.fasta"
-    output      = "uniref100_2759_20240803_20240803.dat"
+    output      = "uniref100only_2759-95272305_20240804_2.dat"
     
     # define regular expressions for UniRef format
     source_re           = "^(UniRef[0-9]*)_"
@@ -90,7 +94,7 @@ def reduce_uniref_fasta(dom_type):
         if member_res is not None:
             n_members = member_res.group(1)
         else:
-            n_members = 9999999999
+            n_members = 999999999
         
         
         uniprot_res = re.search(uniprot_re, record.name)
@@ -100,11 +104,12 @@ def reduce_uniref_fasta(dom_type):
         if taxonomy_id_res is not None:
             tax_id = taxonomy_id_res.group(1)
         else:
-            tax_id = 9999999999
+            #print(f"No Taxonomy id {record.description}")
+            tax_id = 999999999
         
         taxonomy_name_res = re.search(taxonomy_name_re, record.description)
         if taxonomy_name_res is not None:
-            tax_name = taxonomy_id_res.group(1)
+            tax_name = taxonomy_name_res.group(1)
         else:
             tax_name = "undef"
 
@@ -120,7 +125,7 @@ def reduce_uniref_fasta(dom_type):
         
         # create output file entry
         try:
-            line = "|".join([source, uniprot_id, str(len), str(start), str(end), n_members, str(tax_name), str(tax_id)])
+            line = "|".join([source, uniprot_id, str(len), str(start), str(end), n_members, str(tax_id), str(tax_name)])
             output_file.write(line +'\n')
             #print(">",line)
             record_count += 1
