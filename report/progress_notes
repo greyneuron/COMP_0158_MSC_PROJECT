@@ -354,7 +354,7 @@ NB:
 
 - precorpus.dat was created from the join of W2V_PROTEIN and W2V_TOKEN so should only have eukaryotic proteins
 
-MOnday
+Monday August 5th
 - Created a number of differnet models but noticed that when I tried to encode the pfam ids OI had loads of pfam ids
   that had no encoding. THis is becuase the pfam tokens were taken directly from protein2ipr.day which has all proteins
   in it, but my initial list of pfam ids was created from this list. BY contrast, the corpus was created from a join across 

@@ -10,8 +10,8 @@ import re
 #
 def encode_pfam_ids(model_name, pfam_file):
     
-    PFAM_LIMIT      = -1  # max to parse (useful for testin) set to -1 for all entries
-    MAX_PFAM        = 20725 # total pfam entries > NEED TO CHECK THIS
+    PFAM_LIMIT      = -1    # max to parse (useful for testin) set to -1 for all entries
+    MAX_PFAM        = 15578 # total pfam entries > NEED TO CHECK THIS
 
     # load the model
     full_model_name = model_name + ".model"
@@ -77,7 +77,7 @@ def encode_pfam_ids(model_name, pfam_file):
         e2 = time.time()
         print(f"Encodings saved. Total time {e2 - s}s." )
         # return
-        return model_name+"encoding.npy"
+        return model_name+"_encoding.npy"
             
     except Exception as e:
             print(f"An error occurred: {e}")
@@ -113,51 +113,24 @@ def test_encoding(encoding_file):
     print(f"Matrix shape: {encoding_matrix.shape}")
     print(encoding_matrix)
     print("[0,:]:", encoding_matrix[0,:])
-    print("[1,:]:", encoding_matrix[1,:])
-    print("[2,:]:", encoding_matrix[2,:])
+    print("[15577,:]:", encoding_matrix[15577,:])
 
 
 #
 # ---------------- MAIN METHOD ---------------- 
 #
-model_name = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/model/w2v_20240805_vs10_w5"
-pfam_file = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/encoding/unique_pfam_20240722.dat"
-
+model_name = "/Users/patrick/dev/ucl/comp0158_mscproject/models/w2v_20240805_vs10_w10"
+pfam_file = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/unique_eukaryotic_pfam.txt"
 
 # encode pfam ids
 print('------------ ENCODING ---------------------')
 encoding_file = encode_pfam_ids(model_name, pfam_file)
+print()
 
 # test
-print('--------------- TESTING ------------------')
+#print('--------------- TESTING ------------------')
 test_encoding(encoding_file)
 
 # calcualte distances
-print('----- DISTANCE CALC -----------------------')
-calculate_distances(encoding_file)
-
-
-
-'''
-# reload the encodings just proudced
-
-print("\nRELOADED ENCODINGS")
-encoding_matrix = np.load(encoding_file)
-
-print(f"Matrix shape: {encoding_matrix.shape}")
-print(encoding_matrix)
-print("[0,:]:", encoding_matrix[0,:])
-
-num_entries = encoding_matrix.shape[0]
-# calcualte distances
-
-print(f"\ncalculating distances for {num_entries} pfam ids")
-for i in range(num_entries):
-    for j in range(i+1, num_entries):
-        #print(f"i {i} {encoding_matrix[i,:]}")
-        #print(f"j {j} {encoding_matrix[j,:]}")
-        #print(encoding_matrix[j,:])
-        distance = np.linalg.norm(encoding_matrix[i,:] - encoding_matrix[j,:])
-        print(f"distance i:{i} to j:{j} = {distance}")
-    
-'''
+#print('----------- DISTANCE CALC ----------------')
+#calculate_distances(encoding_file)

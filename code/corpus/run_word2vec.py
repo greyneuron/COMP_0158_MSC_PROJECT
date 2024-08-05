@@ -42,15 +42,9 @@ Model creation time 2052.9426929950714
 Model saved to /Users/patrick/dev/ucl/comp0158_mscproject/models/w2v_20240805_vs10_w10.model
 '''
 #
-def create_w2v(corpus_dir, model_name, vector_size, window_size):
-    
-    current_date = datetime.now().strftime('%Y%m%d')
-    model_name      = model_name + ".model"
-    
-    print(f"Creating model {model_name} from corpus files in {corpus_dir}......")
-    
-
-    
+# parses a directory to build up sentences to create a model
+#
+def get_corpus_sentences(corpus_dir):
     # find the files in the target directory
     #print('Searching for corpi files in:', corpus_dir)
     file_list = glob.glob(os.path.join(corpus_dir, '*corpus*.txt'))
@@ -66,10 +60,19 @@ def create_w2v(corpus_dir, model_name, vector_size, window_size):
             for line in file:
                 tokens = line.split()
                 sentences.append(tokens)       
-    
     # time check
     e = time.time()
     print(f"Sentence parse time taken {e - s}" )
+    return sentences
+
+#
+# Create W2V model
+#
+def create_w2v(sentences, model_name, vector_size, window_size):
+    current_date    = datetime.now().strftime('%Y%m%d')
+    model_name      = model_name + ".model"
+    
+    print(f"Creating model {model_name} from corpus files in {corpus_dir}......")
     
     # create model from sentences
     print(f"Creating model {model_name}.....")           
@@ -84,17 +87,36 @@ def create_w2v(corpus_dir, model_name, vector_size, window_size):
     print(f"Model saved to {model_name}")
 
 
-# setup model config
+# ---------------------------------------------------
+#
+# CHANGE MODEL PARAMETERS HERE
+#
+# ---------------------------------------------------
+
+# create sentences
 corpus_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/20240727/corpus/files"
-vector_size     = 10
-window          = 10
+sentences = get_corpus_sentences(corpus_dir)
+
+# ---------------------- window 15
+window          = 15
 current_date    = datetime.now().strftime('%Y%m%d')
 model_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/models/"
 model_name      = model_dir+"w2v_"+current_date + "_vs"+str(vector_size)+"_w"+str(window)
+create_w2v(sentences, model_name, vector_size, window )
 
+# ---------------------- window 20
+window          = 20
+current_date    = datetime.now().strftime('%Y%m%d')
+model_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/models/"
+model_name      = model_dir+"w2v_"+current_date + "_vs"+str(vector_size)+"_w"+str(window)
+create_w2v(sentences, model_name, vector_size, window )
 
-# create the model
-create_w2v(corpus_dir, model_name, vector_size, window )
+# ---------------------- window 25
+window          = 25
+current_date    = datetime.now().strftime('%Y%m%d')
+model_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/models/"
+model_name      = model_dir+"w2v_"+current_date + "_vs"+str(vector_size)+"_w"+str(window)
+create_w2v(sentences, model_name, vector_size, window )
 
 
 
