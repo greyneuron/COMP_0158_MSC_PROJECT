@@ -353,3 +353,18 @@ NB:
 - W2V_PROTEIN_UREF100_E has eukaryotic proteins in UniRef100 format including taxonomy
 
 - precorpus.dat was created from the join of W2V_PROTEIN and W2V_TOKEN so should only have eukaryotic proteins
+
+MOnday
+- Created a number of differnet models but noticed that when I tried to encode the pfam ids OI had loads of pfam ids
+  that had no encoding. THis is becuase the pfam tokens were taken directly from protein2ipr.day which has all proteins
+  in it, but my initial list of pfam ids was created from this list. BY contrast, the corpus was created from a join across 
+  W2V_PROTEIN and W2V_TOKEN thus the corpus already has eukaryotic proteins only but my list of unique pfam ids did not.
+  
+- I decided to create a new pfam entry list by selecting only pfam tokens in W2V_TOKEN that had an entry W2V_PROTEIN (actually
+  I used W2V_PROTEIN_UREF100_E from my Sunday download)
+
+- ** IMPORTANT ** It is SOOO much quicker t put a count column on the protein table rather than using OFFSET and LIMIT which 
+  appears to parse the whole table each time. THus I re-ran in the UNiref100 fasta file but added a counter field. I relaoded 
+  this into the W2V_PROTEIN_UREF100_E table and then generated a list of pfam ids and the sorted it and made it unique
+
+

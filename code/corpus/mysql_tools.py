@@ -3,6 +3,10 @@ import time
 import sys
 
 #
+# DID NOT USE THIS SCRIPT IN THE END - IT WAS FAR QUICKER TO USE A DIRECT SQL QUERY AND BYPASS
+# THE PYTHON MYSQL CONNECTOR LIBRARY - SEE 'extract_tokens_from_db.sh'
+#
+#
 # This set of scripts was used to extract all tokens and protein information from the 
 # database. I used an AWS RDS instance for this and connected over EC2.
 #

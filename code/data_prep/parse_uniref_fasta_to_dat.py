@@ -21,8 +21,15 @@ import time
 # 01/08/2024 : On a macbook, this took on average 11s to parse 1M lines
 # 01/08/2024 : Final lines of output showing 408,368,587 entries in 4,387s
 #
-# 1000000 lines processed in  10.067269086837769 s 	total : 408000000
+# 1000000 lines processed in  10.067269086837769 s 	total : 408,000,000
 # >>> 408368587 records processed in 4387.462231874466 s error count: 0
+#
+# August 5th 2024
+# Did this again as it was beneficial to include a counter in the output
+# this will make joins across large tables more efficitent
+#
+# 95,272,305 records processed in 1428.9437069892883 s error count: 0
+#
 #
 # Instructions - 
 # Set the directory and file name for input and output,
@@ -53,10 +60,10 @@ AKIKAYNLTVEGVEGFVRYSRVTKQHVAAFLKELRHSKQYENVNLIHYILTDKRVDIQHL
 EKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDD
 SFRKIYTDLGWKFTPL
 '''
-def reduce_uniref_fasta(dom_type):
+def parse_uniref_fasta(dom_type):
     input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniref_100only_2759-95272305_0804.fasta" # note that this file has loads of 90% entries
     #input        = "/Volumes/My Passport/data/protein/uniref100.fasta"
-    output      = "uniref100only_2759-95272305_20240804_2.dat"
+    output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniref100only_2759-95272305_20240805.dat"
     
     # define regular expressions for UniRef format
     source_re           = "^(UniRef[0-9]*)_"
@@ -79,6 +86,7 @@ def reduce_uniref_fasta(dom_type):
     # -----------------
     
     output_file = open(output, "w")
+    
 
     for record in SeqIO.parse(input, "fasta"):
         
@@ -125,7 +133,7 @@ def reduce_uniref_fasta(dom_type):
         
         # create output file entry
         try:
-            line = "|".join([source, uniprot_id, str(len), str(start), str(end), n_members, str(tax_id), str(tax_name)])
+            line = "|".join([str(record_count), uniprot_id, str(len), str(start), str(end), n_members, str(tax_id), str(tax_name)])
             output_file.write(line +'\n')
             #print(">",line)
             record_count += 1
@@ -157,5 +165,5 @@ def reduce_uniref_fasta(dom_type):
 
 # --------------------------------------------
 
-reduce_uniref_fasta("LowComplexity")
+parse_uniref_fasta("LowComplexity")
 

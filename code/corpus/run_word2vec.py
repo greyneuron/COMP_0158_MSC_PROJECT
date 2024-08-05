@@ -28,18 +28,32 @@ import glob
 # and adds ech token to the sentecnes required for word2vec. It then creates and saves 
 # the model.
 #
-# Locally (2020 Macbook) it took 6s to parse 10 corpus files (ie 10M proteins)
-# and a further 61s to create the model
+'''
+On Macbook - V10 W5
+Sentence parse time taken 800.3100779056549
+Creating model /Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/model/w2v_20240805_vs10_w5.model.....
+Model creation time 1976.5878400802612
+Model saved to /Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/model/w2v_20240805_vs10_w5.model
+
+On Macbook - V10 W10
+Sentence parse time taken 881.1151170730591
+Creating model /Users/patrick/dev/ucl/comp0158_mscproject/models/w2v_20240805_vs10_w10.model.....
+Model creation time 2052.9426929950714
+Model saved to /Users/patrick/dev/ucl/comp0158_mscproject/models/w2v_20240805_vs10_w10.model
+'''
 #
 def create_w2v(corpus_dir, model_name, vector_size, window_size):
-    FILE_LIMIT = 10
     
     current_date = datetime.now().strftime('%Y%m%d')
     model_name      = model_name + ".model"
     
+    print(f"Creating model {model_name} from corpus files in {corpus_dir}......")
+    
+
+    
     # find the files in the target directory
-    print('Searching for corpi files in:', corpus_dir)
-    file_list = glob.glob(os.path.join(corpus_dir, '*corpus_00M_*.txt'))
+    #print('Searching for corpi files in:', corpus_dir)
+    file_list = glob.glob(os.path.join(corpus_dir, '*corpus*.txt'))
     
     # initialise
     s = time.time()
@@ -70,15 +84,16 @@ def create_w2v(corpus_dir, model_name, vector_size, window_size):
     print(f"Model saved to {model_name}")
 
 
-corpus_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/corpus"
+# setup model config
+corpus_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/20240727/corpus/files"
 vector_size     = 10
-window          = 5
+window          = 10
 current_date    = datetime.now().strftime('%Y%m%d')
-model_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/model/"
-model_name      = model_dir+"w2v_"+current_date + "_vs"+str(vector_size)+"_w"+str(window)+"_00M_2"
-print(model_name)
+model_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/models/"
+model_name      = model_dir+"w2v_"+current_date + "_vs"+str(vector_size)+"_w"+str(window)
 
 
+# create the model
 create_w2v(corpus_dir, model_name, vector_size, window )
 
 

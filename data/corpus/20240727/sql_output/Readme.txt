@@ -1,0 +1,1 @@
+The output of the SQL joins between W2V_TOKEN and W2V_PROTEIN are in AWS
