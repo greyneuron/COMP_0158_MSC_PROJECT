@@ -72,6 +72,8 @@ def create_w2v(sentences, model_name, vector_size, window_size):
     current_date    = datetime.now().strftime('%Y%m%d')
     model_name      = model_name + ".model"
     
+    s = time.time()
+    
     print(f"Creating model {model_name} from corpus files in {corpus_dir}......")
     
     # create model from sentences
@@ -79,8 +81,8 @@ def create_w2v(sentences, model_name, vector_size, window_size):
     w2v = Word2Vec(sentences, vector_size=vector_size, window=window_size, workers=4, epochs=10, min_count=5)
     
     # time check
-    e2 = time.time()
-    print(f"Model creation time {e2 - e}")
+    e = time.time()
+    print(f"Model creation time {e - s}s")
           
     # save model      
     w2v.save(model_name)
@@ -96,6 +98,8 @@ def create_w2v(sentences, model_name, vector_size, window_size):
 # create sentences
 corpus_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/20240727/corpus/files"
 sentences = get_corpus_sentences(corpus_dir)
+
+vector_size = 10
 
 # ---------------------- window 15
 window          = 15
