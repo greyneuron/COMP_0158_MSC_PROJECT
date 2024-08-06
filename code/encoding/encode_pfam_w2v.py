@@ -6,27 +6,23 @@ import numpy as np
 import re
 
 #
-# Takes a file of pfam entries and encodes them
+# Encodes a list of pfam ids using a supplied model
 #
-def encode_pfam_ids(model_name, pfam_file):
+def encode_pfam_ids_for_model(model_name, pfam_file, target_folder):
     
     PFAM_LIMIT      = -1    # max to parse (useful for testin) set to -1 for all entries
     MAX_PFAM        = 15578 # total pfam entries > NEED TO CHECK THIS
 
     # load the model
-    full_model_name = model_name + ".model"
-    print('loading model:', full_model_name)
-    model = Word2Vec.load(full_model_name)
+    print('loading model:', model_name)
+    model = Word2Vec.load(model_name)
 
-    # ROWS - One per pfam entry
-    # How many rows are needded - one row per pfam entry
-    #pfam_ids    = ["PF00001", "PF00002", "PF00003", "PF00004", "PF00005","PF00006"]
-    #num_rows    = len(pfam_ids)
+    vector_size_search  = re.search("_vs([0-9]+)_", model_name)
+    num_cols            = int(vector_size_search.group(1))
     
-    # COLUMNS - One for each dimension in the vector used to generate the model
-    # The vector size (columns) is encoded in the model file name
-    vs_search   = re.search("_vs([0-9]+)_", model_name)
-    num_cols    = int(vs_search.group(1))
+    base_name_search  = re.search("\/(w2v_.*)\.model", model_name)
+    base_name         = base_name_search.group(1)
+    print('base name for encoding:', base_name)
 
     # create a numpy matrix to hold the encodings
     if(PFAM_LIMIT != -1):
@@ -57,11 +53,12 @@ def encode_pfam_ids(model_name, pfam_file):
                     encoding_matrix[row, :] = None
                 
                 # output interim timings
-                if(row %1000 ==0):
+                '''
+                if(row %10000 ==0):
                     m2 = time.time()
-                    print(f"10000 pfam items encoded in {m2-m1}s")
+                    print(f"100000 pfam items encoded in {m2-m1}s")
                     m1 = m2
-            
+                '''
                 row += 1
                 
                 if(PFAM_LIMIT != -1):
@@ -71,8 +68,8 @@ def encode_pfam_ids(model_name, pfam_file):
                     
         # save the encodings
         e1 = time.time()
-        print(f"Encodings created in {e1 - s}s. Saving to {model_name}_encoding.npy")           
-        np.save(model_name+"_encoding", encoding_matrix)
+        print(f"Encodings created in {e1 - s}s. Saving to {target_folder}{base_name}_encoding.npy")           
+        np.save(target_folder+base_name+"_encoding", encoding_matrix)
         
         e2 = time.time()
         print(f"Encodings saved. Total time {e2 - s}s." )
@@ -82,7 +79,30 @@ def encode_pfam_ids(model_name, pfam_file):
     except Exception as e:
             print(f"An error occurred: {e}")
             
+
+
+#
+# parses a directory to build up sentences to create a model
+#
+def encode_all_models(models_dir, pfam_file, target_folder):
+    # find the files in the target directory
+    #print('Searching for corpi files in:', corpus_dir)
+    file_list = glob.glob(os.path.join(models_dir, '*.model'))
     
+    # initialise
+    s = time.time()
+
+    # parse each corpus file to build up the sentences
+    for file_path in file_list:
+        with open(file_path, 'r') as file:
+            print(f'encoding using model: {file_path}')
+            encode_pfam_ids_for_model(file_path, pfam_file, target_folder)
+            
+    # time check
+    e = time.time()
+    print(f"Overall encoding time {e - s}" )
+
+
 
 #
 # Given an encoding matrix, calculate the distances bewtween pairs of pfam tokens
@@ -119,17 +139,21 @@ def test_encoding(encoding_file):
 #
 # ---------------- MAIN METHOD ---------------- 
 #
-model_name = "/Users/patrick/dev/ucl/comp0158_mscproject/models/w2v_20240805_vs10_w10"
-pfam_file = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/unique_eukaryotic_pfam.txt"
+
+# folder locations
+model_folder    = "/Users/patrick/dev/ucl/comp0158_mscproject/models/"
+pfam_file       = "/Users/patrick/dev/ucl/comp0158_mscproject/data/pfam/unique_eukaryotic_pfam.txt"
+target_folder   = "/Users/patrick/dev/ucl/comp0158_mscproject/encodings/"
 
 # encode pfam ids
 print('------------ ENCODING ---------------------')
-encoding_file = encode_pfam_ids(model_name, pfam_file)
-print()
+encode_all_models(model_folder, pfam_file, target_folder)
+
+#encoding_file = encode_pfam_ids(model_name, pfam_file)
 
 # test
 #print('--------------- TESTING ------------------')
-test_encoding(encoding_file)
+#test_encoding(encoding_file)
 
 # calcualte distances
 #print('----------- DISTANCE CALC ----------------')

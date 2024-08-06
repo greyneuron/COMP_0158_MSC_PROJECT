@@ -254,6 +254,5 @@ data/pfam/tmp/eukaryotic_pfam_smart_not_unique_*.txt
 data/pfam/non_unique_eukaryotic_pfam.txt
 models/encodings/w2v_20240729_vs10_w5_00M_encoding.npy
 models/encodings/w2v_20240729_vs10_w5_00M_encoding.txt
-models/encodings/w2v_20240805_vs10_w5_encoding.npy
-models/encodings/w2v_20240805_vs10_w5.modelencoding.npy
-models/encodings/w2v_20240805_vs10_w5encoding.npy
+*encoding.npy
+
