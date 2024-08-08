@@ -23,13 +23,16 @@ debug = False
 
 # Finds overlapping regions - and removes them, assumes the tokens
 # are in order  - thus the start of token 2 will always be after the start of token 1
-def remove_overlaps(protein_id, protein_start, protein_end, tokens):
+def remove_overlaps(protein_id, protein_length, tokens):
     # List to store overlapping intervals
     result = []
     prev_start, prev_end = None, None
     
-    #print('removing overlaps from :', protein_id, protein_start, protein_end, tokens)
+    protein_start = 1
+    protein_end = protein_length
     
+    #print('removing overlaps from :', protein_id, protein_start, protein_end, tokens)
+    num_tokens = len(tokens)
     for token in tokens:
         start, end = token[2], token[3]
         
@@ -51,7 +54,7 @@ def remove_overlaps(protein_id, protein_start, protein_end, tokens):
                 result.append(token)
                 prev_start, prev_end = start, end
     if (end < int(protein_end)):
-        result.append((100000, "STOP_GAP"))
+        result.append((1000, "STOP_GAP"))
             
     return result
 
@@ -62,47 +65,52 @@ def remove_overlaps(protein_id, protein_start, protein_end, tokens):
 # a token. These are then ordered according to their start and end poitiion and overlaps are 
 # removed. The final sentence will contain the words 'GAP' 'DISORDER' or 'PF<id>
 # EXAMPLE INPUT:
-#   A0A010PZK3:1:513:1:4|DISORDER:414:512|DISORDER:417:433|DISORDER:445:462|DISORDER:491:505|PF00722:58:224
 #
-def create_corpus_for_file(input_dir, input_file_root, input_file_ext, output_dir):
-    
-    input_file    = input_dir + '/' + input_file_root + input_file_ext
-    output_name   = re.sub("precorpus", "corpus", input_file_root)
-    output_file    = output_dir + '/' + output_name + ".txt"
+#   A0A010PZJ8:493:4:1:3|DISORDER:1:30|DISORDER:1:32|DISORDER:468:493|PF01399:335:416
+#
+def create_corpus(input_file, output_file):
     
     print('outputting corpus to:', output_file)
     
-    PARSE_LIMIT  = - 1  # number of lines to parse (useful for testing -1 means all)
-    debug = False 
+    PARSE_LIMIT  = 1000  # number of lines to parse (useful for testing -1 means all)
+    debug = False
+    
+    # init
+    num_tokens      = 0
+    num_pfam_tokens = 0
+    num_disorder_tokens = 0
 
     corpus = [] # contains a list of tuples
     of     = open(output_file, "w")
+    
+    # parse input file
     with open(input_file, 'r') as input:
         for line_number, line in enumerate(input): # one line number per protein
             
+            #print(f"\nline: {line.strip('\n')}")
+            
             # each section is split by a pipe '|' - the first sectoin contains protein metadata 
-            cols    = line.split('|')
+            cols        = line.split('|')
+            num_cols    = len(cols)
             
-            num_cols        = len(cols)
-            
-            # get protein meta data
+            # get protein meta data - this is the first token
             protein_section = cols[0].rstrip("\n")
             protein_pieces  = protein_section.split(':')
             protein_id      = protein_pieces[0]
-            protein_start   = protein_pieces[1]
-            protein_end     = protein_pieces[2]
-            num_tokens      = protein_pieces[3]
-            num_pfam_tokens     = protein_pieces[5]
-            num_disorder_tokens = protein_pieces[5]
+            protein_length  = int(protein_pieces[1])
+            num_tokens      = int(protein_pieces[2])
+            num_pfam_tokens     = int(protein_pieces[3])
+            num_disorder_tokens = int(protein_pieces[4])
             
-            if debug:
-                print('\nline:', line.rstrip('\n'), '>', num_cols -1, 'tokens')
-            #print(protein_id, protein_start, protein_end, num_pfam_tokens, num_disorder_tokens)                                              
-                                                 
+            # leave out lines with no pfam tokens
+            if( (num_pfam_tokens == 0) or (num_tokens == 0)):
+                print(f"{line} has no tokens or no pfam tokens, skipping..")
+                continue
+                                                                                      
             # tokens for the current line
             tokens = []
 
-            # extract tuples from subsequent sections (if the exist)
+            # extract tokens from subsequent sections (if they exist)
             if(num_cols > 1):
                 for i in range(1, num_cols):
                     token_elements  = cols[i].split(':')
@@ -112,27 +120,43 @@ def create_corpus_for_file(input_dir, input_file_root, input_file_ext, output_di
                     
                     tuple = (i-1, token_item, token_start, token_end)
                     tokens.append(tuple)
-                    #print(i-1, token_item, token_start, token_end)
                         
-            #print('tokens:', tokens)
+            #print(f"tokens for {protein_id}: {tokens}")
             
             # sort the tokens by start point (second item)
             sorted_tokens = sorted(tokens, key=lambda x: x[2])
             
             # remove overlapping tokens and add a START_GAP and END_GAP at the end
-            sorted_tokens_no_overlap = remove_overlaps(protein_id, protein_start, protein_end, sorted_tokens)
-
+            sorted_tokens_no_overlap = remove_overlaps(protein_id, protein_length, sorted_tokens)
             
+            #print(f"sorted no overlap for {protein_id}: {sorted_tokens_no_overlap}")
+            
+            # create sentences
             sentence = ""
             idx = 0
-            num_tokens = len(sorted_tokens_no_overlap)
+            num_tokens  = len(sorted_tokens_no_overlap)
+            last_token  = sorted_tokens_no_overlap[num_tokens - 1][1]
+            first_token = sorted_tokens_no_overlap[0][1]
+            
             for token in sorted_tokens_no_overlap:
                 sentence = sentence + token[1] + " "
-                # add gaps in between tokens
-                if (idx > 0 and idx < num_tokens -2):
+                # add gaps in between tokens except if
+                # - current token is token 0 and first token was START_GAP
+                # - current token is penultimate and last token is STOP_GAP
+                if(idx == 0):
+                    if (first_token == "START_GAP"):
+                        idx +=1
+                        continue
+                elif(idx == num_tokens-2):
+                    if (last_token == "STOP_GAP"):
+                        idx+=1
+                        continue
+                elif(idx<num_tokens-2):
                     sentence = sentence + "GAP "
-                idx += 1
-            if(debug): print('final sentence:', sentence)
+                    idx += 1
+
+                
+            print(f"sentence for {protein_id}: {sentence}")
             of.write(sentence +'\n')
                     
             if(PARSE_LIMIT != -1):            
@@ -144,43 +168,23 @@ def create_corpus_for_file(input_dir, input_file_root, input_file_ext, output_di
     return
 
 
-#
-# Loops through precorpus files 
-#
-def create_corpus_files(input_dir, output_dir):
-    corpus = []
-    try:
-        # Get a list of all files in the directory
-        files = []
-        for root, dirs, files in os.walk(input_dir):
-            for file in files:
-
-                file_path = os.path.join(root, file)
-                file_name, file_extension = os.path.splitext(file)
-                
-                
-                if ("dat" in file_extension):
-                    s = time.time()
-                    #print(f"processing : {root} {file_name} {file_extension}")
-                    
-                    corpus.append(create_corpus_for_file(root, file_name, file_extension, output_dir))
-                    
-                    e = time.time()
-                    print(f"processed : {root}/{file_name}{file_extension} time taken {e - s}" )
-        return 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return []
-
-
 #input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/input/"
-input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/output"
-output_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/corpus"
+#input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/output"
+#output_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/corpus"
 
-create_corpus_files(input_dir, output_dir)
+input_file      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/tokens_combined/uniref100_e_tokens_20240808_ALL_COMBINED_TEST.dat"
+output_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240808.dat"
+
+create_corpus(input_file, output_file)
 
 
-
+'''
+TEST1:664:1:1:0|PFAM1234:123:575    > gap from start to pfam and gap to end         : START_GAP PFAMXX STOP_GAP : pass
+TEST2:214:1:1:0|PF14273:31:213      > gap from start to pfam and tiny gap to end    : START_GAP PFAMXX STOP_GAP : pass
+TEST3:214:1:1:0|PF14273:31:214      > gap from start to pfam and no gap at end      : START_GAP PFAMXX : pass
+TEST4:100:4:2:2|PF14273:30:40|DISORDER:50:60|PF2345:65:70|DISORDER:80:100           : START_GAP PFAMXX GAP DISORDER GAP PFXXX DISORDER  : pass
+TEST5:100:4:2:2|PF14273:0:40|DISORDER:50:60|PF2345:61:70|DISORDER:80:100            : PF14273 DISORDER PF2345 DISORDER : fail
+'''
 
 
 
