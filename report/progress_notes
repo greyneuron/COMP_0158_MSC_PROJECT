@@ -19,6 +19,10 @@ Sun July 21st
 
 
 # --------------------------------------------------------------------------------
+
+scp plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry/profile_study/distance_matrix/rand_rep_distance_matrix/pfam_rep_distance_matrix.npy .
+
+
 # ssh to ecs
 export dns="ec2-63-32-44-188.eu-west-1.compute.amazonaws.com"
 ssh -i "w2v_rsa" ec2-user@$dns
@@ -368,3 +372,5 @@ Monday August 5th
   this into the W2V_PROTEIN_UREF100_E table and then generated a list of pfam ids and the sorted it and made it unique
 
 
+ssh -l plowry knuckles.cs.ucl.ac.uk
+cd /cs/research/bioinf/dbgroup/profile_study/

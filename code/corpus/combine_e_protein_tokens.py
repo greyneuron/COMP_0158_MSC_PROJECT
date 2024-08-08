@@ -23,14 +23,21 @@ import os
 #  A0A010PZP8:1:633|DISORDER:Consensus Disorder Prediction:553:598
 #  A0A010PZP8:1:633|PFAM:PF00172:16:53
 #  A0A010PZP8:1:633|PFAM:PF04082:216:322
+# Example of output
+#  protein_id:start:end:num tokens:numpfam tokens : num disorder tokens | disorder or pfam entries with start and end point
+#
+#  A0A010PZP8:1:633:5:2:3|DISORDER:50:103|DISORDER:50:109|DISORDER:553:598|PF00172:16:53|PF04082:216:322
 
 
 # IMPROVED OUTPUT WITH EUKARYOTIC PROTEIS ONLY
 '''
-A0A010PZJ8|493|DISORDER|Negative Polyelectrolyte|1|30
-A0A010PZJ8|493|DISORDER|Consensus Disorder Prediction|1|32
-A0A010PZJ8|493|DISORDER|Consensus Disorder Prediction|468|493
-A0A010PZJ8|493|PFAM|PF01399|335|416
+UNIPROT LENGTH TYPE TOKEN TOKEN START TOKEN END
+A0A010PZP8|632|DISORDER|Polar|50|103
+A0A010PZP8|632|DISORDER|Consensus Disorder Prediction|50|109
+A0A010PZP8|632|DISORDER|Consensus Disorder Prediction|553|598
+A0A010PZP8|632|PFAM|PF00172|16|53
+A0A010PZP8|632|PFAM|PF04082|216|322
+
 A0A010PZK3|512|DISORDER|Consensus Disorder Prediction|414|512
 A0A010PZK3|512|DISORDER|Polar|417|433
 A0A010PZK3|512|DISORDER|Polar|445|462
@@ -51,15 +58,13 @@ A0A010PZK7|664|PFAM|PF14033|123|575
 
 
 # does the heavy lifting of combining pfam and disorder tokens into a single line per protein
-def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
+def combine_tokens(input_file, output_file):
     
-    input_dat     = input_dir + '/' + input_file_root + input_file_ext
+    s = time.time()
     
-    output_name = re.sub("sql_output", "precorpus", input_file_root)
-    output_dat    = output_dir + '/' + output_name + ".dat"
+    print(f"Combining tokens in {input_file}, output to {output_file}")
     
-    #print('processing input:', input_dat)
-    #print('output to:', output_dat)
+    line_limit = -1 # set to non negative number to limit output
     
     last_protein    = "start"
     current_protein = ""
@@ -68,32 +73,31 @@ def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
     protein_disorder_count = 0
     protein_pfam_count = 0
     
-    of      = open(output_dat, "w")
-        
-    with open(input_dat, 'r') as file:
+    of      = open(output_file, "w")
+    
+    lines_processed = 0
+    output_lines    = 0
+    with open(input_file, 'r') as file:
         for line_number, line in enumerate(file):
+            lines_processed += 1
+            
+            if(line_limit != -1 and line_number > line_limit):
+                print(f"Hit line limit of {line_limit}, returning")
+                return
+            
             #print('line:',line.strip('\n'))
+            
             cols = line.split('|')
-            
+            #print(cols)
             if(len(cols) > 1):
-                # get key info from current line
-                protein_info = cols[0].strip('\n')
-                p_cols      = protein_info.split(':')
-            
-                token_info  = cols[1].strip('\n')
-                t_cols      = token_info.split(':')
 
-                current_protein = p_cols[0]
-                protein_start   = p_cols[1]
-                protein_end     = p_cols[2]
+                current_protein = cols[0].strip('\n')
+                protein_len     = cols[1].strip('\n')
 
-                token_type  = t_cols[0]
-                token       = t_cols[1]
-                token_start = t_cols[2]
-                token_end   = t_cols[3]
-                
-                # debug
-                # print(' -', current_protein, protein_start, protein_end, token, token_start, token_end)
+                token_type  = cols[2].strip('\n')
+                token       = cols[3].strip('\n')
+                token_start = cols[4].strip('\n')
+                token_end   = cols[5].strip('\n')
                 
                 # if the curent result line is for a new protein (ie the protine id at the start of the output has changed)
                 if (last_protein == "start" or current_protein != last_protein ):
@@ -102,15 +106,17 @@ def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
                     if(last_protein != "start"):
                         combined_line = protein_start_buffer + ':' + str(protein_pfam_count + protein_disorder_count) + ':' + str(protein_pfam_count) + ':' + str(protein_disorder_count) + protein_buffer
                         of.write(combined_line +'\n')
-                        #of.write(protein_buffer + '\n')
-                        #print('combined line :', combined_line, '\n')
+                        output_lines += 1
+                        
+                        #print('combined line :', combined_line.strip('\n'), '\n')
+                        
                         protein_buffer  = ""
                         protein_pfam_count      = 0
                         protein_disorder_count  = 0
                     
                     # otherwise, add to current buffer
                     last_protein = current_protein
-                    protein_start_buffer = ':'.join([current_protein, protein_start, protein_end])
+                    protein_start_buffer = ':'.join([current_protein, protein_len])
                 
                 # for a disorder token
                 if (token_type == "DISORDER"):
@@ -121,38 +127,12 @@ def combine_tokens(input_dir, input_file_root, input_file_ext, output_dir):
                 elif (token_type == "PFAM"):
                     protein_buffer = protein_buffer + '|' + token + ':' + token_start + ':' + token_end
                     protein_pfam_count += 1
-
-
-
-# intermediate method that simply loops through a directory of input files and, for each  file
-# calls the combine_tokens() method to combine the elements
-def combine_token_files(input_dir, output_dir):
-    try:
-        # Get a list of all files in the directory
-        files = []
-        for root, dirs, files in os.walk(input_dir):
-            for file in files:
-                #files.append(os.path.join(root, filename))
-                file_path = os.path.join(root, file)
-                file_name, file_extension = os.path.splitext(file)
-                
-                
-                if ("dat" in file_extension):
-                    s = time.time()
-                    #print(f"processing : {file_name}{file_extension}")
-                    
-                    combine_tokens(root, file_name, file_extension, output_dir)
-                    e = time.time()
-                    print(f"processed : {file_name}{file_extension} time taken {e - s}" )
-        return
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return
+    e = time.time()
+    print(f"{lines_processed} lines processed in {round(e-s,2)}s. {output_lines} lines written to {output_file}")
 
 
 # TODO: CHANGE THESE VALUES input_dir and output_dir
-#input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/input/"
-input_dir       = "/Volumes/My Passport/data/corpus/precorpus_token_dat"
-output_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/output"
+input_file       = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/tokens/uniref100_e_tokens_20240808_ALL.dat"
+output_file      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/tokens_combined/uniref100_e_tokens_20240808_ALL_COMBINED.dat"
 
-combine_token_files(input_dir, output_dir)
+combine_tokens(input_file, output_file)

@@ -6,7 +6,13 @@ import numpy as np
 import re
 
 #
-# Encodes a list of pfam ids using a supplied model
+# ----------- MAY NOT BE NEEDED -----------------------
+#
+
+#
+# Gets the encoding vector for a list of pfam entries given a model
+# Outputs the encoding to a numpy matrix - not entirely sure of the value of this
+# as the encoding is already in the model
 #
 def encode_pfam_ids_for_model(model_name, pfam_file, target_folder):
     

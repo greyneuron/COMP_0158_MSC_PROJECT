@@ -61,8 +61,7 @@ EKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDD
 SFRKIYTDLGWKFTPL
 '''
 def parse_uniref_fasta(dom_type):
-    input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniref_100only_2759-95272305_0804.fasta" # note that this file has loads of 90% entries
-    #input        = "/Volumes/My Passport/data/protein/uniref100.fasta"
+    input        = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniref_100only_2759-95272305_0804.fasta" 
     output      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/protein/uniref100only_2759-95272305_20240805.dat"
     
     # define regular expressions for UniRef format
