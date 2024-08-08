@@ -133,32 +133,81 @@ def create_corpus(input_file, output_file):
             
             # create sentences
             sentence = ""
-            idx = 0
-            num_tokens  = len(sorted_tokens_no_overlap)
+            pos = 0
+            num_sorted_tokens  = len(sorted_tokens_no_overlap)
             last_token  = sorted_tokens_no_overlap[num_tokens - 1][1]
             first_token = sorted_tokens_no_overlap[0][1]
             
+            if(num_sorted_tokens <= 1):
+                print('NOT ENOUGH TOKENS IN THIS LINE')
+                continue
+            
+            print(sorted_tokens_no_overlap)
+            result = []
+            for i in range(len(sorted_tokens_no_overlap)):
+                result.append(sorted_tokens_no_overlap[i][1])
+                # Check if we should add "GAP"
+                if i < len(sorted_tokens_no_overlap) - 1:  # Check if not the last word
+                    if sorted_tokens_no_overlap[i][1] != "START_GAP" and sorted_tokens_no_overlap[i+1][1] != "STOP_GAP":
+                        if(sorted_tokens_no_overlap[i+1][2] > sorted_tokens_no_overlap[i][3] + 1):
+                            result.append("GAP")
+            print(f"sentence for {protein_id}: {result} \n")
+        
+            '''
+            # have at least 2 tokens
             for token in sorted_tokens_no_overlap:
-                sentence = sentence + token[1] + " "
-                # add gaps in between tokens except if
-                # - current token is token 0 and first token was START_GAP
-                # - current token is penultimate and last token is STOP_GAP
-                if(idx == 0):
-                    if (first_token == "START_GAP"):
-                        idx +=1
+                # first token - add in the token whatever
+                if(pos == 0):
+                    sentence = sentence + token[1] + " "
+                    # add in a gap if there are more tokens left 
+                    if (num_sorted_tokens == 2):
+                        if((first_token != "START_GAP") and (last_token != "STOP_GAP")):
+                            sentence = sentence + "GAP "
+                    else:
+                        if(first_token != "START_GAP"):
+                            sentence = sentence + "GAP "
+                    pos +=1
+                    continue
+                if(pos == 1):
+                    sentence = sentence + token[1] + " "
+                    if (num_sorted_tokens == 2):
+                        pos +=1
                         continue
-                elif(idx == num_tokens-2):
+                    
+                            
+                        
+                        
+                # second token - add the token and add a gap only if the first_token wasn't START_GAP
+                elif(idx == 1):
+                    sentence = sentence + token[1] + " "
+                    if ((first_token != "START_GAP") and (idx < num_sorted_tokens -1)):
+                        sentence = sentence + "GAP "
+                    idx +=1
+                    continue
+                
+                # if second last token
+                elif(idx == num_sorted_tokens -2):
                     if (last_token == "STOP_GAP"):
                         idx+=1
                         continue
-                elif(idx<num_tokens-2):
+                    else:
+                        if(num_tokens > 1):
+                            sentence = sentence + "GAP "
+                            idx+=1
+                            continue
+                # if neither first nor second last
+                elif(idx > 0 and idx < num_sorted_tokens -1 and num_tokens > 1):
                     sentence = sentence + "GAP "
                     idx += 1
-
+                else:
+                    idx +=1
+                
+                
                 
             print(f"sentence for {protein_id}: {sentence}")
             of.write(sentence +'\n')
-                    
+            '''
+            
             if(PARSE_LIMIT != -1):            
                 if(line_number == PARSE_LIMIT):
                     print('\n------', PARSE_LIMIT, 'lines processed, terminating.')
@@ -167,10 +216,6 @@ def create_corpus(input_file, output_file):
     of.close()
     return
 
-
-#input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/input/"
-#input_dir       = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/output"
-#output_dir      = "/Users/patrick/dev/ucl/comp0158_mscproject/code/corpus/corpus"
 
 input_file      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/tokens_combined/uniref100_e_tokens_20240808_ALL_COMBINED_TEST.dat"
 output_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240808.dat"
@@ -182,8 +227,19 @@ create_corpus(input_file, output_file)
 TEST1:664:1:1:0|PFAM1234:123:575    > gap from start to pfam and gap to end         : START_GAP PFAMXX STOP_GAP : pass
 TEST2:214:1:1:0|PF14273:31:213      > gap from start to pfam and tiny gap to end    : START_GAP PFAMXX STOP_GAP : pass
 TEST3:214:1:1:0|PF14273:31:214      > gap from start to pfam and no gap at end      : START_GAP PFAMXX : pass
+
 TEST4:100:4:2:2|PF14273:30:40|DISORDER:50:60|PF2345:65:70|DISORDER:80:100           : START_GAP PFAMXX GAP DISORDER GAP PFXXX DISORDER  : pass
-TEST5:100:4:2:2|PF14273:0:40|DISORDER:50:60|PF2345:61:70|DISORDER:80:100            : PF14273 DISORDER PF2345 DISORDER : fail
+TEST5:100:4:2:2|PF14273:0:40|DISORDER:50:60|PF2345:61:70|DISORDER:80:100            : PF14273 GAP DISORDER PF2345 DISORDER : fail
+
+
+
+
+TEST1:664:1:1:0|PFAM1234:123:575
+TEST2:214:1:1:0|PF14273:31:213
+TEST3:214:1:1:0|PF14273:31:214
+TEST4:100:4:2:2|PF14273:30:40|DISORDER:50:60|PF2345:65:70|DISORDER:80:100
+TEST5:100:4:2:2|PF14273:0:40|DISORDER:50:60|PF2345:61:70|DISORDER:80:100
+
 '''
 
 
