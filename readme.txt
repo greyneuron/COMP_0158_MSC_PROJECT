@@ -219,5 +219,18 @@ THis uses uniref100_e_tokens_20240808_ALL_COMBINED.dat to create a sentence per 
 
 Details
 input	:	uniref100_e_tokens_20240808_ALL_COMBINED.dat
-output	:	
-code	: 	
+output	:	uniref100_e_corpus_20240808.txt
+			uniref100_e_corpus_20240808_ignored.txt (for proteins with no pfam entries)
+code	: 	create_corpus.py
+
+
+Stats:
+- input file: 	uniref100_e_tokens_20240808_ALL_COMBINED.dat	:	50249678 lines
+- output	:	uniref100_e_corpus_20240808.txt					:	45909435 lines
+				uniref100_e_corpus_20240808_ignored.txt			: 	 4340243 lines
+- Corpus created in 232.38s
+
+
+------------------------------------------------------------------
+			 Creating Models
+------------------------------------------------------------------

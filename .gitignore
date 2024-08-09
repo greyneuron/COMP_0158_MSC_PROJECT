@@ -263,3 +263,5 @@ data/analysis/w2v_20240805_vs10_w5_dist.npy
 data/analysis/w2v_20240805_vs10_w10_dist.npy
 data/corpus/corpus_july.zip
 report/~$MSc Dissertation - W2V.pptx
+data/corpus/uniref100_e_corpus_20240808_ignored.txt
+data/corpus/uniref100_e_corpus_20240808.txt
