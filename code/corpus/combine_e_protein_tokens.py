@@ -6,30 +6,12 @@ import os
 
 # ------ Background------ 
 #
-# This script is step 3 of 5 to create sentences to form a corpus for word2vec
+# This script was step 3 of 5 to create sentences to form a corpus for word2vec (as described in db_approach/extract_tokens_from_db.sh) but has since been modified
+# but it still does broadly the same thing - it combines multiple protein token entries across mutiple lines into a single line per protein. The precursor to this
+# step can be found in code/data_prep/duckdb_dat_loader.ipynb in method extract_eukaryotic_tokens()
 #
-# 5 steps:
-# 1. extract_tokens_from_db.sh : Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
-# 2. convert_db_tokens_dat.sh  : Converts each of the txt outputs from step 1 into a dat file of pipe separated tokens.
-#    Each line consists of information about a token and its corresponding uniprot id
-# 3. combine_db_tokens_dat.py : Converts each lines (one per token) into a single line per protein (each line with multiple tokens for that protein plus metadata)
-# 4. create_corpus.py : Creates a sentence for each protein with GAP DISORDER and PFAM 'words', orders the tokens and removes overlaps
-# 5. run_word2vec.py  : Calls word2vec with the corpus
-#
-# This script combines multiple protein token entries into a single line per protein.
-# Example of input:
-#  A0A010PZP8:1:633|DISORDER:Polar:50:103
-#  A0A010PZP8:1:633|DISORDER:Consensus Disorder Prediction:50:109
-#  A0A010PZP8:1:633|DISORDER:Consensus Disorder Prediction:553:598
-#  A0A010PZP8:1:633|PFAM:PF00172:16:53
-#  A0A010PZP8:1:633|PFAM:PF04082:216:322
-# Example of output
-#  protein_id:start:end:num tokens:numpfam tokens : num disorder tokens | disorder or pfam entries with start and end point
-#
-#  A0A010PZP8:1:633:5:2:3|DISORDER:50:103|DISORDER:50:109|DISORDER:553:598|PF00172:16:53|PF04082:216:322
+# Example of input - multiple lines per protein
 
-
-# IMPROVED OUTPUT WITH EUKARYOTIC PROTEIS ONLY
 '''
 UNIPROT LENGTH TYPE TOKEN TOKEN START TOKEN END
 A0A010PZP8|632|DISORDER|Polar|50|103
@@ -46,14 +28,11 @@ A0A010PZK3|512|PFAM|PF00722|58|224
 A0A010PZK7|664|PFAM|PF14033|123|575
 '''
 
-
-# Example of output:
-#  protein_id:start:end:num tokens:numpfam tokens : num disorder tokens | disorder or pfam entries with start and end point
-#
-#  A0A010PZP8:1:633:5:2:3|DISORDER:50:103|DISORDER:50:109|DISORDER:553:598|PF00172:16:53|PF04082:216:322
-
-
-
+# Example of output - one line per protein including metadata at the start:
+'''
+protein_id:start:end:num tokens:numpfam tokens : num disorder tokens | disorder or pfam entries with start and end point
+A0A010PZP8:1:633:5:2:3|DISORDER:50:103|DISORDER:50:109|DISORDER:553:598|PF00172:16:53|PF04082:216:322
+'''
 
 
 

@@ -4,7 +4,7 @@ import sys
 
 #
 # DID NOT USE THIS SCRIPT IN THE END - IT WAS FAR QUICKER TO USE A DIRECT SQL QUERY AND BYPASS
-# THE PYTHON MYSQL CONNECTOR LIBRARY - SEE 'extract_tokens_from_db.sh'
+# THE PYTHON MYSQL CONNECTOR LIBRARY - FOR SOME REASON THE MYSQL CONNECTOR WAS INCREDINBLY SLOW
 #
 #
 # This set of scripts was used to extract all tokens and protein information from the 
@@ -488,7 +488,7 @@ def create_pre_corpus(from_record, chunk_size, iteration):
 def test_query():
     print('Test query')
     try:
-        con = get_connection()
+        con = mysql.connector.connect(user='admin', password='w0rd2v3c', host=db_host, database='W2V')
         if (con != None):
             cursor = con.cursor()
             query = ("DESCRIBE W2V_PROTEIN")

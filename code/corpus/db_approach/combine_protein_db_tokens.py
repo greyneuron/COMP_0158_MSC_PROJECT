@@ -4,7 +4,10 @@ import csv
 import time
 import os
 
-# ------ Background------ 
+# ------------------------- DEPRECATED ------------------------- 
+# Note that the approach in this script has been been superceded by a much faster approach as described in extract_tokens_from_db.sh
+# --------------------------------------------------------------
+
 #
 # This script is step 3 of 5 to create sentences to form a corpus for word2vec
 #

@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# ------ Background------ 
-#
-# This script is step 2 of 5 to create sentences to form a corpus for word2vec
-#
+
+# ------------------------- DEPRECATED ------------------------- 
+# Note that the approach in this script has been been superceded by a much faster approach as described in extract_tokens_from_db.sh
+# --------------------------------------------------------------
+
 # 5 steps:
 # 1. extract_tokens_from_db.sh : Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
 # 2. convert_db_tokens_dat.sh  : Converts each of the txt outputs from step 1 into a dat file of pipe separated tokens.

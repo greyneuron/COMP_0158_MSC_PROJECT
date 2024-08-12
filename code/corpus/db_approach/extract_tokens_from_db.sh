@@ -1,10 +1,25 @@
 #!/bin/bash
 
-# ------ Background------ 
 #
-# This script is step 1 of 5 to create sentences to form a corpus for word2vec
+# DEPRECATED
 #
-# 5 steps:
+# ------ Background - Note that the approach in this script has been been superceded by a much faster approach read below ------ 
+#
+# HISTORY
+# This script is the first of 5 that were originally used to create sentences to form a corpus for word2vec. The tokens (pfam and disorder) were stored in
+# W2V_PROTEIN and W2V_TOKEN respectively and it was necessary to combine all tokens based upon eukaryotic protein id (note that the tokens at this point
+# are not for eukayotic prooteins only - because they have come from protien2ipr.dat and extra.xml). 
+# The solution ws to simply join across the 2 tables....
+# ... except that this proved very difficult to achieve on a mac. At one point it was taking an hour to join over only 1M proteins, yet this had to be 
+# done for 78M - ie 78hours!! To speed thins up I created a databse in AWS and ran this script from an EC2 instance connected to it, managing to perform
+# the task in about 12 hours.
+#
+# IMPROVED APPROACH
+# The improved approach which I discovered later is available in duckdb_dat_loader whci was able to do the same thing in under an hour - the key difference
+# was to add a counter into the protein table from 0....78M and then query based upon that counter rahter than using the LIMIT and OFFSET apprach here.
+#
+#
+# INITIAL APPROACH - 5 STEPS:
 # 1. extract_tokens_from_db.sh : Runs sql from the mysql command line and pipes it to an output file : sql_output_<startprotein>_<iteration>.txt
 # 2. convert_db_tokens_dat.sh  : Converts each of the txt outputs from step 1 into a dat file of pipe separated tokens.
 #    Each line consists of information about a token and its corresponding uniprot id
