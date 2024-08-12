@@ -33,17 +33,77 @@ debug = False
 # 5. run_word2vec.py  : Calls word2vec with the corpus
 
 
+#
+# This method processes an ordered list of tokens (order by their start position) and removes overlaps.
+#
+# Rules:
+# - First token always added
+# - If there is an overlap and the current token is pfam and previous was disorder, the previous disorder is removed and the current pfam added
+# - If there is an overlap and the current token is pfam and previous was pfam as well, the current pfam token is ignored
+# - If there is an overlap and the current token is disorder and previous was disorder as well, the current disorder token is ignored
+#
+def reorder_tokens(tokens, debug=False):
+    reordered_tokens        = []
+    prev_start, prev_end    = None, None
+    last_token_added        = None
+
+    for token in tokens:
+        #print(f"processing {token}")
+        token_start = token[2]
+        token_end   = token[3]
+        if token[1].startswith('PF'):
+            token_type = "pfam"
+        elif token[1].startswith('DISORDER'):
+            token_type = "disorder"
+        
+        # start with first token
+        if prev_start is None:
+            prev_start, prev_end = token_start, token_end
+            reordered_tokens.append(token)
+            if(debug): print(f"adding {token[1]} at {token[2]}.")
+            last_token_added = token
+        
+        # if there is overlap - don't add the current item unless its pfam and the previos was disorder    
+        else:
+            if token_start <= prev_end:
+                if token_type == "pfam":
+                    if(debug): print(f"overlapping pfam token {token_start} with last added {last_token_added}")
+                    # replace previous if it was a disorder token
+                    if last_token_added[1].startswith('DISORDER'):
+                        if(debug): print(f"removing {last_token_added[1]} at {last_token_added[2]}.")
+                        if(debug): print(f"adding {token[1]} at {token[2]}.")
+                        reordered_tokens[len(reordered_tokens) -1] = token
+                        prev_start, prev_end = token_start, token_end
+                        last_token_added = token
+                else:
+                    if(debug): print(f"overlapping token {token[1]} at pos {token_start} with last added {last_token_added}, not adding.")
+            else:
+                # No overlap, add the item to the result list
+                if(debug): print(f"adding {token[1]} at {token[2]}.")
+                reordered_tokens.append(token)
+                last_token_added = token
+                prev_start, prev_end = token_start, token_end
+    return reordered_tokens
+    
+    
+    
+    
+    
+    
+
+
+
+
 # Finds overlapping regions - and removes them, assumes the tokens
 # are in order  - thus the start of token 2 will always be after the start of token 1
-def remove_overlaps(protein_id, protein_length, tokens):
+def add_bookends(protein_id, protein_length, tokens, debug=False):
     # List to store overlapping intervals
     result = []
     prev_start, prev_end = None, None
     
     protein_start = 1
     protein_end = protein_length
-    
-    #print('removing overlaps from :', protein_id, protein_start, protein_end, tokens)
+
     num_tokens = len(tokens)
     for token in tokens:
         start, end = token[2], token[3]
@@ -58,9 +118,8 @@ def remove_overlaps(protein_id, protein_length, tokens):
         # if there is overlap - don't add this item (for now)    
         else:
             if start <= prev_end:
-                #print('--------------> overlap : ', start , end)
-                # Overlapping interval found, skip adding this item
-                continue
+                if token[1].startswith('PF'):
+                    continue
             else:
                 # No overlap, add the item to the result list
                 result.append(token)
@@ -81,7 +140,7 @@ def remove_overlaps(protein_id, protein_length, tokens):
 # EXAMPLE OUTPUT:
 #       START_GAP DISORDER GAP PF01399 GAP DISORDER
 #
-def create_corpus(input_file, output_file, ignore_file):
+def create_corpus(input_file, output_file, ignore_file, debug=False):
     
     print('outputting corpus to:', output_file)
     
@@ -137,33 +196,37 @@ def create_corpus(input_file, output_file, ignore_file):
                     tuple = (i-1, token_item, token_start, token_end)
                     tokens.append(tuple)
             
-            # sort tokens and remove overlaps
-            sorted_tokens = sorted(tokens, key=lambda x: x[2])
-            sorted_tokens_no_overlap = remove_overlaps(protein_id, protein_length, sorted_tokens)
+            # sort tokens and remove overlaps - i imagine there is a smarter way to do this
+            sorted_tokens               = sorted(tokens, key=lambda x: x[2]) # order by start position
+            reordered_tokens            = reorder_tokens(sorted_tokens)      # reorder by replacing overlaps
+            
+            bookended_tokens    = add_bookends(protein_id, protein_length, reordered_tokens)
             
             # debug
-            #print(sorted_tokens_no_overlap)
+            if(debug): print(f"sorted tokens    : {sorted_tokens}")
+            if(debug): print(f"combined tokens  : {reordered_tokens}")
+            if(debug): print(f"with bookends    : {bookended_tokens}")
             
             # double check that we have enough tokens for a sentence!
-            num_sorted_tokens  = len(sorted_tokens_no_overlap)
+            num_sorted_tokens  = len(bookended_tokens)
             if(num_sorted_tokens <= 1):
-                #print(f"NOT ENOUGH TOKENS FOR THIS PROTEIN: {protein_id}. line: {line}")
+                print(f"NOT ENOUGH TOKENS FOR THIS PROTEIN: {protein_id}. line: {line}")
                 ignoref.write(protein_id + '|' + " SKIP_TOO_SMALL |" + line + '\n')
                 continue
             
-            # create sentences- add gaps where appropriate - basically in between any words
+            # create sentences - add gaps where appropriate - basically in between any words
             # as long as the first word or last word isn;t also a gap (which is possible) ad
             # thenwe'd have two GAP tokens. NOte that I have differentiated between gaps that appear
             # as the first token or last token - not sure it will make any difference
             sentence = ""
             for i in range(num_sorted_tokens):
-                sentence += sorted_tokens_no_overlap[i][1]
+                sentence += bookended_tokens[i][1]
                 # Check if we should add "GAP"
-                if i < len(sorted_tokens_no_overlap) - 1:  # Check if not the last word
-                    if sorted_tokens_no_overlap[i][1] != "START_GAP " and sorted_tokens_no_overlap[i+1][1] != " STOP_GAP":
-                        if(sorted_tokens_no_overlap[i+1][2] > sorted_tokens_no_overlap[i][3] + 1):
+                if i < len(bookended_tokens) - 1:  # Check if not the last word
+                    if bookended_tokens[i][1] != "START_GAP " and bookended_tokens[i+1][1] != " STOP_GAP":
+                        if(bookended_tokens[i+1][2] > bookended_tokens[i][3] + 1):
                             sentence += " GAP "
-                        elif(sorted_tokens_no_overlap[i+1][2] == sorted_tokens_no_overlap[i][3] + 1):
+                        elif(bookended_tokens[i+1][2] == bookended_tokens[i][3] + 1):
                             sentence += " "
             # DEBUG
             #print(f"sentence for {protein_id}: {sentence}")
@@ -184,8 +247,8 @@ def create_corpus(input_file, output_file, ignore_file):
 #
 # ------------------------------------------------------------------------------------------------------
 input_file      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/tokens_combined/uniref100_e_tokens_20240808_ALL_COMBINED.dat"
-output_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240808.txt"
-ignore_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240808_ignored.txt"
+output_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240810.txt"
+ignore_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240810_ignored.txt"
 
 s = time.time()
 create_corpus(input_file, output_file, ignore_file)
@@ -197,24 +260,23 @@ print(f"Corpus created in {round(e-s,2)}s; ouput to {output_file}")
 
 
 '''
-EXAMPLES
+EXAMPLES FOR TESTING
 
 TEST1:664:1:1:0|PFAM1234:123:575
 TEST2:214:1:1:0|PF14273:31:213
 TEST3:214:1:1:0|PF14273:31:214
 TEST4:100:4:2:2|PF14273:30:40|DISORDER:50:60|PF2345:65:70|DISORDER:80:100
 TEST5:100:4:2:2|PF14273:0:40|DISORDER:50:60|PF2345:61:70|DISORDER:80:100
-TEST6:100:4:2:2|PF14273:1:40|DISORDER:50:60|PF2345:62:70|DISORDER:80:99
+TEST6:100:4:2:2|PF14273:1:40|DISORDER:50:60|PF2345:62:70|DISORDER:80:98
 TEST7:100:4:0:4|DISORDER:0:40|DISORDER:50:60|DISORDER:51:60|DISORDER:80:100
+TEST8:106:4:1:3|DISORDER:38:106|DISORDER:55:72|PF00424:60:70|PF00424:42:91
+TEST9:106:4:1:3|DISORDER:38:106|DISORDER:55:72|PF00424:60:70|PF00425:61:91
+TEST10:106:4:1:3|DISORDER:38:106|DISORDER:55:72|PF00424:60:70|PF00425:71:91
+A0A2A9PFF7:106:4:1:3|DISORDER:38:106|DISORDER:55:72|DISORDER:83:106|PF00424:42:91
+A0A0A2VYH2:310:1:1:0|PF01278:29:310
+D5J701:86:1:1:0|PF01766:3:84
 
 
-sentence for TEST1: START_GAP PFAM1234 STOP_GAP                                     : correct
-sentence for TEST2: START_GAP PF14273 STOP_GAP                                      : correct
-sentence for TEST3: START_GAP PF14273                                               : correct
-sentence for TEST4: START_GAP PF14273 GAP DISORDER GAP PF2345 GAP DISORDER          : correct
-sentence for TEST5: PF14273 GAP DISORDER PF2345 GAP DISORDER                        : correct
-sentence for TEST6: START_GAP PF14273 GAP DISORDER GAP PF2345 GAP DISORDER STOP_GAP : correct
-Test 7 excluded as has no pfam tokens                                               : correct
 
 '''
 
