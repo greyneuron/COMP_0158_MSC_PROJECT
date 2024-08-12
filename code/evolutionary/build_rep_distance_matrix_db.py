@@ -46,6 +46,7 @@ def build_distance_matrix():
     return similarity_matrix
 
 similarity_matrix = None
+
 if os.path.isfile("non-normalised_similarity_matrix.npy"):
     print("Reading in matrix")
     similarity_matrix = np.load("non-normalised_similarity_matrix.npy")
@@ -64,8 +65,10 @@ np.fill_diagonal(similarity_matrix, (np.max(similarity_matrix)*1.2))
 # print(np.min(similarity_matrix))
 # print(np.max(similarity_matrix))
 dom_list = get_dom_list()
-normalized_similarity_matrix = (similarity_matrix-np.min(similarity_matrix))/(np.max(similarity_matrix)-np.min(similarity_matrix))
+normalized_similarity_matrix = (similarity_matrix - np.min(similarity_matrix)) / (np.max(similarity_matrix)-np.min(similarity_matrix))
+
 flipped_sim_matrix = 1.0 - normalized_similarity_matrix
+
 # now save out distance matrix and dom_list
 with open("hmm_rep_distance_matrix.npy", "wb") as f:
     np.save(f, flipped_sim_matrix)
