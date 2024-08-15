@@ -372,5 +372,29 @@ Monday August 5th
   this into the W2V_PROTEIN_UREF100_E table and then generated a list of pfam ids and the sorted it and made it unique
 
 
+Wed August 7th
+- Met with Daniel (I was in office, he was online)
+- Downloaded evo files
+
+Thurs Aug 8th - Friday 9th
+- Decided to review all code up to this point as don;t want to start on analysis with issues
+- Decided to load all UNiref100 proteins as opposed to TrEMBL as really want as much data as possible
+
+Sat 10th, Sun 10th
+- Ran a number of models and noticed really low vocab numbers - did a lot of analysis, tracing pfam ids all the way through
+  from protein2ipr through to my token file, through to the corpus
+- Found a small bug in corpurs creation but fixed it
+- Reason for small vocabs was due to the min_count parameter for word2vec which removes a lot of words
+- Reran a number of models with varying min_count sizes
+
+Mon 11th, Tues 12th, Wed 14th (am)
+- Wrote and debugged mantel test
+- Tried to run on DB' matrix but fond an issue - there is a defect that he is fixing and needs to rerun his matrices
+- Also found issue with my mantel test - I was not reordering the rows and columns properly to reflect the source matrix. fixed wed am
+- DB has created a smal subset (as of Tue 12th pm) - have downloaded and will test with them
+
+
 ssh -l plowry knuckles.cs.ucl.ac.uk
 cd /cs/research/bioinf/dbgroup/profile_study/
+
+scp plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry/rand_rep_distance_matrix.npy .
