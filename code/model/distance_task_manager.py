@@ -45,16 +45,20 @@ if __name__ == '__main__':
     distance_tasks = W2V_DistanceTasks(model_dir, distances_dir)
     
     # unpack a evolutionary distaance binary
-    db_file = '/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/evolutionary/rand_rep_distance_matrix.npy'
-    distance_tasks.extract_npy_files(db_file)
+    #db_file = '/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/evolutionary/rand_rep_distance_matrix.npy'
+    #distance_tasks.extract_npy_files(db_file)
     
     w2v_model_name          = 'w2v_20240814_v5_w5_mc1'
     evo_dist_matrix_name    = 'rand_rep_distance_matrix.npy'
     evo_vector_name         = 'rand_rep_distance_vector.npy'
     
-    
     #distance_tasks.create_distance_matrix(w2v_model_name)
+    #distance_tasks.w2v_evo_mantel_test(w2v_model_name, evo_dist_matrix_name, evo_vector_name)
+    
+    #distance_tasks.test_reorder_2()
+    
     distance_tasks.w2v_evo_mantel_test(w2v_model_name, evo_dist_matrix_name, evo_vector_name)
+    
     
     
     
