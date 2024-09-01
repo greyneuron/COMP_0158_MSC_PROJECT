@@ -55,13 +55,13 @@ else
     . /home/plowry/w2v-env/bin/activate
 fi
 
-# call python
-#python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 3 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 5 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 8 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 13 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 21 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 44 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+# call python - ech of these will do 7 vector sizes
+python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 3 --ws 3 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 3 --ws 5 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 3 --ws 8 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 3 --ws 13 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 3 --ws 21 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 3 --ws 44 --corpus_file="${corpus_file}" --output_dir="$output_dir"
 
 date
 

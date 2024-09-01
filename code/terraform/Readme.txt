@@ -1,5 +1,7 @@
-1. VPC > EC2 (main and securoty group)
-    - Run 'terraform apply' on the vpc module
+1. Create VPC - only needed once
+    - % cd terraform/w2v_vpc
+    - % terraform apply
+
     - Take the outputs, for example
     
     vpc_id = "vpc-01ede11f2f41296af"
@@ -10,19 +12,124 @@
 
 
 
-2. EBS > EC2
-    - Run 'teraform apply' on the ebs module
-    - Take the following outputs and paste the id into ec2 aws_volume_attachment
+2. Create EBS instance
+    - % cd terraform/w2v_ebs
+    - % terraform apply
+
+    - Take the outputs, e.g:
+
+        - For the EC2 instance you need the volume id:
 
         > id=vol-05f27d34631d31dd8
 
-    - Subnet groups
-        > Paste 2 ids into RDS
-    
-    - Security group
-        > paste into RDS (public sec grp)
+    - For RDS you need the subnet groups and securoty groups )not sure if this actually works)
+        > Paste 2 subnet ids into RDS
+        > paste securoty group into RDS (public sec grp)
 
 3. EC2
+
+
+
+--- Connect to EC2 ---
+Take the dns name from the output: ec2-3-248-193-3.eu-west-1.compute.amazonaws.com
+
+export dns="ec2-3-248-193-3.eu-west-1.compute.amazonaws.com"
+
+ssh -i "w2v_rsa_key_03" ec2-user@$dns
+
+WelcometoParadise
+
+--- Format disk : ONLY DO once
+lsblk -f
+sudo mkfs -t xfs /dev/nvme1n1
+
+sudo mkdir /word2vec
+sudo mount /dev/nvme1n1 /word2vec
+
+
+----------- Create venv
+sudo yum install pip
+
+cd /word2vec
+sudo mkdir code
+sudo mkdir models
+sudo chmod 777 -R models
+sudo chmod 777 -R code
+sudo python3 -m venv w2v-env
+
+sudo chmod 777 -R w2v-env
+
+. w2v-env/bin/activate
+sudo pip install gensim
+sudo pip install numpy
+
+
+exit ssh
+
+-- copy code across
+
+scp -i "w2v_rsa_key_04" ../../../hpc/w2v_batch.py ec2-user@$dns:/word2vec/code
+scp -i "w2v_rsa_key_04" ../../../hpc/run_w2v_02.sh ec2-user@$dns:/word2vec/code
+scp -i "w2v_rsa_key_04" ../../../hpc/word2vec_sentences.pkl ec2-user@$dns:/word2vec/code
+
+
+-- ssh back in
+ssh -i "w2v_rsa_key_04" ec2-user@$dns
+
+
+cd /word2vec
+. w2v-env/bin/activate
+sudo chmod 777 -R code
+sudo chmod 777 -R models
+
+cd code
+sudo ./run_w2v_04.sh aws
+
+
+
+clear
+
+
+
+
+
+------------------------------------------------
+-- Subsequent EC2
+------------------------------------------------
+
+1. Change EC2 name in variables.tf
+2. terraform apply
+
+export dns="ec2-3-248-193-3.eu-west-1.compute.amazonaws.com"
+ssh -i "w2v_rsa" ec2-user@$dns
+
+cd /word2vec
+. w2v-env/bin/activate
+
+cd code
+sudo ./run_w2v_03.sh aws
+
+
+
+
+
+
+
+--- Timings
+t3.2xlarge.....
+                mac     t3.2xlarge ($0.36 ph)   
+load pickle     246s    175.54s
+
+mac:    w2v_model_create_20240831 | 1 | 5 | 3 | 1 | 1238.38
+mac:    w2v_model_create_20240831 | 1 | 10 | 3 | 1 | 1319.78
+mac:    w2v_model_create_20240831 | 1 | 25 | 3 | 1 | 1283.5
+mac:    w2v_model_create_20240831 | 1 | 50 | 3 | 1 | 1257.68
+
+mac     w2v_model_create_20240831 | 1 | 1 | 3 | 10 | 1902.61 | 698.72
+
+
+aws 02  w2v_model_create_20240831 | 1 | 5 | 5 | 1 | 1604.3
+
 
 
 4. RDS

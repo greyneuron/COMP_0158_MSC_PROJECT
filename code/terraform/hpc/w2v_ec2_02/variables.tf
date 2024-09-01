@@ -64,7 +64,7 @@ variable "db_port" {
 variable "key_pair_name" {
   description = "key_pair_name"
   type        = string
-  default     = "word2vec_key_pair"
+  default     = "word2vec_key_pair_02"
 }
 
 variable "file_name" {
@@ -72,12 +72,3 @@ variable "file_name" {
   type        = string
   default     = "word2vec_key_pair_file"
 }
-
-# ------------- for vpc ------------
-
-
-# variable "cidr_block" {
-#  description = "CIDR Block"
-#  type        = string
-#  default     = "10.0.0.0/16"
-# }

@@ -428,3 +428,7 @@ scp model_tasks.py plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry
 cd to data/corpus
 
 scp uniref100_e_corpus_20240810.txt plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry/word2vec/data/corpus
+
+
+
+qrsh -l tmem=5G, h_vmem=5G, h_rt=3600

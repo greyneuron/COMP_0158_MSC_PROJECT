@@ -275,3 +275,8 @@ data/models/vocab/w2v_20240811_v5_w5_mc3_dist.npy
 *.gz
 *pfams.txt
 
+*w2v_rsa*
+code/hpc/w2v_rsa.pub
+*.pkl
+
+*.tfstate.backup

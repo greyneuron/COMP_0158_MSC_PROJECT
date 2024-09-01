@@ -14,8 +14,7 @@ provider "aws" {
 }
 
 # --------------------------------------------
-resource "aws_instance" "w2v-ec2-server" {
-  #ami                    = "ami-08ca6be1dc85b0e84"
+resource "aws_instance" "w2v-ec2-server-01" {
   ami                    = "ami-0b995c42184e99f98"
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.w2v_security_group.id]
@@ -41,8 +40,8 @@ resource "aws_instance" "w2v-ec2-server" {
 
 resource "aws_volume_attachment" "w2v_ebs_att" {
   device_name = "/dev/sdh"
-  volume_id   = "vol-0065a63dcc61ab199"
-  instance_id = aws_instance.w2v-ec2-server.id
+  volume_id   = "vol-0429dca8da2092239"
+  instance_id = aws_instance.w2v-ec2-server-01.id
 }
 
 

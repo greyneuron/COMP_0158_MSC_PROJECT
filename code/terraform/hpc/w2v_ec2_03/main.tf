@@ -14,11 +14,10 @@ provider "aws" {
 }
 
 # --------------------------------------------
-resource "aws_instance" "w2v-ec2-server" {
-  #ami                    = "ami-08ca6be1dc85b0e84"
+resource "aws_instance" "w2v-ec2-server-03" {
   ami                    = "ami-0b995c42184e99f98"
   instance_type          = var.instance_type
-  vpc_security_group_ids = [aws_security_group.w2v_security_group.id]
+  vpc_security_group_ids = [aws_security_group.w2v_security_group_03.id]
   availability_zone      = var.availabilty_zone
 
   # key-pair for this ec2
@@ -41,8 +40,8 @@ resource "aws_instance" "w2v-ec2-server" {
 
 resource "aws_volume_attachment" "w2v_ebs_att" {
   device_name = "/dev/sdh"
-  volume_id   = "vol-0065a63dcc61ab199"
-  instance_id = aws_instance.w2v-ec2-server.id
+  volume_id   = "vol-04e37eccf94c8679a"
+  instance_id = aws_instance.w2v-ec2-server-03.id
 }
 
 
@@ -65,7 +64,7 @@ resource "aws_volume_attachment" "w2v_ebs_att" {
 
 resource "aws_key_pair" "w2v_ssh_key" {
   key_name   = var.key_pair_name
-  public_key = file("w2v_rsa.pub")
+  public_key = file("w2v_rsa_key_03.pub")
 }
 
 

@@ -38,12 +38,12 @@ platform=$1
 if [[ "$platform" == "mac" ]]; then 
     echo "setting mac parameters"
     corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/hpc/word2vec_sentences.pkl'
-    output_dir='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/hpc/'
+    output_dir='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/hpc/models/'
     code_dir="/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/hpc"
 elif [[ "$platform" == "aws" ]]; then 
     echo "setting aws parameters"
     corpus_file='/word2vec/code/word2vec_sentences.pkl'
-    output_dir='/word2vec/models/'
+    output_dir='/word2vec/models/01'
     code_dir="/word2vec/code"
 else
     echo "setting hpc parameters"
@@ -56,12 +56,8 @@ else
 fi
 
 # call python
-#python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 3 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 5 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 8 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 13 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 21 --corpus_file="${corpus_file}" --output_dir="$output_dir"
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 44 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 3 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+
 
 date
 

@@ -90,12 +90,12 @@ MySQL [(none)]> use W2V;
 sudo yum install pip
 
 # create venv - should be already on the ebs so only need to do this once
-cd /data/dev/ucl
+cd /word2vec
 python3 -m venv w2v-env
 
 # ths worked without changing shell
 cd /data/dev/ucl
-. w2venv/bin/activate
+. w2v-env/bin/activate
 
 export endpoint=
 mysql -h $endpoint -P 3306 -u admin -p

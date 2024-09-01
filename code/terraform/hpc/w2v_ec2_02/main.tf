@@ -14,15 +14,14 @@ provider "aws" {
 }
 
 # --------------------------------------------
-resource "aws_instance" "w2v-ec2-server" {
-  #ami                    = "ami-08ca6be1dc85b0e84"
+resource "aws_instance" "w2v-ec2-server-02" {
   ami                    = "ami-0b995c42184e99f98"
   instance_type          = var.instance_type
-  vpc_security_group_ids = [aws_security_group.w2v_security_group.id]
+  vpc_security_group_ids = [aws_security_group.w2v_security_group_02.id]
   availability_zone      = var.availabilty_zone
 
   # key-pair for this ec2
-  key_name = aws_key_pair.w2v_ssh_key.key_name
+  key_name = aws_key_pair.w2v_rsa_key_02.key_name
 
   # need this for ssh
   associate_public_ip_address = true
@@ -41,8 +40,8 @@ resource "aws_instance" "w2v-ec2-server" {
 
 resource "aws_volume_attachment" "w2v_ebs_att" {
   device_name = "/dev/sdh"
-  volume_id   = "vol-0065a63dcc61ab199"
-  instance_id = aws_instance.w2v-ec2-server.id
+  volume_id   = "vol-0b0bb55bdd648cb84"
+  instance_id = aws_instance.w2v-ec2-server-02.id
 }
 
 
@@ -63,9 +62,9 @@ resource "aws_volume_attachment" "w2v_ebs_att" {
 # When Terraform has run, find the instance name from the terraform output and connect this way:
 # % ssh -i "w2v_rsa" ec2-user@ec2-3-251-68-222.eu-west-1.compute.amazonaws.com
 
-resource "aws_key_pair" "w2v_ssh_key" {
+resource "aws_key_pair" "w2v_rsa_key_02" {
   key_name   = var.key_pair_name
-  public_key = file("w2v_rsa.pub")
+  public_key = file("w2v_rsa_key_02.pub")
 }
 
 
