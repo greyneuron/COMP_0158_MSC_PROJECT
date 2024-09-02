@@ -211,8 +211,8 @@ if __name__ == '__main__':
     # Change these params for each batch
     #
     # -----------------------------------------------------------------
-    #vector_sizes    = [25, 50]
-    vector_sizes    = [5, 10, 25, 50, 75, 100]
+    vector_sizes    = [75, 100]
+    #vector_sizes    = [5, 10, 25, 50, 75, 100]
 
     
     #

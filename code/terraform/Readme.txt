@@ -91,6 +91,13 @@ clear
 
 
 
+# to save space - zip up models and copy them into s3
+aws configure
+find . -name "*model" | xargs zip models_aws03_mc5.zip
+aws s3 cp models_aws03_mc5.zip s3://w2vmodels/models_aws03_mc5.zip
+find . -name "*model" -delete
+
+
 
 
 ------------------------------------------------

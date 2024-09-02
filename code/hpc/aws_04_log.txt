@@ -236,3 +236,56 @@ Model w2v_20240901_sg1_mc8_w13_v100.model has a vocab of 12191
 min dist: 0.0. max dist: 15.303175926208496
 distance matrix computed for model: w2v_20240901_sg1_mc8_w13_v100.model. num words: 12191. time: 615.87s. success: 74304145 fail: 0 output: /word2vec/models/w2v_20240901_sg1_mc8_w13_v100.model_dist_normalised.npy
 Sun Sep  1 19:23:03 UTC 2024
+
+Mon Sep  2 09:00:14 UTC 2024
+setting aws parameters
+
+
+---------------------------------------------------
+       ** Word2Vec Model Batch **          
+---------------------------------------------------
+loading sentences from pickle file: /word2vec/code/word2vec_sentences.pkl
+sentences loaded in 301.53 seconds.
+creating model /word2vec/models/w2v_20240902_sg1_mc8_w21_v5.model.
+w2v_model_create_20240902 | 1 | 8 | 21 | 5 | 1883.86
+creating distance matrix
+Creating distance matrix for model w2v_20240902_sg1_mc8_w21_v5.model.
+Model w2v_20240902_sg1_mc8_w21_v5.model has a vocab of 12191
+min dist: 0.0. max dist: 33.659912109375
+distance matrix computed for model: w2v_20240902_sg1_mc8_w21_v5.model. num words: 12191. time: 425.75s. success: 74304145 fail: 0 output: /word2vec/models/w2v_20240902_sg1_mc8_w21_v5.model_dist_normalised.npy
+creating model /word2vec/models/w2v_20240902_sg1_mc8_w21_v10.model.
+w2v_model_create_20240902 | 1 | 8 | 21 | 10 | 2003.24
+creating distance matrix
+Creating distance matrix for model w2v_20240902_sg1_mc8_w21_v10.model.
+Model w2v_20240902_sg1_mc8_w21_v10.model has a vocab of 12191
+min dist: 0.0. max dist: 25.147268295288086
+distance matrix computed for model: w2v_20240902_sg1_mc8_w21_v10.model. num words: 12191. time: 450.68s. success: 74304145 fail: 0 output: /word2vec/models/w2v_20240902_sg1_mc8_w21_v10.model_dist_normalised.npy
+creating model /word2vec/models/w2v_20240902_sg1_mc8_w21_v25.model.
+w2v_model_create_20240902 | 1 | 8 | 21 | 25 | 2250.12
+creating distance matrix
+Creating distance matrix for model w2v_20240902_sg1_mc8_w21_v25.model.
+Model w2v_20240902_sg1_mc8_w21_v25.model has a vocab of 12191
+min dist: 0.0. max dist: 19.338319778442383
+distance matrix computed for model: w2v_20240902_sg1_mc8_w21_v25.model. num words: 12191. time: 465.51s. success: 74304145 fail: 0 output: /word2vec/models/w2v_20240902_sg1_mc8_w21_v25.model_dist_normalised.npy
+creating model /word2vec/models/w2v_20240902_sg1_mc8_w21_v50.model.
+w2v_model_create_20240902 | 1 | 8 | 21 | 50 | 2113.36
+creating distance matrix
+Creating distance matrix for model w2v_20240902_sg1_mc8_w21_v50.model.
+Model w2v_20240902_sg1_mc8_w21_v50.model has a vocab of 12191
+min dist: 0.0. max dist: 16.58194351196289
+distance matrix computed for model: w2v_20240902_sg1_mc8_w21_v50.model. num words: 12191. time: 440.51s. success: 74304145 fail: 0 output: /word2vec/models/w2v_20240902_sg1_mc8_w21_v50.model_dist_normalised.npy
+creating model /word2vec/models/w2v_20240902_sg1_mc8_w21_v75.model.
+w2v_model_create_20240902 | 1 | 8 | 21 | 75 | 2093.06
+creating distance matrix
+Creating distance matrix for model w2v_20240902_sg1_mc8_w21_v75.model.
+Model w2v_20240902_sg1_mc8_w21_v75.model has a vocab of 12191
+min dist: 0.0. max dist: 16.553199768066406
+distance matrix computed for model: w2v_20240902_sg1_mc8_w21_v75.model. num words: 12191. time: 498.95s. success: 74304145 fail: 0 output: /word2vec/models/w2v_20240902_sg1_mc8_w21_v75.model_dist_normalised.npy
+creating model /word2vec/models/w2v_20240902_sg1_mc8_w21_v100.model.
+w2v_model_create_20240902 | 1 | 8 | 21 | 100 | 1989.32
+creating distance matrix
+Creating distance matrix for model w2v_20240902_sg1_mc8_w21_v100.model.
+Model w2v_20240902_sg1_mc8_w21_v100.model has a vocab of 12191
+min dist: 0.0. max dist: 16.01740264892578
+distance matrix computed for model: w2v_20240902_sg1_mc8_w21_v100.model. num words: 12191. time: 495.23s. success: 74304145 fail: 0 output: /word2vec/models/w2v_20240902_sg1_mc8_w21_v100.model_dist_normalised.npy
+Mon Sep  2 13:18:38 UTC 2024

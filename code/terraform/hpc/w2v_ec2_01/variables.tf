@@ -30,7 +30,7 @@ variable "availabilty_zone" {
 variable "instance_name" {
   description = "EC2 W2V01"
   type        = string
-  default     = "Word2Vec EC2 Server"
+  default     = "Word2Vec EC2 Server 01"
 }
 
 
