@@ -416,11 +416,13 @@ Word2Vec parameters: https://radimrehurek.com/gensim/models/word2vec.html
 sg = 0 : bag of words (this is the default)
 sg = 1 : skipgram
 
+--------
+HCP
+--------
+
 # Log on to gateway
 ssh -l plowry knuckles.cs.ucl.ac.uk --> works
 ssh plowry@morecambe.cs.ucl.ac.uk   --> works
-
-
 
 scp model_task_manager.py plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry/word2vec/code
 scp model_tasks.py plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry/word2vec/code
@@ -430,5 +432,41 @@ cd to data/corpus
 scp uniref100_e_corpus_20240810.txt plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry/word2vec/data/corpus
 
 
-
 qrsh -l tmem=5G, h_vmem=5G, h_rt=3600
+
+-------------------------------
+Sat 31st August - Mon 2nd Sep
+-------------------------------
+- Gave up on HPC as memory requirements mean ti was taking too long to schedule - reverted to AWS instead
+- Created 4 AWS EC2 instances and 4 separate EBS (tried to share EBS originally but it seemed to be slowing things down)
+
+- See 
+    code/terraform/hpc - created 4 instances
+    code/hpc : code to execute on AWS
+
+- See code/terraform/Readme.txt to see how I set these up
+
+- ONce models and distances created:
+
+# copy models to s3
+cd /word2vec/models
+aws configure
+
+find . -name "*model" 
+find . -name "*model" | wc -l
+
+find . -name "*model" | xargs zip models_aws04_mc8.zip
+aws s3 cp models_aws04_mc8.zip s3://w2vmodels/models_aws04_mc8.zip
+find . -name "*model" -delete
+
+
+--------------------------
+# get data from knuckles to local
+
+scp plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry/rand_rep_distance_matrix.npy .
+
+# find files and move to a directory
+find skip_mc1 -name "*npy" -exec mv {} eucdist_mc1 \;
+
+# list files in a directory and count them
+for i in 3 5 8 13 21; do echo $i; find . -name "*mc8*w$i*model" | wc -l; find . -name "*mc5*w$i*model"; done

@@ -49,13 +49,15 @@ def get_array_sentences(corpus_file, limit=-1):
     return sentences
 
 #
-# Use gensim to read sentences from a file
+# Use gensim to read sentences from a file - not used
 #
+'''
 def get_line_sentences(corpus_file):
     print(f"creating sentences using Line Sentence from: {corpus_file}")
     sentences = LineSentence(datapath(corpus_file))
     print(sentences)
     return sentences
+'''
 
 #
 # gets the vocab for a model - returns a python list and a numpy array
@@ -211,8 +213,8 @@ if __name__ == '__main__':
     # Change these params for each batch
     #
     # -----------------------------------------------------------------
-    vector_sizes    = [75, 100]
-    #vector_sizes    = [5, 10, 25, 50, 75, 100]
+    #vector_sizes    = [75, 100]
+    vector_sizes    = [5, 10, 25, 50, 75, 100]
 
     
     #
@@ -235,7 +237,7 @@ if __name__ == '__main__':
         e = time.time()
         time_taken=str(round(e-s, 2))
         
-        print(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken}")
+        #print(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken}")
         
         #
         #--------------------------- create dist -----------------------
@@ -246,6 +248,7 @@ if __name__ == '__main__':
         e2 = time.time()
         matrix_time_taken=str(round(e2-e, 2))
         
+        print(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken} | {matrix_time_taken}")
         lf.write(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken} | {matrix_time_taken}\n")
         
     
