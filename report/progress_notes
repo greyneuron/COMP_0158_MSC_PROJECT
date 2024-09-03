@@ -472,4 +472,6 @@ find skip_mc1 -name "*npy" -exec mv {} eucdist_mc1 \;
 for i in 3 5 8 13 21; do echo $i; find . -name "*mc8*w$i*npy" | wc -l; find . -name "*mc5*w$i*model"; done \;
 
 # individually zip up all files names *.npy
-find . -name "*npy" -exec gzip {}; done \;
+find . -name "*npy" -exec gzip {} \;
+
+find . -name "*model" -exec gzip {} \;
