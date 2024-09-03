@@ -469,4 +469,7 @@ scp plowry@knuckles.cs.ucl.ac.uk:/cs/student/msc/dsml/2023/plowry/rand_rep_dista
 find skip_mc1 -name "*npy" -exec mv {} eucdist_mc1 \;
 
 # list files in a directory and count them
-for i in 3 5 8 13 21; do echo $i; find . -name "*mc8*w$i*model" | wc -l; find . -name "*mc5*w$i*model"; done
+for i in 3 5 8 13 21; do echo $i; find . -name "*mc8*w$i*npy" | wc -l; find . -name "*mc5*w$i*model"; done \;
+
+# individually zip up all files names *.npy
+find . -name "*npy" -exec gzip {}; done \;

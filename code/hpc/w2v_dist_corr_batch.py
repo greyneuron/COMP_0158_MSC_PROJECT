@@ -239,6 +239,8 @@ if __name__ == '__main__':
     # comparison
     # skbio mantel test with 50 permutations complete in 42.88s corr : 0.027683471717661834 p_val : 0.0196078431372549 num: 15030.
     # skbio mantel test with DistanceMatrices and 50 permutations complete in 26.14s corr : 0.027683471717661834 p_val : 0.0196078431372549 num: 15030.
+    # skbio mantel test with unordered DistanceMatrices and 50 permutations complete in 34.17s corr : 0.027683471717661834 p_val : 0.0196078431372549 num: 15030.
+    
     # custom mantel test with 50 permutations complete in 565.19s corr : 0.027683471717690037 p_val : 0.0 num: 15030.
 
     # -------------- run mantel test as is --------------
@@ -275,6 +277,18 @@ if __name__ == '__main__':
         e = time.time()
         print(f"skbio mantel test with DistanceMatrices and {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
     '''
+    
+    # -------------- run mantel but convert to DistMatrix first without having removed non-common entries
+    print(f"Not bothering to remove non-common, see if skbio does it for me as per docs")
+    w2v_dist_matrix = DistanceMatrix(w2v_matrix_sym, ids=w2v_vector_np)
+    evo_dist_matrix = DistanceMatrix(evo_matrix, ids=evo_vector_np)
+
+    for n in num_permutations:
+        print(f"Starting skbio mantel test with unordered DistanceMatrices and {n} permutations")
+        s= time.time()
+        corr_coeff, p_value, num = mantel(w2v_dist_matrix, evo_dist_matrix, permutations=n, strict=False)
+        e = time.time()
+        print(f"skbio mantel test with unordered DistanceMatrices and {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
     
     
     print('********** comparison complete ***********')
