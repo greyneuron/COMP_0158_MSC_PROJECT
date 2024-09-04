@@ -297,3 +297,37 @@ Model w2v_20240901_sg1_mc5_w44_v100.model has a vocab of 12806
 min dist: 0.0. max dist: 18.27602195739746
 distance matrix computed for model: w2v_20240901_sg1_mc5_w44_v100.model. num words: 12806. time: 560.7s. success: 81990415 fail: 0 output: /word2vec/models/w2v_20240901_sg1_mc5_w44_v100.model_dist_normalised.npy
 Sun Sep  1 18:19:49 UTC 2024
+
+
+Tue Sep  3 16:49:03 UTC 2024
+setting aws parameters
+
+
+---------------------------------------------------
+       ** Word2Vec Model Batch **          
+---------------------------------------------------
+loading sentences from pickle file: /word2vec/code/word2vec_sentences.pkl
+sentences loaded in 246.45 seconds.
+creating model /word2vec/models/w2v_20240903_sg1_mc8_w44_v5.model.
+w2v_model_create_20240903 | 1 | 8 | 44 | 5 | 1803.65
+creating model /word2vec/models/w2v_20240903_sg1_mc8_w44_v10.model.
+w2v_model_create_20240903 | 1 | 8 | 44 | 10 | 1724.52
+creating model /word2vec/models/w2v_20240903_sg1_mc8_w44_v25.model.
+w2v_model_create_20240903 | 1 | 8 | 44 | 25 | 1862.62
+creating model /word2vec/models/w2v_20240903_sg1_mc8_w44_v50.model.
+w2v_model_create_20240903 | 1 | 8 | 44 | 50 | 1893.76
+
+
+
+Tue Sep  3 19:21:45 UTC 2024
+setting aws parameters
+
+
+---------------------------------------------------
+       ** Word2Vec Model Batch **          
+---------------------------------------------------
+loading sentences from pickle file: /word2vec/code/word2vec_sentences.pkl
+sentences loaded in 348.01 seconds.
+creating model /word2vec/models/w2v_20240903_sg1_mc8_w44_v75.model.
+w2v_model_create_20240903 | 1 | 8 | 44 | 75 | 1931.52
+Tue Sep  3 20:01:00 UTC 2024

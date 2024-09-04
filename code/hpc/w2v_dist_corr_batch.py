@@ -18,23 +18,41 @@ from scipy.stats import pearsonr
 #
 # make a matrix symmetrical - my word2vec matrices are not
 #
+'''
 def make_symmetrical(matrix):
     matrix_sym = matrix + matrix.T - np.diag(matrix.diagonal())
     return matrix_sym
-    
+''' 
 
 
 # ------------------- GET MATRICES AND VECTORS FROM NPY FILE ----------------------------
+
 
 #
 # extract vocab vector and matrix from npy file
 #                
 def extract_matrix_vector_files(npy_file_name):
-    npy_f              = open(npy_file_name, 'rb')
-    dist_matrix         = np.load(npy_f) #loads first array
+    print(f"loading {npy_file_name}")
+    npy_f               = open(npy_file_name, 'rb')
+    dist_matrix         = np.load(npy_f) #loads first matrix
+    dist_matrix_norm    = np.load(npy_f) #loads second matrix
     vocab_vector        = np.load(npy_f)
     
-    return vocab_vector, dist_matrix
+    return vocab_vector, dist_matrix, dist_matrix_norm
+
+
+
+#
+# extract vocab vector and matrix from npy file
+#                
+def extract_evo_matrix_vector_files(npy_file_name):
+    print(f"loading {npy_file_name}")
+    npy_f               = open(npy_file_name, 'rb')
+    dist_matrix_norm    = np.load(npy_f) #loads second matrix
+    vocab_vector        = np.load(npy_f)
+    
+    return vocab_vector, dist_matrix_norm
+
 
 
 
@@ -164,34 +182,54 @@ def custom_mantel_test(source_matrix, target_matrix, permutations=10):
 if __name__ == '__main__':
     
     current_date    = datetime.now().strftime('%Y%m%d')
+    s1 = time.time()
     
     print('\n')
     print('---------------------------------------------------')
     print('    ** Word2Vec Distance Correlations Batch **     ')
     print('---------------------------------------------------')
     
-    parser = argparse.ArgumentParser(prog='Word2Vec Distance Correlation', description='Establishes correlation between two distances matrices')
+    parser = argparse.ArgumentParser(prog='Word2Vec Distance Creation', description='Establishes correlation between two distances matrices')
     
-    parser.add_argument("--source_file", help="full path to npy file containing source matrix and vector", required=False)
-    parser.add_argument("--target_file", help="full path to npy file containing target matrix and vector", required=False)
-    parser.add_argument("--output_dir", help="output directory for los", required=False)
-
+    parser.add_argument("--w2v_file", help="full path to w2v npy file (must have 2 matrices and a vector)", required=True)
+    parser.add_argument("--base_name", help="base name of distance file - for logging", required=True)
+    parser.add_argument("--evo_file", help="full path to evo npy file (must have 2 matrices and a vector)", required=True)
+    parser.add_argument("--output_dir", help="output directory for distance matrices", required=True)
+    
     
     # ------------------------------------- extract arguments from shell script -------------------------------------
-    args            = parser.parse_args()
-    source_file     = args.source_file
-    target_file     = args.target_file
-    output_dir      = args.output_dir
+    args         = parser.parse_args()
+    w2v_file     = args.w2v_file
+    evo_file     = args.evo_file
+    output_dir   = args.output_dir
+    base_name    = args.base_name
 
-    # extract files
-    print(f"extracting matrices and vectors from .npy files:\n{source_file}\n{target_file}")
-    s = time.time()
-    w2v_vector, w2v_matrix = extract_matrix_vector_files(source_file)
-    evo_vector, evo_matrix = extract_matrix_vector_files(target_file)
-    e = time.time()
-    print(f"files extracted. time taken: {round(e-s,2)}s\n")
     
-
+    # -------------------------------------------------- extract files ---------------------------------------------
+    s = time.time()
+    print(f"Processing distances for model :{base_name}\n")
+    print(f"Extracting matrices and vectors from .npy files:\n{w2v_file}\n{evo_file}")
+    w2v_vector, w2v_matrix, w2v_matrix_norm = extract_matrix_vector_files(w2v_file)
+    evo_vector_raw, evo_matrix_norm = extract_evo_matrix_vector_files(evo_file)
+    
+    # need to extract pfam ids from evo vector as they are in this format : K1SVA3.1/50-86|PF02829
+    evo_vector = extract_evo_pfam_ids(evo_vector_raw)
+    
+    # need to convert vocab vector to numpy for comparison
+    w2v_vector_np = np.array(w2v_vector)
+    evo_vector_np = np.array(evo_vector)
+    e = time.time()
+    print(f"Matrices extracted and converted. time taken: {round(e-s,2)}s\n")
+    
+    
+    # NOTE THAT THE PREVIOUS CODE WAS REMOVED ON 4 SEPT AT ABOUT 1700 AS I DETERMINED I COULD COMPARE 
+    # MUCH WUICKER USING skbio LIBRARIES - THE OLD CODE WAS DEVELOPED IN run_word2vec.ipynb AND IS
+    # STILL THERE
+    
+    
+    
+    
+    '''
     # ------------------ make w2v matrix symmetrical and convert vector to numpy array --------------------------
     print('making w2v distance matrix symmetrical')
     s = time.time()
@@ -199,8 +237,9 @@ if __name__ == '__main__':
     w2v_vector_np = np.array(w2v_vector)
     e = time.time()
     print(f"make w2v symmetrical. time taken: {round(e-s,2)}s\n")
+    '''
     
-    
+    '''
     # -------------------------------- also get pfam ids from evo vector (need regexp) --------------------------
     evo_pfam_ids  = extract_evo_pfam_ids(evo_vector)
     evo_vector_np = np.array(evo_pfam_ids)
@@ -235,7 +274,8 @@ if __name__ == '__main__':
     assert w2v_common_matrix.shape == common_evo_matrix.shape, "Both matrices must have the same shape."
     assert w2v_common_matrix.shape[0] == w2v_common_matrix.shape[1], "Word2Vec matrix must be square."
     assert common_evo_matrix.shape[0] == common_evo_matrix.shape[1], "Evo matrix must be square."
-
+    '''
+    
     # comparison
     # skbio mantel test with 50 permutations complete in 42.88s corr : 0.027683471717661834 p_val : 0.0196078431372549 num: 15030.
     # skbio mantel test with DistanceMatrices and 50 permutations complete in 26.14s corr : 0.027683471717661834 p_val : 0.0196078431372549 num: 15030.
@@ -243,18 +283,19 @@ if __name__ == '__main__':
     
     # custom mantel test with 50 permutations complete in 565.19s corr : 0.027683471717690037 p_val : 0.0 num: 15030.
 
-    # -------------- run mantel test as is --------------
-    
     #num_permutations = [25,50,100]
     num_permutations = [50]
 
+    # -------------- run mantel test as is --------------
+    '''
     for n in num_permutations:
         print(f"Starting skbio mantel test with {n} permutations")
         s= time.time()
         corr_coeff, p_value, num = mantel(w2v_common_matrix, common_evo_matrix, permutations=n)
         e = time.time()
         print(f"skbio mantel test with {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
-        
+    '''
+    
     # -------------- run custom mantel test -------------- don;t bother - takes too long
     '''
     for n in num_permutations:
@@ -278,17 +319,30 @@ if __name__ == '__main__':
         print(f"skbio mantel test with DistanceMatrices and {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
     '''
     
+    
+    #
     # -------------- run mantel but convert to DistMatrix first without having removed non-common entries
-    print(f"Not bothering to remove non-common, see if skbio does it for me as per docs")
-    w2v_dist_matrix = DistanceMatrix(w2v_matrix_sym, ids=w2v_vector_np)
-    evo_dist_matrix = DistanceMatrix(evo_matrix, ids=evo_vector_np)
+    #
+    print(f"Not removing non-common, see if skbio does it for me as per docs")
+    
+    # need to convert to float
+    print(f"Converting matrices to float to avoid mantel test error!")
+    w2v_matrix_norm_fl = w2v_matrix_norm.astype(np.float64)
+    #evo_matrix_norm_fl = evo_matrix_norm.astype(np.float64)
+    
+    print(f"Creating Distance Matrices...")
+    w2v_dist_matrix = DistanceMatrix(w2v_matrix_norm_fl, ids=w2v_vector_np)
+    evo_dist_matrix = DistanceMatrix(evo_matrix_norm, ids=evo_vector_np)
+    
+    print(f"Distance Matrix created")
 
     for n in num_permutations:
         print(f"Starting skbio mantel test with unordered DistanceMatrices and {n} permutations")
         s= time.time()
         corr_coeff, p_value, num = mantel(w2v_dist_matrix, evo_dist_matrix, permutations=n, strict=False)
         e = time.time()
-        print(f"skbio mantel test with unordered DistanceMatrices and {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
+        print(f"Mantel test with unordered DistanceMatrices and {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
     
+    e1 = time.time()
     
-    print('********** comparison complete ***********')
+    print(f"{current_date} | mantel | {base_name} | {round(e1 - s1, 2)} | {corr_coeff} | {p_value} | {num}")
