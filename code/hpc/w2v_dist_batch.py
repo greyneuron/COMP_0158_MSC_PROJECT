@@ -42,9 +42,9 @@ def create_distance_matrices(output_dir, model_file):
     cosine_distance_matrix = cosine_distances(word_vectors.vectors, word_vectors.vectors)
 
     # normalise
-    print('normalising')
     non_diag_elements   = cosine_distance_matrix[np.triu_indices_from(cosine_distance_matrix, k=1)]
     max_value           = np.max(np.abs(non_diag_elements))
+    print(f"normalising with max value: {max_value}")
     cosine_distance_matrix_norm = cosine_distance_matrix / max_value
     np.fill_diagonal(cosine_distance_matrix_norm, 0)
     
@@ -52,14 +52,14 @@ def create_distance_matrices(output_dir, model_file):
     print('calculating euclidean distances')
     euclidean_distance_matrix = euclidean_distances(word_vectors.vectors, word_vectors.vectors)
     # normalise
-    print('normalising')
     non_diag_elements   = euclidean_distance_matrix[np.triu_indices_from(euclidean_distance_matrix, k=1)]
     max_value           = np.max(np.abs(non_diag_elements))
+    print(f"normalising with max value: {max_value}")
     euclidean_distance_matrix_norm = euclidean_distance_matrix / max_value
     np.fill_diagonal(euclidean_distance_matrix_norm, 0)
     
     e = time.time()
-    print(f"distance matrices computed for model: {model_name}. time: {round(e-s,2)}s.")
+    print(f"distance matrices computed for model: {model_name}. vocab size: {len(vocab)} euclidean shape: {euclidean_distance_matrix_norm.shape} cosine shape: {cosine_distance_matrix_norm.shape} time: {round(e-s,2)}s.")
     
     
     # normalized_dist_matrix = (distance_matrix - min_dist) / (max_dist - min_dist)

@@ -471,7 +471,19 @@ find skip_mc1 -name "*npy" -exec mv {} eucdist_mc1 \;
 # list files in a directory and count them
 for i in 3 5 8 13 21; do echo $i; find . -name "*mc8*w$i*npy" | wc -l; find . -name "*mc5*w$i*model"; done
 
-for j in 1 3 5 8; do for i in 3 5 8 13 21; do echo mc_$j w$i; find skip_mc$j -name "*mc$j*w$i*model" | wc -l; done; done
+for j in 1 3 5 8; do for i in 3 5 8 13 21; do echo mc_$j w$i; find skip_mc$j -name "*mc$j*w$idist_*npy" | wc -l; done; done
+
+for j in 1 3 5 8; do for i in 3 5 8 13 21 44; do echo mc_$j w$i; find . -name "*mc$j*w$idist_*npy" | wc -l; done; done
+
+
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; grep "*mc$mc" 20240904_dist_matrix_mantel.txt | wc -l; done; done
+
+
+
+
+for j in 3; do for i in 3 5 8 13 21; do find . -name "*mc$j*w$idist_*npy"; done; done
+
+
 
 for j in 1 3 5 8; do for i in 3 5 8 13 21; do echo $i $j; done; done
 

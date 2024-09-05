@@ -187,15 +187,15 @@ if __name__ == '__main__':
     print('\n')
     print('---------------------------------------------------')
     print('    ** Word2Vec Distance Correlations Batch **     ')
-    print('---------------------------------------------------')
+    print('---------------------------------------------------\n')
     
+    
+    # ------------------------------------- define arguments -------------------------------------
     parser = argparse.ArgumentParser(prog='Word2Vec Distance Creation', description='Establishes correlation between two distances matrices')
-    
     parser.add_argument("--w2v_file", help="full path to w2v npy file (must have 2 matrices and a vector)", required=True)
     parser.add_argument("--base_name", help="base name of distance file - for logging", required=True)
     parser.add_argument("--evo_file", help="full path to evo npy file (must have 2 matrices and a vector)", required=True)
     parser.add_argument("--output_dir", help="output directory for distance matrices", required=True)
-    
     
     # ------------------------------------- extract arguments from shell script -------------------------------------
     args         = parser.parse_args()
@@ -203,146 +203,56 @@ if __name__ == '__main__':
     evo_file     = args.evo_file
     output_dir   = args.output_dir
     base_name    = args.base_name
-
     
     # -------------------------------------------------- extract files ---------------------------------------------
     s = time.time()
-    print(f"Processing distances for model :{base_name}\n")
-    print(f"Extracting matrices and vectors from .npy files:\n{w2v_file}\n{evo_file}")
+    print(f"\nProcessing distances for model :{base_name}............\n")
+    print(f"Extracting matrices and vectors from .npy files:\n - {w2v_file}\n - {evo_file}")
     w2v_vector, w2v_matrix, w2v_matrix_norm = extract_matrix_vector_files(w2v_file)
     evo_vector_raw, evo_matrix_norm = extract_evo_matrix_vector_files(evo_file)
     
     # need to extract pfam ids from evo vector as they are in this format : K1SVA3.1/50-86|PF02829
     evo_vector = extract_evo_pfam_ids(evo_vector_raw)
     
-    # need to convert vocab vector to numpy for comparison
+    # need to convert vocab vector to numpy for mantel test
     w2v_vector_np = np.array(w2v_vector)
     evo_vector_np = np.array(evo_vector)
     e = time.time()
-    print(f"Matrices extracted and converted. time taken: {round(e-s,2)}s\n")
+    #print(f"Matrices extracted and converted. time taken: {round(e-s,2)}s\n")
     
-    
-    # NOTE THAT THE PREVIOUS CODE WAS REMOVED ON 4 SEPT AT ABOUT 1700 AS I DETERMINED I COULD COMPARE 
-    # MUCH WUICKER USING skbio LIBRARIES - THE OLD CODE WAS DEVELOPED IN run_word2vec.ipynb AND IS
-    # STILL THERE
-    
-    
-    
-    
-    '''
-    # ------------------ make w2v matrix symmetrical and convert vector to numpy array --------------------------
-    print('making w2v distance matrix symmetrical')
-    s = time.time()
-    w2v_matrix_sym = make_symmetrical(w2v_matrix)
-    w2v_vector_np = np.array(w2v_vector)
-    e = time.time()
-    print(f"make w2v symmetrical. time taken: {round(e-s,2)}s\n")
-    '''
-    
-    '''
-    # -------------------------------- also get pfam ids from evo vector (need regexp) --------------------------
-    evo_pfam_ids  = extract_evo_pfam_ids(evo_vector)
-    evo_vector_np = np.array(evo_pfam_ids)
-    
-
-    # -------------------------------- output metrics --------------------------
-    print(f"w2v vector (np) length: {w2v_vector_np.size} w2v matrix shape :{w2v_matrix_sym.shape}")
-    print(f"evo vector (np) length: {evo_vector_np.size} evo dist matrix shape: {evo_matrix.shape}\n")
-    
-    
-    #
-    # ----------------------------------- reorder the matrices as they have different entries -------------------
-    #
-    print('reducing evo matrix to contain entries common to w2v matrix....')
-    s = time.time()
-    found_items, missing_items, common_evo_vector, common_evo_matrix = reduce_matrix(w2v_vector_np, evo_vector_np, evo_matrix)
-    e = time.time()
-    print(f"reduce evo matrix. time :{round(e-s,2)}s items found :{len(found_items)} items missing (in w2v not in evo):{len(missing_items)}.")
-    print(f"common evo vector length :{common_evo_vector.size} common evo matrix shape :{common_evo_matrix.shape}.\n")
-
-    # missing items are still in the source vector and matrix so need to remove them as well
-    print('reducing w2v matrix to remove entries not found in evo matrix....')
-    s = time.time()
-    w2v_common_vector_np = np.array(found_items)
-    found_items, missing_items, w2v_common_vector, w2v_common_matrix = reduce_matrix(w2v_common_vector_np, w2v_vector_np, w2v_matrix_sym)
-    e = time.time()
-    print(f"reduce w2v matrix. time taken: {round(e-s,2)}s items found :{len(found_items)} items missing :{len(missing_items)}.")
-
-    print(f"commmon w2v vector length :{w2v_common_vector.size} common w2v matrix shape :{w2v_common_matrix.shape}.\n")
-
-    # Ensure that the matrices are square and of the same size
-    assert w2v_common_matrix.shape == common_evo_matrix.shape, "Both matrices must have the same shape."
-    assert w2v_common_matrix.shape[0] == w2v_common_matrix.shape[1], "Word2Vec matrix must be square."
-    assert common_evo_matrix.shape[0] == common_evo_matrix.shape[1], "Evo matrix must be square."
-    '''
-    
-    # comparison
+    # NOTE THAT THE PREVIOUS CODE WAS REMOVED ON 4 SEPT AT ABOUT 1700 AS I DETERMINED I COULD COMPARE MUCH
+    # QUICKER USING skbio LIBRARIES - THE OLD CODE WAS DEVELOPED IN run_word2vec.ipynb AND IS STILL THERE
+    # -- COMPARISON
     # skbio mantel test with 50 permutations complete in 42.88s corr : 0.027683471717661834 p_val : 0.0196078431372549 num: 15030.
     # skbio mantel test with DistanceMatrices and 50 permutations complete in 26.14s corr : 0.027683471717661834 p_val : 0.0196078431372549 num: 15030.
     # skbio mantel test with unordered DistanceMatrices and 50 permutations complete in 34.17s corr : 0.027683471717661834 p_val : 0.0196078431372549 num: 15030.
-    
     # custom mantel test with 50 permutations complete in 565.19s corr : 0.027683471717690037 p_val : 0.0 num: 15030.
 
     #num_permutations = [25,50,100]
     num_permutations = [50]
-
-    # -------------- run mantel test as is --------------
-    '''
-    for n in num_permutations:
-        print(f"Starting skbio mantel test with {n} permutations")
-        s= time.time()
-        corr_coeff, p_value, num = mantel(w2v_common_matrix, common_evo_matrix, permutations=n)
-        e = time.time()
-        print(f"skbio mantel test with {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
-    '''
-    
-    # -------------- run custom mantel test -------------- don;t bother - takes too long
-    '''
-    for n in num_permutations:
-        print(f"Starting custom mantel test with {n} permutations")
-        s= time.time()
-        corr_coeff, p_value = custom_mantel_test(w2v_common_matrix, common_evo_matrix, permutations=n)
-        e = time.time()
-        print(f"custom mantel test with {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
-    '''    
-    
-    # -------------- run mantel but convert to DistMatrix first -------------- gives same results if matrices already ordered properly
-    '''
-    w2v_dist_matrix = DistanceMatrix(w2v_common_matrix, ids=w2v_common_vector)
-    evo_dist_matrix = DistanceMatrix(common_evo_matrix, ids=common_evo_vector)
-
-    for n in num_permutations:
-        print(f"Starting skbio mantel test with DistanceMatrices and {n} permutations")
-        s= time.time()
-        corr_coeff, p_value, num = mantel(w2v_dist_matrix, evo_dist_matrix, permutations=n)
-        e = time.time()
-        print(f"skbio mantel test with DistanceMatrices and {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
-    '''
-    
+    log_file = output_dir+current_date+"_dist_matrix_mantel.txt"
+    lf = open(log_file, "a")
     
     #
     # -------------- run mantel but convert to DistMatrix first without having removed non-common entries
     #
-    print(f"Not removing non-common, see if skbio does it for me as per docs")
     
-    # need to convert to float
-    print(f"Converting matrices to float to avoid mantel test error!")
+    # need to convert w2v matrices to float - mantel fails if they are doubles!
     w2v_matrix_norm_fl = w2v_matrix_norm.astype(np.float64)
     #evo_matrix_norm_fl = evo_matrix_norm.astype(np.float64)
-    
-    print(f"Creating Distance Matrices...")
+
     w2v_dist_matrix = DistanceMatrix(w2v_matrix_norm_fl, ids=w2v_vector_np)
     evo_dist_matrix = DistanceMatrix(evo_matrix_norm, ids=evo_vector_np)
     
-    print(f"Distance Matrix created")
 
     for n in num_permutations:
-        print(f"Starting skbio mantel test with unordered DistanceMatrices and {n} permutations")
+        #print(f"Starting skbio mantel test with unordered DistanceMatrices and {n} permutations")
         s= time.time()
         corr_coeff, p_value, num = mantel(w2v_dist_matrix, evo_dist_matrix, permutations=n, strict=False)
         e = time.time()
-        print(f"Mantel test with unordered DistanceMatrices and {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
+        #print(f"Mantel test with unordered DistanceMatrices and {n} permutations complete in {round(e-s,2)}s corr : {corr_coeff} p_val : {p_value} num: {num}.\n")
     
     e1 = time.time()
     
-    print(f"{current_date} | mantel | {base_name} | {round(e1 - s1, 2)} | {corr_coeff} | {p_value} | {num}")
+    print(f"{current_date} | mantel | {base_name} | {round(e1 - s1, 2)} | {n} | {corr_coeff} | {p_value} | {num}")
+    lf.write(f"{current_date} | mantel | {base_name} \t| {round(e1 - s1, 2)}s | {n} | {corr_coeff} | {p_value} | {num}\n")

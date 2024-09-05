@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# --------------------------------------------------------------------------
+#    Wrapper shell script to create distance matrices for a model
+# --------------------------------------------------------------------------
+
 hostname
 date
 
@@ -24,7 +28,11 @@ fi
 extension="model"
 
 # Get the list of models
-file_list=$(find "$source_dir" -name "*$extension")
+#file_list=$(find "$source_dir" -name "*mc3_w3_v100*$extension")
+#file_list=$(find "$source_dir" -name "*mc3_w8_v50*$extension")
+#file_list=$(find "$source_dir" -name "*mc3_w13_v25*$extension")
+file_list=$(find "$source_dir" -name "*mc1_w3_v10_mac*$extension")
+echo $file_list
 
 # Loop through each file in the list
 for file in $file_list; do
@@ -43,8 +51,5 @@ for file in $file_list; do
     #echo "$filename complete"
 done
 
-
-# call python
-#python3 "${code_dir}/w2v_dist_batch.py" --model_file="${source_file}" --output_dir="$output_dir"
 
 date
