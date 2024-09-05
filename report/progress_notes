@@ -493,3 +493,54 @@ find . -name "*npy" -exec gzip {} \;
 find . -name "*model" -exec gzip {} \;
 
 find . -name "*gz" -exec gzip -d -v {} \;
+
+
+#---------------------- Wed 4/9
+- Re-calculated euclidean and cosine distances locally (found faster way)
+- Also ran mantel and found best model
+
+
+#---------------------- Thursday 5/9
+
+--- Create KMeans clusters
+w2v_cluster.py
+run_w2v_cluster.sh
+
+Attempt 1
+- Ran 2 K-Means clusterings upon best model > 20240905_kmeans_assignments_attempt1.txt
+- Note that the scipy.cluster.vq algo is a bit temperamental and complains about Naan and inf that aren;t there - so reverted to sckit
+- Model 1: Inlcudes the words 'STOP_GAP etc
+- Model 2: Excludes the words 'STOP_GAP etc
+
+-- Get the clans
+query_pfam_clans.sh
+
+- Retrieved clans for each of the 12k words in the vocab but 6k had no mapping at all!
+- Results: pfam_api_clan_results.txt
+- Matched pfams from the above : matched_pfam_clans.txt
+- Unmatched pfams from the above : unmatched_pfam_clans.txt
+
+
+-- Next steps
+1. Cluster only those pfams that have clan entry
+    - Reload model
+    - Loop through matched pfam and get vector from model - save to separate npy matrix, clans become the 'truth' labels
+    - Take 20% away for testing
+    - Train on 80%
+    - Test on 20%
+
+Note:
+Of the 6133 pfams that mapped to a clan - there were 656 clans in total - perhaps I need this many clusters
+
+
+REFEREBCE
+
+# url for a pfam id - clan info will be here
+https://www.ebi.ac.uk/interpro/entry/pfam/PF00104/
+
+# curl for the same and stip out the gumpf to only have the clan id. Result saved to: pfam_api_clan_results.txt
+
+and putput the result
+# This works - the successsion info is after the word set_info : set_info":{"accession":"CL0192","name":"GPCR_A"}
+
+curl -s https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02171/ | sed -n 's/.*set_info\(.\{15\}\)\(.\{7\}\).*/\2/p'

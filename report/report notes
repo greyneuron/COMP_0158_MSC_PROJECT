@@ -1,0 +1,26 @@
+
+PFAM MySQL DB
+https://pfam-docs.readthedocs.io/en/latest/pfam-database.html
+
+PFAM API
+https://pfam-docs.readthedocs.io/en/latest/api.html
+
+distance matrix
+https://scikit.bio/docs/dev/generated/skbio.stats.distance.DistanceMatrix.html#skbio.stats.distance.DistanceMatrix
+
+mantel
+https://scikit.bio/docs/dev/generated/skbio.stats.distance.mantel.html
+
+what is a clan
+
+https://www.ebi.ac.uk/training/online/courses/pfam-creating-protein-families/grouping-pfam-entries-into-clans/
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1347511/
+
+lookup a pfam id to get its clan
+http://pfam.xfam.org
+
+INterpro api: https://www.ebi.ac.uk/interpro/help/faqs/
+
+
+k-means with scipy
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.vq.kmeans.html
