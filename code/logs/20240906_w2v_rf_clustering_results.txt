@@ -1,0 +1,1309 @@
+---------------------------------------------------
+            ** Word2Vec - Clustering  **           
+---------------------------------------------------
+
+
+Model w2v_20240901_sg1_mc1_w44_v25 with mc1 original vocab size 15469: Found 7508 mapped pfam words... X : (7508, 25) Y : 7508 pfams 7508
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v25 | rf | 500 | 10 | 100 | 1502 | 205 | 1297 | 0.03413
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v25 | rf | 500 | 15 | 100 | 1502 | 236 | 1266 | 0.03929
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v25 | rf | 500 | 20 | 100 | 1502 | 235 | 1267 | 0.03913
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v25 | rf | 500 | 25 | 100 | 1502 | 265 | 1237 | 0.04412
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v25 | rf | 500 | 30 | 100 | 1502 | 254 | 1248 | 0.04229
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v25 | rf | 500 | 40 | 100 | 1502 | 248 | 1254 | 0.04129
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v25 | rf | 500 | 50 | 100 | 1502 | 237 | 1265 | 0.03946
+
+Model w2v_20240901_sg1_mc3_w44_v25 with mc3 original vocab size 13529: Found 6745 mapped pfam words... X : (6745, 25) Y : 6745 pfams 6745
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc3_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc3_w44_v25 | rf | 500 | 10 | 100 | 1349 | 187 | 1162 | 0.03466
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc3_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc3_w44_v25 | rf | 500 | 15 | 100 | 1349 | 210 | 1139 | 0.03892
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc3_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc3_w44_v25 | rf | 500 | 20 | 100 | 1349 | 252 | 1097 | 0.0467
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc3_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc3_w44_v25 | rf | 500 | 25 | 100 | 1349 | 243 | 1106 | 0.04503
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc3_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc3_w44_v25 | rf | 500 | 30 | 100 | 1349 | 231 | 1118 | 0.04281
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc3_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc3_w44_v25 | rf | 500 | 40 | 100 | 1349 | 263 | 1086 | 0.04874
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc3_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc3_w44_v25 | rf | 500 | 50 | 100 | 1349 | 259 | 1090 | 0.048
+
+Model w2v_20240901_sg1_mc5_w44_v25 with mc5 original vocab size 12802: Found 6419 mapped pfam words... X : (6419, 25) Y : 6419 pfams 6419
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc5_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc5_w44_v25 | rf | 500 | 10 | 100 | 1284 | 157 | 1127 | 0.03057
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc5_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc5_w44_v25 | rf | 500 | 15 | 100 | 1284 | 222 | 1062 | 0.04323
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc5_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc5_w44_v25 | rf | 500 | 20 | 100 | 1284 | 227 | 1057 | 0.04421
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc5_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc5_w44_v25 | rf | 500 | 25 | 100 | 1284 | 230 | 1054 | 0.04479
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc5_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc5_w44_v25 | rf | 500 | 30 | 100 | 1284 | 234 | 1050 | 0.04557
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc5_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc5_w44_v25 | rf | 500 | 40 | 100 | 1284 | 241 | 1043 | 0.04693
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc5_w44_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc5_w44_v25 | rf | 500 | 50 | 100 | 1284 | 226 | 1058 | 0.04401
+
+Model w2v_20240903_sg1_mc8_w44_v25_best with mc8 original vocab size 12187: Found 6133 mapped pfam words... X : (6133, 25) Y : 6133 pfams 6133
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v25_best
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v25_best | rf | 500 | 10 | 100 | 1227 | 170 | 1057 | 0.03465
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v25_best
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v25_best | rf | 500 | 15 | 100 | 1227 | 215 | 1012 | 0.04382
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v25_best
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v25_best | rf | 500 | 20 | 100 | 1227 | 208 | 1019 | 0.0424
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v25_best
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v25_best | rf | 500 | 25 | 100 | 1227 | 247 | 980 | 0.05035
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v25_best
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v25_best | rf | 500 | 30 | 100 | 1227 | 217 | 1010 | 0.04423
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v25_best
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v25_best | rf | 500 | 40 | 100 | 1227 | 223 | 1004 | 0.04545
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v25_best
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v25_best | rf | 500 | 50 | 100 | 1227 | 210 | 1017 | 0.0428
+
+Model w2v_20240901_sg1_mc8_w13_v5_best_cosine with mc8 original vocab size 12187: Found 6133 mapped pfam words... X : (6133, 5) Y : 6133 pfams 6133
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc8_w13_v5_best_cosine
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc8_w13_v5_best_cosine | rf | 500 | 10 | 100 | 1227 | 158 | 1069 | 0.03221
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc8_w13_v5_best_cosine
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc8_w13_v5_best_cosine | rf | 500 | 15 | 100 | 1227 | 153 | 1074 | 0.03119
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc8_w13_v5_best_cosine
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc8_w13_v5_best_cosine | rf | 500 | 20 | 100 | 1227 | 140 | 1087 | 0.02854
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc8_w13_v5_best_cosine
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc8_w13_v5_best_cosine | rf | 500 | 25 | 100 | 1227 | 150 | 1077 | 0.03057
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc8_w13_v5_best_cosine
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc8_w13_v5_best_cosine | rf | 500 | 30 | 100 | 1227 | 153 | 1074 | 0.03119
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc8_w13_v5_best_cosine
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc8_w13_v5_best_cosine | rf | 500 | 40 | 100 | 1227 | 142 | 1085 | 0.02894
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc8_w13_v5_best_cosine
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc8_w13_v5_best_cosine | rf | 500 | 50 | 100 | 1227 | 138 | 1089 | 0.02813
+
+Model w2v_20240903_sg1_mc8_w44_v75 with mc8 original vocab size 12187: Found 6133 mapped pfam words... X : (6133, 75) Y : 6133 pfams 6133
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v75 | rf | 500 | 10 | 100 | 1227 | 123 | 1104 | 0.02507
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v75 | rf | 500 | 15 | 100 | 1227 | 170 | 1057 | 0.03465
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v75 | rf | 500 | 20 | 100 | 1227 | 183 | 1044 | 0.0373
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v75 | rf | 500 | 25 | 100 | 1227 | 207 | 1020 | 0.04219
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v75 | rf | 500 | 30 | 100 | 1227 | 209 | 1018 | 0.0426
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v75 | rf | 500 | 40 | 100 | 1227 | 236 | 991 | 0.0481
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240903_sg1_mc8_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240903_sg1_mc8_w44_v75 | rf | 500 | 50 | 100 | 1227 | 233 | 994 | 0.04749
+
+Model w2v_20240831_sg1_mc1_w8_v100 with mc1 original vocab size 15469: Found 7508 mapped pfam words... X : (7508, 100) Y : 7508 pfams 7508
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w8_v100
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w8_v100 | rf | 500 | 10 | 100 | 1502 | 160 | 1342 | 0.02664
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w8_v100
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w8_v100 | rf | 500 | 15 | 100 | 1502 | 193 | 1309 | 0.03213
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w8_v100
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w8_v100 | rf | 500 | 20 | 100 | 1502 | 235 | 1267 | 0.03913
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w8_v100
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w8_v100 | rf | 500 | 25 | 100 | 1502 | 217 | 1285 | 0.03613
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w8_v100
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w8_v100 | rf | 500 | 30 | 100 | 1502 | 232 | 1270 | 0.03863
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w8_v100
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w8_v100 | rf | 500 | 40 | 100 | 1502 | 235 | 1267 | 0.03913
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w8_v100
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w8_v100 | rf | 500 | 50 | 100 | 1502 | 250 | 1252 | 0.04163
+
+Model w2v_20240901_sg1_mc1_w44_v75 with mc1 original vocab size 15469: Found 7508 mapped pfam words... X : (7508, 75) Y : 7508 pfams 7508
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v75 | rf | 500 | 10 | 100 | 1502 | 173 | 1329 | 0.0288
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v75 | rf | 500 | 15 | 100 | 1502 | 196 | 1306 | 0.03263
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v75 | rf | 500 | 20 | 100 | 1502 | 228 | 1274 | 0.03796
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v75 | rf | 500 | 25 | 100 | 1502 | 231 | 1271 | 0.03846
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v75 | rf | 500 | 30 | 100 | 1502 | 247 | 1255 | 0.04113
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v75 | rf | 500 | 40 | 100 | 1502 | 244 | 1258 | 0.04063
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240901_sg1_mc1_w44_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240901_sg1_mc1_w44_v75 | rf | 500 | 50 | 100 | 1502 | 221 | 1281 | 0.0368
+
+Model w2v_20240831_sg1_mc5_w3_v5 with mc5 original vocab size 12802: Found 6419 mapped pfam words... X : (6419, 5) Y : 6419 pfams 6419
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v5
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v5 | rf | 500 | 10 | 100 | 1284 | 171 | 1113 | 0.0333
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v5
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v5 | rf | 500 | 15 | 100 | 1284 | 172 | 1112 | 0.0335
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v5
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v5 | rf | 500 | 20 | 100 | 1284 | 167 | 1117 | 0.03252
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v5
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v5 | rf | 500 | 25 | 100 | 1284 | 156 | 1128 | 0.03038
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v5
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v5 | rf | 500 | 30 | 100 | 1284 | 142 | 1142 | 0.02765
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v5
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v5 | rf | 500 | 40 | 100 | 1284 | 171 | 1113 | 0.0333
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v5
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v5 | rf | 500 | 50 | 100 | 1284 | 160 | 1124 | 0.03116
+
+Model w2v_20240831_sg1_mc3_w3_v25 with mc3 original vocab size 13529: Found 6745 mapped pfam words... X : (6745, 25) Y : 6745 pfams 6745
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc3_w3_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc3_w3_v25 | rf | 500 | 10 | 100 | 1349 | 191 | 1158 | 0.0354
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc3_w3_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc3_w3_v25 | rf | 500 | 15 | 100 | 1349 | 240 | 1109 | 0.04448
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc3_w3_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc3_w3_v25 | rf | 500 | 20 | 100 | 1349 | 246 | 1103 | 0.04559
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc3_w3_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc3_w3_v25 | rf | 500 | 25 | 100 | 1349 | 268 | 1081 | 0.04967
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc3_w3_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc3_w3_v25 | rf | 500 | 30 | 100 | 1349 | 237 | 1112 | 0.04392
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc3_w3_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc3_w3_v25 | rf | 500 | 40 | 100 | 1349 | 264 | 1085 | 0.04893
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc3_w3_v25
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc3_w3_v25 | rf | 500 | 50 | 100 | 1349 | 252 | 1097 | 0.0467
+
+---------------------------------------------------
+            ** Word2Vec - Clustering  **           
+---------------------------------------------------
+
+
+Model w2v_20240831_sg1_mc1_w3_v25_mac with mc1 original vocab size 15469: Found 7508 mapped pfam words... X : (7508, 25) Y : 7508 pfams 7508
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w3_v25_mac
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w3_v25_mac | rf | 500 | 10 | 100 | 1502 | 193 | 1309 | 0.03213
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w3_v25_mac
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w3_v25_mac | rf | 500 | 15 | 100 | 1502 | 231 | 1271 | 0.03846
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w3_v25_mac
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w3_v25_mac | rf | 500 | 20 | 100 | 1502 | 267 | 1235 | 0.04446
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w3_v25_mac
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w3_v25_mac | rf | 500 | 25 | 100 | 1502 | 267 | 1235 | 0.04446
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w3_v25_mac
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w3_v25_mac | rf | 500 | 30 | 100 | 1502 | 264 | 1238 | 0.04396
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w3_v25_mac
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w3_v25_mac | rf | 500 | 40 | 100 | 1502 | 281 | 1221 | 0.04679
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc1_w3_v25_mac
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc1_w3_v25_mac | rf | 500 | 50 | 100 | 1502 | 252 | 1250 | 0.04196
+
+Model w2v_20240831_sg1_mc5_w3_v50 with mc5 original vocab size 12802: Found 6419 mapped pfam words... X : (6419, 50) Y : 6419 pfams 6419
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v50
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v50 | rf | 500 | 10 | 100 | 1284 | 160 | 1124 | 0.03116
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v50
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v50 | rf | 500 | 15 | 100 | 1284 | 195 | 1089 | 0.03797
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v50
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v50 | rf | 500 | 20 | 100 | 1284 | 215 | 1069 | 0.04187
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v50
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v50 | rf | 500 | 25 | 100 | 1284 | 224 | 1060 | 0.04362
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v50
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v50 | rf | 500 | 30 | 100 | 1284 | 240 | 1044 | 0.04674
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v50
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v50 | rf | 500 | 40 | 100 | 1284 | 244 | 1040 | 0.04752
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v50
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v50 | rf | 500 | 50 | 100 | 1284 | 222 | 1062 | 0.04323
+
+Model w2v_20240831_sg1_mc5_w3_v75 with mc5 original vocab size 12802: Found 6419 mapped pfam words... X : (6419, 75) Y : 6419 pfams 6419
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 10
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v75 | rf | 500 | 10 | 100 | 1284 | 158 | 1126 | 0.03077
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 15
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v75 | rf | 500 | 15 | 100 | 1284 | 187 | 1097 | 0.03642
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 20
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v75 | rf | 500 | 20 | 100 | 1284 | 200 | 1084 | 0.03895
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 25
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v75 | rf | 500 | 25 | 100 | 1284 | 218 | 1066 | 0.04245
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 30
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v75 | rf | 500 | 30 | 100 | 1284 | 214 | 1070 | 0.04167
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 40
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v75 | rf | 500 | 40 | 100 | 1284 | 228 | 1056 | 0.0444
+
+------------ W2V KMeans model ------------
+ Model name         : w2v_20240831_sg1_mc5_w3_v75
+ Clustering type    : rf
+ k                  : 500
+ depth              : 50
+ num iterations     : 100
+
+Training......
+ - splitting data into train and test sets
+ - training
+
+Testing......
+result: w2v_20240831_sg1_mc5_w3_v75 | rf | 500 | 50 | 100 | 1284 | 226 | 1058 | 0.04401

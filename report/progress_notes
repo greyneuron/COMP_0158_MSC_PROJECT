@@ -544,3 +544,18 @@ and putput the result
 # This works - the successsion info is after the word set_info : set_info":{"accession":"CL0192","name":"GPCR_A"}
 
 curl -s https://www.ebi.ac.uk/interpro/api/entry/pfam/PF02171/ | sed -n 's/.*set_info\(.\{15\}\)\(.\{7\}\).*/\2/p'
+
+
+-- done for mc8
+./query_pfam_clans.sh > pfam_clan_mapping.txt
+
+
+#---------------------- Thursday 5/9
+
+- Created a table for mapping clan ids to pfam ids and filled it for each model
+- Table : W2V_PFAM_CLAN
+- Code  : w2v_clan_utils.py
+- 15,469 pfam entries of which 7961 are undefined (undef | 7961)
+- 695 clans for mc1 (excluding undef) account for
+
+Created w2v_run_kmeans.py - can run through a model, extract words that nly have clans and train, test that model
