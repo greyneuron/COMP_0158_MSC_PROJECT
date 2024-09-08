@@ -56,7 +56,8 @@ else
 fi
 
 # call python
-python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 3 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+#python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 1 --ws 3 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+python3 "${code_dir}/w2v_batch.py" --model_type skip --mc 3 --ws 3 --corpus_file="${corpus_file}" --output_dir="$output_dir"
 
 
 date
