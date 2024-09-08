@@ -214,7 +214,7 @@ if __name__ == '__main__':
     #
     # -----------------------------------------------------------------
     #vector_sizes    = [75, 100]
-    vector_sizes    = [5, 10, 25, 50, 75, 100]
+    vector_sizes    = [250, 500]
 
     
     #
@@ -237,11 +237,12 @@ if __name__ == '__main__':
         e = time.time()
         time_taken=str(round(e-s, 2))
         
-        #print(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken}")
+        print(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken}")
         
         #
         #--------------------------- create dist -----------------------
         #
+        '''
         print("creating distance matrix")
         create_distance_matrix(model_base_name, model_name)
         
@@ -250,5 +251,5 @@ if __name__ == '__main__':
         
         print(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken} | {matrix_time_taken}")
         lf.write(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken} | {matrix_time_taken}\n")
-        
+        '''
     

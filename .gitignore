@@ -288,3 +288,5 @@ code/hpc/pf00001.txt
 code/hpc/pf02171.txt
 data/clusters/20240905_model_vocab_test.txt
 data/models/~$model_creation_times.xlsx
+logs/~$w2v_results.xlsx
+data/models/20240908_model_log.txt

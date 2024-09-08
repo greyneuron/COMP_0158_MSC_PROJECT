@@ -1,5 +1,9 @@
 from gensim.models import Word2Vec
-from w2v_clustering_model import W2V_Clustering_Model
+from w2v_random_forest import W2V_RandomForest
+from w2v_kmeans import W2V_KMeans
+from w2v_adaboost import W2V_AdaBoost
+from w2v_svm import W2V_SVM
+
 from datetime import datetime
 import re
 import time
@@ -13,8 +17,7 @@ import duckdb
 # This loads a w2v model and then removes vectors that don;t have a pfam clan as well as vectors related to GAP words and DISORDER words
 #
 db_string = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/database/w2v_20240731_test.db"
-model_dir="/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/models/best/"
-output_dir='/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/clusters/'
+
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -96,8 +99,44 @@ def get_model_vectors_clan_only(model_path, min_count, vector_size):
     con.close()
     
     return X, Y, X_pfam_ids
-    
-    
+
+
+#
+# creates and runs random forest generators with varying depths
+#
+def run_forest(X, Y, pfam_ids, model_name, output_dir):
+    #depths = [10, 15, 20, 25, 30, 40, 50]
+    depths  = [10]
+
+    for depth in depths:
+        classifier = W2V_RandomForest(X, Y, pfam_ids, depth, model_name, output_dir,)
+        classifier.run(True)
+        
+#
+# creates and runs random forest generators with varying depths
+#
+def run_kmeans(X, Y, pfam_ids, model_name, output_dir):
+    k           = 500
+    classifier  = W2V_KMeans(X, Y, pfam_ids, k, model_name, output_dir,)
+    classifier.run(True)
+
+#
+# creates and runs adaboost
+#
+def run_adaboost(X, Y, pfam_ids, model_name, output_dir):
+    depth           = 6
+    classifier  = W2V_AdaBoost(X, Y, pfam_ids, depth, model_name, output_dir,)
+    classifier.run(True)
+
+
+#
+# creates and runs svm with a kernel
+#
+def run_svm(X, Y, pfam_ids, kernel, model_name, output_dir):
+    depth           = 8
+    classifier  = W2V_SVM(X, Y, pfam_ids, kernel, model_name, output_dir,)
+    classifier.run(True)
+
 #
 # main method
 #
@@ -111,12 +150,18 @@ if __name__ == '__main__':
     print('            ** Word2Vec - Clustering  **           ')
     print('---------------------------------------------------\n')
     
-    #model_names=['w2v_20240901_sg1_mc1_w44_v25', 'w2v_20240901_sg1_mc3_w44_v25', 'w2v_20240901_sg1_mc5_w44_v25', 'w2v_20240903_sg1_mc8_w44_v25_best', 'w2v_20240901_sg1_mc8_w13_v5_best_cosine', 'w2v_20240903_sg1_mc8_w44_v75', 'w2v_20240831_sg1_mc1_w8_v100', 'w2v_20240901_sg1_mc1_w44_v75', 'w2v_20240831_sg1_mc5_w3_v5']
     
-    #model_names=['w2v_20240831_sg1_mc1_w3_v25_mac','w2v_20240831_sg1_mc5_w3_v50',  'w2v_20240831_sg1_mc5_w3_v75']
+    output_dir='/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/logs/clustering/'
+
+    #model_dir="/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/models/best/"
+    #model_names=['w2v_20240831_sg1_mc1_w8_v100']
+    #model_names=['w2v_20240901_sg1_mc1_w44_v25', 'w2v_20240901_sg1_mc3_w44_v25', 'w2v_20240901_sg1_mc5_w44_v25', 'w2v_20240903_sg1_mc8_w44_v25_best', 'w2v_20240901_sg1_mc8_w13_v5_best_cosine', 'w2v_20240903_sg1_mc8_w44_v75', 'w2v_20240831_sg1_mc1_w8_v100', 'w2v_20240901_sg1_mc1_w44_v75', 'w2v_20240831_sg1_mc5_w3_v5', 'w2v_20240831_sg1_mc1_w3_v25_mac','w2v_20240831_sg1_mc5_w3_v50',  'w2v_20240831_sg1_mc5_w3_v75', 'w2v_20240831_sg1_mc3_w3_v100']
     
-    model_names=['w2v_20240831_sg1_mc3_w3_v100']
-    
+    model_dir   ="/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/models/"
+    model_names = ['w2v_20240908_sg1_mc1_w3_v250']
+
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M')
+
 
     for model_name in model_names:
         
@@ -130,28 +175,17 @@ if __name__ == '__main__':
         # get vocab for model
         vocab, vocab_count = get_pfam_vocab(model_path)
 
-        
         # get training and test data - only use pfam ids that have known clan ids
-        X, Y, X_pfam_ids = get_model_vectors_clan_only(model_path, min_count, int(vector_size))
+        X, Y, pfam_ids = get_model_vectors_clan_only(model_path, min_count, int(vector_size))
         
-        print(f"\nModel {model_name} with {min_count} original vocab size {vocab_count}: Found {len(Y)} mapped pfam words... X : {X.shape} Y : {len(Y)} pfams {len(X_pfam_ids)}")
-        
-        #
-        # create classifier
-        #
-        k = 500
-        iterations = 100
-        depth      = 20
-        depths = [10, 15, 20, 25, 30, 40,50]
-        
-        for depth in depths:
-            classifier = W2V_Clustering_Model(X, Y, X_pfam_ids, k, depth, iterations, 'rf', model_name, output_dir)
-        
-            #
-            # train and test classifier
-            #
-            classifier.run(True)
+        print(f"\nModel {model_name} with {min_count} original vocab size {vocab_count}: Found {len(Y)} mapped pfam words... X : {X.shape} Y : {len(Y)} pfams {len(pfam_ids)}")
     
-   
+        # run random forest
+        #run_forest(X, Y, pfam_ids, model_name, output_dir)
+        #run_kmeans(X, Y, pfam_ids, model_name, output_dir)
+        #run_adaboost(X, Y, pfam_ids, model_name, output_dir)
+        run_svm(X, Y, pfam_ids, 'rbf', model_name, output_dir)
+
+
    
 

@@ -38,7 +38,7 @@ platform=$1
 if [[ "$platform" == "mac" ]]; then 
     echo "setting mac parameters"
     corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/hpc/word2vec_sentences.pkl'
-    output_dir='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/hpc/models/'
+    output_dir='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/'
     code_dir="/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/hpc"
 elif [[ "$platform" == "aws" ]]; then 
     echo "setting aws parameters"
