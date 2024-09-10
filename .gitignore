@@ -290,3 +290,6 @@ data/clusters/20240905_model_vocab_test.txt
 data/models/~$model_creation_times.xlsx
 logs/~$w2v_results.xlsx
 data/models/20240908_model_log.txt
+data/corpus/tokens/test.txt
+data/models/20240909_model_log.txt
+logs/20240908_modelcreation_log_mac.txt

@@ -66,11 +66,26 @@ uniprotkb-2759_78494531.dat :   Eukaryotic TrEMBL proteins : dat file with Unipr
 In August I retried this
 uniref100_tax_20240801.dat :    Full UniRef100 proteins : dat file with Uniprot id, start and stop, taxonomy id - 408,368,587 entries
 
+PROTEIN
+----------------
 
+
+PFAM
+----------------
+- protein2ipr.dat from Interpro
+- https://ftp.ebi.ac.uk/pub/databases/interpro/current_release/
+- gzip file : 19Gb
 
 pfam - 296,017,815 entries
 
-disorder
+DISORDER
+----------------
+- extra.xml from Interpro
+- https://ftp.ebi.ac.uk/pub/databases/interpro/current_release/
+- gzip file : 16Gb
+
+- grep -c "<protein" disorder/raw/extra.xml : 
+- wc -l extra.xml                           : 4,007,237,378
 
 First the raw file has over 4BN rows of xml and needed ot be chunked into smaller sizes
 This was done with C++ and Python
@@ -94,7 +109,8 @@ grep -c "disorder_prediction\" dbname=\"MOBIDBLT\"" /Volumes/My\ Passport/downlo
 disorder entries : 81MN
 
 
-Taxonomy
-download from here: https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/
+CORPUS
+------------
+- File  : uniref100_e_corpus_20240810.txt
+- Lines : wc -l uniref100_e_corpus_20240810.txt = 45,909,435
 
-\end{document}
