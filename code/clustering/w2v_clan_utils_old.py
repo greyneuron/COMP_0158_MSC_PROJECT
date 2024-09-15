@@ -5,7 +5,7 @@ import re
 import duckdb
 import requests
 from gensim.models import Word2Vec
-from w2v_evo_utils import *
+from code.clustering.w2v_evo_utils import *
 
 #
 # THis file contains a number of different functions to query clans and create a db table mapping
@@ -170,84 +170,6 @@ def get_pfam_clans_for_model(model_name, model_path, min_clan_size):
     filtered_pfams = list(set([item for sublist in filtered_clan_dict.values() for item in sublist]))
     
     return filtered_pfams, filtered_clans, filtered_clan_dict
-
-
-def get_pfam_clans_db(pfam_ids):
-    con = duckdb.connect(database=db_string)
-    
-    clans = []
-    
-    # loop through each pfam, find its clan and build up a dictinary of clans > pfam_ids
-    for i, pfam_id in enumerate(pfam_ids):
-        try:          
-            results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_EVO WHERE PFAM_ID='{pfam_id}'").fetchall()
-            if(results is None or results ==[]):
-                print(f"----------> No local clan entry for {pfam_id}")
-            else:
-                clan_id = results[0][0]
-                if (clan_id != 'undef'):
-                    clans.append(clan_id)
-        except Exception as e:
-            print('get_clans_for_pfams() error', e, results)
-            con.close()
-            return
-    con.close()
-    return clans
-            
-    
-
-#
-# Gets all the pfam words in an evolutionary vector that have a clan associated with them and then 
-# finds the clan id in the database. Returns only pfams that are in clans that have more
-# than min_clan_size entries
-#
-def get_pfam_clans_for_evo(pfam_ids, min_clan_size):
-    # see if there is an entry
-    con = duckdb.connect(database=db_string)
-    
-    filtered_clans = []
-    filtered_pfams = []
-
-    clan_dict = {}
-    filtered_clan_dict = {}
-    
-    # loop through each pfam, find its clan and build up a dictinary of clans > pfam_ids
-    for i, pfam_id in enumerate(pfam_ids):
-        try:          
-            results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_EVO WHERE PFAM_ID='{pfam_id}'").fetchall()
-            
-            # if no result, get from interpro
-            if(results is None or results ==[]):
-                clan_id = get_interpro_clan(pfam_id)
-                print(f"----------> No local clan entry for {pfam_id}, queried interpro w/ result:{pfam_id}:{clan_id}")
-                #clan_id = get_interpro_clan(pfam_id)
-                #print(f"----------> Retreived :{clan_id}")
-            else:
-                clan_id = results[0][0]
-                if (clan_id != 'undef'):
-                    #add clan id to dictionary
-                    if clan_id in clan_dict:
-                        clan_dict[clan_id].append(pfam_id)  # Append to the list if the key exists
-                    else:
-                        clan_dict[clan_id] = [pfam_id]
-                    # track the index of the pfam that meets the criteria
-        except Exception as e:
-            print('get_pfam_clans_for_evo() error', e, results)
-            con.close()
-            return
-    con.close()
-    
-    # get dictionary with only clans with more than one pfam
-    filtered_clan_dict = {key:value for key, value in clan_dict.items() if len(value) >= min_clan_size}
-    # get list of clans
-    filtered_clans = list(filtered_clan_dict.keys())
-    # get list of pfams
-    filtered_pfams = list(set([item for sublist in filtered_clan_dict.values() for item in sublist]))
-    
-    return filtered_pfams, filtered_clans, filtered_clan_dict
-
-
-
 
 
 #
