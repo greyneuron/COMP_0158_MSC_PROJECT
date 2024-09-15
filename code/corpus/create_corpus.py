@@ -86,12 +86,6 @@ def reorder_tokens(tokens, debug=False):
     return reordered_tokens
     
     
-    
-    
-    
-    
-
-
 
 
 # Finds overlapping regions - and removes them, assumes the tokens
@@ -246,9 +240,9 @@ def create_corpus(input_file, output_file, ignore_file, debug=False):
 #                               SETUP & RUN
 #
 # ------------------------------------------------------------------------------------------------------
-input_file      = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/tokens_combined/uniref100_e_tokens_20240808_ALL_COMBINED.dat"
-output_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240810.txt"
-ignore_file     = "/Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240810_ignored.txt"
+input_file      = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus_validation_sep/uniref100_e_tokens_combined_20240910.dat"
+output_file     = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus_validation_sep/uniref100_e_corpus.dat"
+ignore_file     = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus_validation_sep/uniref100_e_corpus_ignored.dat"
 
 s = time.time()
 create_corpus(input_file, output_file, ignore_file)
