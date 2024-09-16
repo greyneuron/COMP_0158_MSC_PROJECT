@@ -293,3 +293,4 @@ data/models/20240908_model_log.txt
 data/corpus/tokens/test.txt
 data/models/20240909_model_log.txt
 logs/20240908_modelcreation_log_mac.txt
+.DS_Store
