@@ -40,7 +40,7 @@ resource "aws_instance" "w2v-ec2-server-04" {
 
 resource "aws_volume_attachment" "w2v_ebs_att" {
   device_name = "/dev/sdh"
-  volume_id   = "vol-00862b9c472a23818"
+  volume_id   = "vol-03d50b6f01e9551b6"
   instance_id = aws_instance.w2v-ec2-server-04.id
 }
 

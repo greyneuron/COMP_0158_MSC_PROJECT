@@ -27,15 +27,16 @@
         > paste securoty group into RDS (public sec grp)
 
 3. EC2
-
-
+- Make sure you have created the vpc, ebs, sec groups from above - may be easiest to use ec2 to set this up
+- set the EBS and VPC ids etc from the above
+- cd into the directory
 
 --- Connect to EC2 ---
 Take the dns name from the output: ec2-3-248-193-3.eu-west-1.compute.amazonaws.com
 
 export dns="ec2-3-248-193-3.eu-west-1.compute.amazonaws.com"
 
-ssh -i "w2v_rsa_key_03" ec2-user@$dns
+ssh -i "w2v_rsa_key_04" ec2-user@$dns
 
 WelcometoParadise
 
@@ -43,6 +44,8 @@ WelcometoParadise
 lsblk -f
 sudo mkfs -t xfs /dev/nvme1n1
 
+
+--- Mount disk : ONLY DO once
 sudo mkdir /word2vec
 sudo mount /dev/nvme1n1 /word2vec
 

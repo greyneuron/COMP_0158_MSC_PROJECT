@@ -5,6 +5,32 @@ find . -type f -name "pattern" -exec du -h {} +
 
 find . -name "*mc8*model" -exec du -h {} +
 
+#
+# -------------------------------- ec2 stuff ---------------------------------------- 
+#
+# scp files from a local dir to a remote dir
+scp -i "w2v_rsa_key_04" ../../../hpc/w2v_batch.py ec2-user@$dns:/word2vec/code
+
+
+# copy all .gz files from a remote directory to the cbow directory
+scp -i "w2v_rsa_key_04" ec2-user@$dns:'/word2vec/models/*.gz' cbow                                                           
+
+# -----------------------------------------------------------------------------------
+
+
+
+# find all .gz files in current directory and unzip them
+find . -name "*gz" -exec gzip -d -v {} \;
+
+
+
+
+
+# ---- send files to s3 from ec2
+ssh to ec2
+aws configure
+aws s3 cp /data/dev/ucl/data/precorpus_78M_sql_extract.tar.gz s3://w2v-bucket/corpus/precorpus_78M_sql_extract.tar.gz
+
 
 # print names of all models with various param configs
 for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; find . -name "*mc$mc*model"; done; done
