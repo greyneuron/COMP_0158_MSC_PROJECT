@@ -1,5 +1,10 @@
-#!/bin/bash
-#filename="data/protein2.dat"
+# find files of a certain size
+find . -type f -size +2G -exec ls -lh {} + | awk '{ print $5, $9 }' | sort -h
+
+find . -type f -name "pattern" -exec du -h {} +
+
+find . -name "*mc8*model" -exec du -h {} +
+
 
 # print names of all models with various param configs
 for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; find . -name "*mc$mc*model"; done; done
