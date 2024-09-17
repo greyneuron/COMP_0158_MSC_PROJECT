@@ -16,7 +16,12 @@ from sklearn.metrics.pairwise import euclidean_distances
 from scipy.spatial.distance import cosine
 from skbio.stats.distance import mantel
 from skbio.stats.distance import DistanceMatrix
+
+from scipy.spatial.distance import correlation
+from skbio.stats.distance import mantel
+
 from scipy.stats import pearsonr
+from scipy.stats import spearmanr
 
 #
 # Gets pairwise distance matrices for a model using both euclidean and cosine distances
@@ -119,9 +124,11 @@ if __name__ == '__main__':
     evo_npy         = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/distances/evo/rand_rep_distance_matrix.npy"
     output_dir      = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/logs/"
     
-    current_date    = datetime.now().strftime('%Y%m%d_%H%m')
-    log_file        = output_dir+current_date+"_dist_matrix_comparison.txt"
+    current_date    = datetime.now().strftime('%Y%m%d_%H%M')
+    log_file        = output_dir+current_date+"_dist_matrix_comparison_pearsonr.txt"
     lf              = open(log_file, "a")
+    
+    print(f"Log file : {log_file}")
     
     # --------------------- get rand_rep matrix and vocab
     #
@@ -213,13 +220,14 @@ if __name__ == '__main__':
             #
             #--------------------------- can now do some corelation! -----------------------
             #
-            from scipy.spatial.distance import correlation
-            from skbio.stats.distance import mantel
-
+            
+            
             # extract in condesed form - basically a 1D array buit only of upper triangle of matrix and exclude diagonals
             print(f" - running scipy correlation on {model_name} - {dist_type} distance.")
             new_w2v_condensed = new_w2v.condensed_form()
             new_evo_condensed = new_evo.condensed_form()
+            
+            '''
             #print(len(new_w2v_condensed), len(new_evo_condensed))
             my_correlation = correlation(new_w2v_condensed, new_evo_condensed)
             print(' - scipy correlation:', my_correlation)
@@ -233,6 +241,27 @@ if __name__ == '__main__':
             
             print(f"Correlation tests on {model_name} dist type {dist_type}. corr-coeff: {round(my_correlation,4)} mantel corr : {round(corr_coeff,4)} mantel p_val : {round(p_value,4)}. time : {round(e1 - s1, 2)}s\n")
             lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| {round(my_correlation, 4)} \t|  {round(corr_coeff,4)} | {round(p_value,4)} | {round(e1 - s1, 2)}s \n")
+            lf.flush()
+            '''
+            
+            # ---- pearsonr
+            print(f" - running pearsonr test on {model_name} - {dist_type} distance.")
+            pearson_result = pearsonr(new_w2v_condensed, new_evo_condensed)
+            e1 = time.time()
+            
+            print(f"Pearsonr test on {model_name} dist type {dist_type}. pearsonr stat: {round(pearson_result.statistic, 4)} pval: {round(pearson_result.pvalue, 4)}  time : {round(e1 - s1, 2)}s\n")
+            lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| pearsonr | {round(pearson_result.statistic,4)} | {round(pearson_result.pvalue, 4)} | {round(e1 - s1, 2)}s \n")
+            
+            # ---- spearmanr
+            print(f" - running spearmanr test on {model_name} - {dist_type} distance.")
+            spearmanr_result = spearmanr(new_w2v_condensed, new_evo_condensed)
+            e2 = time.time()
+            
+            print(f"Spearmanr test on {model_name} dist type {dist_type}. spearmanr stat: {round(spearmanr_result.statistic, 4)} pval: {round(spearmanr_result.pvalue, 4)}  time : {round(e1 - s1, 2)}s\n")
+            lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| spearmanr | {round(spearmanr_result.statistic,4)} | {round(spearmanr_result.pvalue, 4)} | {round(e2 - e1, 2)}s \n")
+            
+            
+            lf.flush()
                       
     e = time.time()
     print(f"{current_date} distance comparisons complete in time:  {round(e - s, 2)}")
