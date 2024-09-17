@@ -1,6 +1,20 @@
 #!/bin/bash
 #filename="data/protein2.dat"
 
+# print names of all models with various param configs
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; find . -name "*mc$mc*model"; done; done
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; find . -name "*mc$mc*model" | wc -l; done; done
+
+
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; done; done
+
+cd models/cbow
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; grep "*mc$mc" 20240904_dist_matrix_mantel.txt | wc -l; done; done
+
+
+find . -name "*gz" -exec gzip -d -v {} \;
+
+
 
 # ***************** AWK ******************
 
