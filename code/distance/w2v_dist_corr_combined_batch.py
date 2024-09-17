@@ -19,56 +19,42 @@ from skbio.stats.distance import DistanceMatrix
 from scipy.stats import pearsonr
 
 #
-# creates cosine and euclidean distance matrices for the vocab in a model
-# normalises them and outputs the raw, normalised and word vectors to a npy file
+# Gets pairwise distance matrices for a model using both euclidean and cosine distances
+# 
 #
-def create_distance_matrices(output_dir, model_file):
-    # get model name from file
-    name_search = re.search("(w2v.*)\.model", model_file)
-    model_name = name_search.group(1)
-    
-    print(f"- loading model {model_name}.model")
-    
-    model       = Word2Vec.load(model_file)
+def get_distances(model_path):
+    model           = Word2Vec.load(model_path)
     word_vectors    = model.wv
     
-    # grab the vocab vector
-    vocab           = model.wv.key_to_index
-    vocab_vector    = []
-    for i, word in enumerate(vocab):
-        vocab_vector.append(word)
-
     print('- w2v word vectors shape:', word_vectors.vectors.shape)
+    
+    # grab the pfam words
+    pfams = []
+    vocab           = model.wv.key_to_index
+    for i, word in enumerate(vocab):
+        pfams.append(word)
 
-    s = time.time()
+    # get cosine and normalise
     print('- calculating cosine distances')
     cosine_distance_matrix = cosine_distances(word_vectors.vectors, word_vectors.vectors)
-
-    # normalise
-    non_diag_elements   = cosine_distance_matrix[np.triu_indices_from(cosine_distance_matrix, k=1)]
-    max_value           = np.max(np.abs(non_diag_elements))
-    #print(f"normalising with max value: {max_value}")
+    non_diag_elements       = cosine_distance_matrix[np.triu_indices_from(cosine_distance_matrix, k=1)]
+    max_value               = np.max(np.abs(non_diag_elements))
     cosine_distance_matrix_norm = cosine_distance_matrix / max_value
     np.fill_diagonal(cosine_distance_matrix_norm, 0)
     
-    
+    # get euclidean and normalise
     print('- calculating euclidean distances')
-    euclidean_distance_matrix = euclidean_distances(word_vectors.vectors, word_vectors.vectors)
-    # normalise
-    non_diag_elements   = euclidean_distance_matrix[np.triu_indices_from(euclidean_distance_matrix, k=1)]
-    max_value           = np.max(np.abs(non_diag_elements))
-    #print(f"normalising with max value: {max_value}")
+    euclidean_distance_matrix   = euclidean_distances(word_vectors.vectors, word_vectors.vectors)
+    non_diag_elements           = euclidean_distance_matrix[np.triu_indices_from(euclidean_distance_matrix, k=1)]
+    max_value                   = np.max(np.abs(non_diag_elements))
     euclidean_distance_matrix_norm = euclidean_distance_matrix / max_value
     np.fill_diagonal(euclidean_distance_matrix_norm, 0)
     
-    e = time.time()
-    print(f"- distance matrices computed for model: {model_name}. vocab size: {len(vocab)} euclidean shape: {euclidean_distance_matrix_norm.shape} cosine shape: {cosine_distance_matrix_norm.shape} time: {round(e-s,2)}s.")
-    
-    # normalized_dist_matrix = (distance_matrix - min_dist) / (max_dist - min_dist)
-
-    return vocab_vector, euclidean_distance_matrix_norm, cosine_distance_matrix_norm
+    return pfams, euclidean_distance_matrix, cosine_distance_matrix, euclidean_distance_matrix_norm, cosine_distance_matrix_norm
 
 
+
+# ------------------- EVOLUTIONARY MATRIX -------------------------------------
 
 #
 # extract vocab vector and matrix from npy file
@@ -80,9 +66,6 @@ def extract_evo_matrix_vector_files(npy_file_name):
     vocab_vector        = np.load(npy_f)
     
     return vocab_vector, dist_matrix_norm
-
-
-# ------------------- GET PFAM IDS FROM EVO VECTOR ----------------------------
 
 #
 # vectors in evo matrix have format K1SVA3.1/50-86|PF02829
@@ -98,6 +81,8 @@ def extract_evo_pfam_ids(evo_vector):
         pfam_ids.append(pfam_id)
     return pfam_ids
 
+# -------------------------------------------------------------------
+
 
 #
 # main method
@@ -109,20 +94,10 @@ if __name__ == '__main__':
     print(' **              Word2Vec Distance & Correlation Batch                   **') 
     print('      takes a model, calculates its distance and compares it to randrep    ')
     print('---------------------------------------------------------------------------')
-    
-    s1 = time.time()
-    
-    '''
-    parser = argparse.ArgumentParser(prog='Word2Vec Distance Creation', description='Establishes correlation between two distances matrices')
-    
-    parser.add_argument("--model_file", help="full path to model", required=False)
-    parser.add_argument("--output_dir", help="output directory for distance matrices", required=False)
-    
-    args            = parser.parse_args()
-    model_file      = args.model_file
-    output_dir      = args.output_dir
-    '''
-    
+
+
+    # ------------------------ setup
+    #
     model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/cbow/"
     #model_names     = ['w2v_20240911_cbow_mc1_w3_v5', 'w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25', 'w2v_20240911_cbow_mc1_w3_v50']
     model_names     = ['w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25']
@@ -131,37 +106,54 @@ if __name__ == '__main__':
     output_dir      = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/logs/"
     
     current_date    = datetime.now().strftime('%Y%m%d_%H%m')
-    log_file        = output_dir+current_date+"_dist_matrix_comparison.csv"
+    log_file        = output_dir+current_date+"_dist_matrix_comparison.txt"
     lf              = open(log_file, "a")
     
-    # get rand_rep matrix and vocab
+    # --------------------- get rand_rep matrix and vocab
+    #
     evo_vocab_vector, evo_dist_matrix = extract_evo_matrix_vector_files(evo_npy)
-    evo_vocab   = extract_evo_pfam_ids(evo_vocab_vector)
-    print(f"- rand_rep extracted. number of pfams : {len(evo_vocab)} matrix shape: {evo_dist_matrix.shape}")
+    evo_vocab                         = extract_evo_pfam_ids(evo_vocab_vector)
+    print(f"- rand_rep extracted. number of pfams : {len(evo_vocab)} matrix shape: {evo_dist_matrix.shape}\n")
     
     # loop through models
+    s = time.time()
     for model_name in model_names:
         
         # get details from model name
         model_path = model_dir+model_name+'.model'
         
         min_count_s = re.search("(mc[0-9]+)_", model_name)
-        vector_s = re.search("v([0-9]+)", model_name)
+        vector_s    = re.search("v([0-9]+)", model_name)
         vector_size = vector_s.group(1)
     
         #
         #--------------------------- create distance matrices -----------------------
         #
-        print(f"- creating distance matrices for model {model_path}")
+        print(f"Creating distance matrices for model {model_name}")
         
-        s = time.time()
-        w2v_vocab, w2v_distance_matrix_euc, w2v_distance_matrix_cos = create_distance_matrices(output_dir, model_path)
-        e = time.time()
-        print(f"- distance matrices created for {model_path}. time taken: {round(e-s,2)}")
+        s2 = time.time()
+        w2v_vocab, w2v_euc_dist_matrix, w2v_cos_dist_matrix, w2v_euc_dist_matrix_n, w2v_cos_dist_matrix_n = get_distances(model_path)
+        e2 = time.time()
+        print(f"- distance matrices created for {model_name}. time taken: {round(e2-s2,2)}")
         
-        w2v_matrices = {'euc': w2v_distance_matrix_euc, 'cos' :w2v_distance_matrix_cos}
+        # make sure to use normalised!
+        w2v_matrices = {'euc': w2v_euc_dist_matrix_n, 'cos' :w2v_cos_dist_matrix_n}
+        
+        # loop through each type of distance matrix
         for dist_type, w2v_distance_matrix in w2v_matrices.items():
-        
+            s1 = time.time()
+            print(f"\n** {model_name} - {dist_type} correlation...")
+            print(' - converting to Distance Matrix ahead of correlation and distance calculations...')
+            w2v_dist_matrix_fl   = w2v_distance_matrix.astype(np.float64)
+
+            w2v_vocab_np         = np.array(w2v_vocab)
+            evo_vocab_np         = np.array(evo_vocab)
+                        
+            # Convert existing matrices to DistanceMatrix
+            w2v_dist_matrix_new = DistanceMatrix(w2v_dist_matrix_fl, ids=w2v_vocab_np)
+            evo_dist_matrix_new = DistanceMatrix(evo_dist_matrix, ids=evo_vocab_np)
+            
+            
             #
             #--------------------------- create distance matrices -----------------------
             #
@@ -174,21 +166,49 @@ if __name__ == '__main__':
             # now create DistanceMatrices - this allows us to use the distance measures in skbio.stats.distance
             w2v_dist_matrix = DistanceMatrix(w2v_distance_matrix_fl, ids=w2v_vocab_np)
             evo_dist_matrix = DistanceMatrix(evo_dist_matrix, ids=evo_vocab_np)
-            
-            
+
             #
-            #--------------------------- run mantel -----------------------
+            # --------------------------- reduce to same sizes based upon shared vocab -----------------------
+            # ------- Note that this has been tested extensively in distance_helper.ipynb
             #
-            print(f"- running mantel test on {model_name} - {dist_type} distance.")
-            num_permutations = [50]
-            for n in num_permutations:
-                s= time.time()
-                corr_coeff, p_value, num = mantel(w2v_dist_matrix, evo_dist_matrix, permutations=n, strict=False)
-                e = time.time()
-                print(f"- mantel test on {model_name} dist type {dist_type} and {n} permutations complete in {round(e-s,2)}s. ** results corr : {round(corr_coeff,4)} p_val : {round(p_value,4)} num: {num}.\n")
-                lf.write(f"{current_date} | mantel | {model_name} \t| {dist_type} \t| {round(e - s, 2)}s | {n} | {round(corr_coeff,4)} | {round(p_value,4)} | {num}\n")
-    e1 = time.time()
-    print(f"{current_date} distance comparisons complete for {model_name} time:  {round(e1 - s1, 2)}")
+
+            print(f" - current matrix shapes. \t w2v: {w2v_distance_matrix_fl.shape} evo : {evo_dist_matrix.shape}")
+            try:
+                # create a new evo matrix to only have the pfams that it shares with the w2v matric
+                new_evo         = evo_dist_matrix_new.filter(w2v_vocab_np, False)
+                new_evo_ids     = new_evo.ids
+                # create a new w2v matrix to only have the pfams that it shares with the new evo one!
+                new_w2v         = w2v_dist_matrix_new.filter(new_evo_ids, False)
+                new_w2v_ids     = new_w2v.ids
+            except Exception as e:
+                print('Error', e)
+            print(f" - New matrix shapes. \t w2v: {new_w2v.shape} evo : {new_evo.shape}")
+
+            #
+            #--------------------------- can now do some corelation! -----------------------
+            #
+            from scipy.spatial.distance import correlation
+            from skbio.stats.distance import mantel
+
+            # extract in condesed form - basically a 1D array buit only of upper triangle of matrix and exclude diagonals
+            print(f" - running scipy correlation on {model_name} - {dist_type} distance.")
+            new_w2v_condensed = new_w2v.condensed_form()
+            new_evo_condensed = new_evo.condensed_form()
+            #print(len(new_w2v_condensed), len(new_evo_condensed))
+            my_correlation = correlation(new_w2v_condensed, new_evo_condensed)
+            print(' - scipy correlation:', my_correlation)
+
+            print(f" - running mantel test on {model_name} - {dist_type} distance.")
+            n=50
+            corr_coeff, p_value, num = mantel(new_w2v, new_evo, permutations=n, strict=False)
+            print(f" - mantel test corr : {round(corr_coeff,4)} p_val : {round(p_value,4)} num: {num}.\n")
+            
+            e1 = time.time()
+            
+            print(f"Correlation tests on {model_name} dist type {dist_type}. corr-coeff: {round(my_correlation,4)} mantel corr : {round(corr_coeff,4)} mantel p_val : {round(p_value,4)}. time : {round(e1 - s1, 2)}s\n")
+            lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| {round(my_correlation, 4)} \t|  {round(corr_coeff,4)} | {round(p_value,4)} | {round(e1 - s1, 2)}s \n")
+    e = time.time()
+    print(f"{current_date} distance comparisons complete in time:  {round(e - s, 2)}")
     lf.close()
     
     
