@@ -1,1 +1,0 @@
-distance matrices apart from the best 2 according to mantel are on an external drive
