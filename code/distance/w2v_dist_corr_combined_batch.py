@@ -84,6 +84,21 @@ def extract_evo_pfam_ids(evo_vector):
 # -------------------------------------------------------------------
 
 
+
+def find_files(directory):
+    files_info = []
+    # Traverse the directory recursively
+    for file_path in Path(directory).rglob(f'*model'):
+        if file_path.is_file():  # Check if it's a file
+            filename = file_path.stem  # Get the filename without extension
+            file_extension = file_path.suffix  # Get the file extension
+            files_info.append((str(file_path), filename, file_extension))
+    
+    return files_info
+
+
+
+
 #
 # main method
 #
@@ -96,11 +111,10 @@ if __name__ == '__main__':
     print('---------------------------------------------------------------------------')
 
 
+    from pathlib import Path
+    
     # ------------------------ setup
     #
-    model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/cbow/"
-    #model_names     = ['w2v_20240911_cbow_mc1_w3_v5', 'w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25', 'w2v_20240911_cbow_mc1_w3_v50']
-    model_names     = ['w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25']
     
     evo_npy         = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/distances/evo/rand_rep_distance_matrix.npy"
     output_dir      = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/logs/"
@@ -115,12 +129,24 @@ if __name__ == '__main__':
     evo_vocab                         = extract_evo_pfam_ids(evo_vocab_vector)
     print(f"- rand_rep extracted. number of pfams : {len(evo_vocab)} matrix shape: {evo_dist_matrix.shape}\n")
     
-    # loop through models
+
+    # --------------------- get models
+    #
+    #model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/cbow/"
+    #model_names     = ['w2v_20240911_cbow_mc1_w3_v5', 'w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25', 'w2v_20240911_cbow_mc1_w3_v50']
+    #model_names     = ['w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25']
+    
+    model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/"
+    models_info     = find_files(model_dir)
+    
     s = time.time()
-    for model_name in model_names:
-        
+    for model_info in models_info:
+        #print(f"Model Path: {model_info[0]}, \tModel name: {model_info[1]}, Extension: {model_info[2]}")
+
         # get details from model name
-        model_path = model_dir+model_name+'.model'
+        #model_path = model_dir+model_name+'.model'
+        model_path = model_info[0]
+        model_name = model_info[1]
         
         min_count_s = re.search("(mc[0-9]+)_", model_name)
         vector_s    = re.search("v([0-9]+)", model_name)
@@ -129,7 +155,7 @@ if __name__ == '__main__':
         #
         #--------------------------- create distance matrices -----------------------
         #
-        print(f"Creating distance matrices for model {model_name}")
+        print(f"Creating distance matrices for model {model_name} located at {model_path}")
         
         s2 = time.time()
         w2v_vocab, w2v_euc_dist_matrix, w2v_cos_dist_matrix, w2v_euc_dist_matrix_n, w2v_cos_dist_matrix_n = get_distances(model_path)
@@ -207,6 +233,7 @@ if __name__ == '__main__':
             
             print(f"Correlation tests on {model_name} dist type {dist_type}. corr-coeff: {round(my_correlation,4)} mantel corr : {round(corr_coeff,4)} mantel p_val : {round(p_value,4)}. time : {round(e1 - s1, 2)}s\n")
             lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| {round(my_correlation, 4)} \t|  {round(corr_coeff,4)} | {round(p_value,4)} | {round(e1 - s1, 2)}s \n")
+                      
     e = time.time()
     print(f"{current_date} distance comparisons complete in time:  {round(e - s, 2)}")
     lf.close()
