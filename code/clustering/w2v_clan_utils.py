@@ -123,7 +123,6 @@ def get_interpro_clans_for_model(model_path, output_file):
 # than min_clan_size entries
 #
 def get_pfam_clans_for_model(model_name, model_path, min_clan_size):
-    
     print(f"get_pfam_clans_for_model() {model_name}, {model_path}")
     min_count_s = re.search("(mc[0-9]+)_", model_name)
     min_count = min_count_s.group(1)
@@ -171,7 +170,10 @@ def get_pfam_clans_for_model(model_name, model_path, min_clan_size):
     
     return filtered_pfams, filtered_clans, filtered_clan_dict
 
-
+#
+# 
+# gets clans for a pfam entry but doesn't call INterpro if there are gaps
+#
 def get_pfam_clans_db(pfam_ids):
     con = duckdb.connect(database=db_string)
     
