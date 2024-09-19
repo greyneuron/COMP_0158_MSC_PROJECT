@@ -274,7 +274,7 @@ data/models/vocab/w2v_20240811_v5_w5_mc3_dist.npy
 *.zip
 *.gz
 *pfams.txt
-
+*aws*log.txt
 *w2v_rsa*
 code/hpc/w2v_rsa.pub
 *.pkl
@@ -296,3 +296,5 @@ logs/20240908_modelcreation_log_mac.txt
 .DS_Store
 *_dist_matrix_comparison.txt
 
+logs/model_creation/20240901_aws_01_log.txt
+logs/~$w2v_logs_summary.xlsx

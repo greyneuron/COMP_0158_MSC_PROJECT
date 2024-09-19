@@ -5,6 +5,9 @@ find . -type f -name "pattern" -exec du -h {} +
 
 find . -name "*mc8*model" -exec du -h {} +
 
+# output the number of pfam entries in the corpus by pfam
+awk '{ for (i = 1; i <= NF; i++) { if ($i ~ /PF[0-9]*/) { count[$i]++ } } } END { for (word in count) { print word, "|", count[word] } }' uniref100_e_corpus.dat | sort -k3,3nr
+
 #
 # -------------------------------- ec2 stuff ---------------------------------------- 
 #
