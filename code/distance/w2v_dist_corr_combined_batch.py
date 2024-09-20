@@ -23,6 +23,8 @@ from skbio.stats.distance import mantel
 from scipy.stats import pearsonr
 from scipy.stats import spearmanr
 
+from pathlib import Path
+
 #
 # Gets pairwise distance matrices for a model using both euclidean and cosine distances
 # 
@@ -90,7 +92,7 @@ def extract_evo_pfam_ids(evo_vector):
 
 
 
-def find_files(directory):
+def find_files(directory, extension):
     files_info = []
     # Traverse the directory recursively
     for file_path in Path(directory).rglob(f'*model'):
@@ -116,7 +118,7 @@ if __name__ == '__main__':
     print('---------------------------------------------------------------------------')
 
 
-    from pathlib import Path
+    
     
     # ------------------------ setup
     #

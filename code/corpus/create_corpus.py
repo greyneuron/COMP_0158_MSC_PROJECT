@@ -3,7 +3,7 @@ import time
 from gensim import corpora
 from gensim.models import Word2Vec
 import os
-
+from datetime import datetime
 debug = False
 
 
@@ -235,20 +235,240 @@ def create_corpus(input_file, output_file, ignore_file, debug=False):
     ignoref.close()
     return
 
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
+
+
+# Finds overlapping regions - and removes them, assumes the tokens
+# are in order  - thus the start of token 2 will always be after the start of token 1
+def add_bookends_gap_rule(protein_id, protein_length, tokens, min_gap=50, debug=False):
+    # List to store overlapping intervals
+    result = []
+    prev_start, prev_end = None, None
+    
+    protein_start   = 1
+    protein_end     = protein_length
+
+    num_tokens = len(tokens)
+    
+    for token in tokens:
+        start, end = token[2], token[3]
+        
+        # start with first token - if it doesn;t start at position 1, add a gap
+        if prev_start is None:
+            #if int(protein_start-1) < start:
+            if int(protein_start-1 + min_gap) < start:
+                start_tuple = (-1, "START_GAP ")
+                result.append(start_tuple)
+            prev_start, prev_end = start, end
+            result.append(token)
+        # if there is overlap - don't add this item (for now)    
+        else:
+            if start <= prev_end:
+                if token[1].startswith('PF'):
+                    continue
+            else:
+                # No overlap, add the item to the result list
+                result.append(token)
+                prev_start, prev_end = start, end
+    #if (end < int(protein_end)):
+    if (end + min_gap < int(protein_end)):
+        result.append((1000, " STOP_GAP"))
+            
+    return result
+
+
+
+
+
+def strip_line(line, min_gap):
+    # each section is split by a pipe '|' - the first sectoin contains protein metadata
+    line = line.strip('\n')
+    cols        = line.split('|')
+    num_cols    = len(cols)
+    
+    #print(f"\nsentence to parse \t: {line}")
+    
+    #
+    # get protein meta data - this is the first token
+    #
+    protein_section = cols[0].rstrip("\n")
+    protein_pieces  = protein_section.split(':')
+    protein_id      = protein_pieces[0]
+    protein_length  = int(protein_pieces[1])
+    num_tokens      = int(protein_pieces[2])
+    num_pfam_tokens     = int(protein_pieces[3])
+    num_disorder_tokens = int(protein_pieces[4])
+    
+    # ignore lines with no pfam tokens and move to the next line
+    if( (num_pfam_tokens == 0) or (num_tokens == 0)):
+        #print('No pfam tokens - skipping line', line)
+        return 'err'
+    # tokens for the current line
+    tokens = []
+
+    #
+    # extract tokens that represent pfam domains and disordered regions
+    #
+    if(num_cols > 1):
+        for i in range(1, num_cols):
+            token_elements  = cols[i].split(':')
+            token_item      = token_elements[0]
+            token_start     = int(token_elements[1])
+            token_end       = int(token_elements[2].rstrip('\n'))
+            
+            tuple = (i-1, token_item, token_start, token_end)
+            tokens.append(tuple)
+    
+    # sort tokens and remove overlaps - i imagine there is a smarter way to do this
+    #print(f"protein length  \t\t: {protein_length}")
+    #print(f"tokens to parse \t\t: {tokens}")
+    sorted_tokens               = sorted(tokens, key=lambda x: x[2]) # order by start position
+    reordered_tokens            = reorder_tokens(sorted_tokens)      # reorder by replacing overlap
+    bookended_tokens            = add_bookends_gap_rule(protein_id, protein_length,  reordered_tokens, min_gap, True)
+    
+    # debug
+
+    #print(f"sorted tokens    : {sorted_tokens}")
+    #print(f"reordered tokens : {reordered_tokens}")
+    #print(f"with bookends    : {bookended_tokens}")
+    
+    # double check that we have enough tokens for a sentence!
+    num_sorted_tokens  = len(bookended_tokens)
+    if(num_sorted_tokens <= 1):
+        #print(f"Not enough tokens for : {protein_id}. line: {line}")
+        return 'err'
+    
+    # create sentences - add gaps where appropriate - basically in between any words
+    # as long as the first word or last word isn't also a gap (which is possible) as
+    # then we'd have two GAP tokens. Note that I have differentiated between gaps that appear
+    # as the first token or last token - not sure it will make any difference
+    sentence = ""
+    for i in range(num_sorted_tokens):
+        
+        # add token - but if the last token was 'DISORDER' 
+        #if i > 0:
+        #    if bookended_tokens[i-1][1] == 'DISORDER' and bookended_tokens[i][1] == 'DISORDER':
+        #        continue
+       
+        sentence += bookended_tokens[i][1] + " "
+        
+        # Check if we should add "GAP"
+        if i < len(bookended_tokens) - 1:  # Check if not the last word
+            
+            # as long as previous word wasn't STOP_GAP or next word isn;t 'STOP GAP'
+            # the second element of the token is the start position
+            if bookended_tokens[i][1] != "START_GAP " and bookended_tokens[i+1][1] != " STOP_GAP":
+                # if start of next 
+                if(bookended_tokens[i][3] + min_gap < bookended_tokens[i+1][2]):
+                    sentence += "GAP "
+                elif(bookended_tokens[i+1][2] == bookended_tokens[i][3] + 1):
+                    sentence += " "
+    # DEBUG
+    #print(f"sentence for {protein_id} \t\t: {sentence}\n")
+    return sentence
+    #of.write(sentence +'\n')
+    
+
+#
+# This does most of the work - it returns a corpus from one file 
+# It breaks each line into individual chunks (tuples) - each representing
+# a token. These are then ordered according to their start and end poitiion and overlaps are 
+# removed. The final sentence will contain the words 'GAP' 'DISORDER' or 'PF<id>
+# EXAMPLE INPUT:
+#       A0A010PZJ8:493:4:1:3|DISORDER:1:30|DISORDER:1:32|DISORDER:468:493|PF01399:335:416
+# EXAMPLE OUTPUT:
+#       START_GAP DISORDER GAP PF01399 GAP DISORDER
+#
+def create_corpus_gap_rule(input_file, output_file, ignore_file, min_gap=50, debug=False):
+    
+    if debug : 
+        print(f"> Creating corpus with gap rule {min_gap} based upon {input_file}. outputting corpus to {output_file}")
+    
+    PARSE_LIMIT  = -1  # number of lines to parse (useful for testing -1 means all)
+    
+    # init
+    num_tokens      = 0
+    num_pfam_tokens = 0
+    num_disorder_tokens = 0
+
+    #corpus  = [] # contains a list of tuples
+    of      = open(output_file, "w")
+    
+    # parse input file
+    with open(input_file, 'r') as input:
+        for line_number, line in enumerate(input): # one line number per protein
+            line = line.strip('\n')
+            
+            #print(f"{line_number} | {line.strip('\n')}")
+            sentence = strip_line(line, min_gap)
+            #print(f"{line_number} | {sentence}")
+            
+            if sentence != 'err':
+                of.write(sentence +'\n')
+            
+            if(PARSE_LIMIT != -1):            
+                if(line_number == PARSE_LIMIT):
+                    print('\n------', PARSE_LIMIT, 'lines processed, terminating.')
+                    of.close()
+                    return
+    of.close()
+    return
+
+
+
+
 # ------------------------------------------------------------------------------------------------------
 #
 #                               SETUP & RUN
 #
 # ------------------------------------------------------------------------------------------------------
-input_file      = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus_validation_sep/uniref100_e_tokens_combined_20240910.dat"
-output_file     = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus_validation_sep/uniref100_e_corpus.dat"
-ignore_file     = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus_validation_sep/uniref100_e_corpus_ignored.dat"
+input_file          = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus/uniref100_e_tokens_combined_20240910.dat"
+output_file_root    = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus/uniref100_e_corpus_gap_"
+current_date    = datetime.now().strftime('%Y%m%d_%H%M')
 
 s = time.time()
-create_corpus(input_file, output_file, ignore_file)
-e = time.time()
+#create_corpus_gap_rule(input_file, output_file, ignore_file, 50, debug=True)
 
-print(f"Corpus created in {round(e-s,2)}s; ouput to {output_file}")
+min_gap = 50
+output_file = output_file_root + str(min_gap) + '_' + current_date +'.txt'
+print(f"Using minimum gap size of {min_gap}")
+
+
+# real
+create_corpus_gap_rule(input_file, output_file, min_gap)
+
+# test
+'''
+line1 = 'TEST1:100:4:2:2|PF14273:30:40|DISORDER:50:60|PF2345:65:70|DISORDER:80:100'
+line2 = 'TEST2:110:4:2:2|PF14273:30:40|DISORDER:50:60|PF2345:65:70|DISORDER:80:100'
+line3 = 'TEST3:100:4:2:2|PF14273:0:40|DISORDER:50:60|PF2345:61:70|DISORDER:80:100'
+line4 = 'TEST4:100:4:2:2|PF14273:1:40|DISORDER:50:60|PF2345:62:70|DISORDER:80:98'
+line5 = 'TEST5:100:4:0:4|DISORDER:0:40|DISORDER:50:60|DISORDER:51:60|DISORDER:80:100' # no pfam
+line5a = 'TEST5a:100:4:1:4|DISORDER:0:40|DISORDER:50:60|PF14273:51:60|DISORDER:80:99' # consecutive disorder
+
+line6 = 'TEST6:106:4:1:3|DISORDER:38:106|DISORDER:55:72|PF00424:60:70|PF00424:42:91'
+line7 = 'TEST7:106:4:1:3|DISORDER:38:106|DISORDER:55:72|PF00424:60:70|PF00425:61:91'
+line8 = 'TEST9:106:4:1:3|DISORDER:38:106|DISORDER:55:72|PF00424:60:70|PF00425:71:91'
+line9 = 'A0A2A9PFF7:106:4:1:3|DISORDER:38:106|DISORDER:55:72|DISORDER:83:106|PF00424:42:91'
+line10 = 'A0A0A2VYH2:310:1:1:0|PF01278:29:310'
+line11 = 'D5J701:86:1:1:0|PF01766:3:84'
+
+#lines = [line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11]
+#lines = [line1, line2, line3, line4, line5, line6]
+lines = [line5a]
+
+print(f"Using minimum gap size of {min_gap}")
+for line in lines:
+    strip_line(line, min_gap)
+'''
+
+e = time.time()
+print(f"Corpus created in {round(e-s,2)}s; output to {output_file}")
 
 
 
@@ -260,6 +480,8 @@ TEST1:664:1:1:0|PFAM1234:123:575
 TEST2:214:1:1:0|PF14273:31:213
 TEST3:214:1:1:0|PF14273:31:214
 TEST4:100:4:2:2|PF14273:30:40|DISORDER:50:60|PF2345:65:70|DISORDER:80:100
+TEST41:110:4:2:2|PF14273:30:40|DISORDER:50:60|PF2345:65:70|DISORDER:80:100
+
 TEST5:100:4:2:2|PF14273:0:40|DISORDER:50:60|PF2345:61:70|DISORDER:80:100
 TEST6:100:4:2:2|PF14273:1:40|DISORDER:50:60|PF2345:62:70|DISORDER:80:98
 TEST7:100:4:0:4|DISORDER:0:40|DISORDER:50:60|DISORDER:51:60|DISORDER:80:100
