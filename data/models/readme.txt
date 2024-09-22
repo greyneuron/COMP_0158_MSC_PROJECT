@@ -3,9 +3,14 @@ Timings
 -------------------------------
 0920
 - Time to create corpus with gap size of 50 :
+- Corpus size : 37,721,172 lines
 - Model creation times  : see log
 - Distance comparison   (w2v_dist_corr_combined_batch.py) : 20240922_0719 distance comparisons complete in time:  13040.69s
 
+0922
+- Time to create corpus with gap size of 100 : 290.89s
+- Corpus size : 37,721,172 lines
+- Corpus is identical to gap size of 50
 
 -------------------------------
 Model & corpus history

@@ -427,14 +427,14 @@ def create_corpus_gap_rule(input_file, output_file, ignore_file, min_gap=50, deb
 #                               SETUP & RUN
 #
 # ------------------------------------------------------------------------------------------------------
-input_file          = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus/uniref100_e_tokens_combined_20240910.dat"
-output_file_root    = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus/uniref100_e_corpus_gap_"
+input_file          = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus/precorpus/uniref100_e_tokens_combined_20240910.dat"
+output_file_root    = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/corpus/0922/uniref100_e_corpus_gap_"
 current_date    = datetime.now().strftime('%Y%m%d_%H%M')
 
 s = time.time()
 #create_corpus_gap_rule(input_file, output_file, ignore_file, 50, debug=True)
 
-min_gap = 50
+min_gap = 25
 output_file = output_file_root + str(min_gap) + '_' + current_date +'.txt'
 print(f"Using minimum gap size of {min_gap}")
 
