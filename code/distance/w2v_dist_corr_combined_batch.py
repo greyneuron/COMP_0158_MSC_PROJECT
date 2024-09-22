@@ -92,7 +92,7 @@ def extract_evo_pfam_ids(evo_vector):
 
 
 
-def find_files(directory, extension):
+def find_files(directory):
     files_info = []
     # Traverse the directory recursively
     for file_path in Path(directory).rglob(f'*model'):
@@ -117,14 +117,12 @@ if __name__ == '__main__':
     print('      takes a model, calculates its distance and compares it to randrep    ')
     print('---------------------------------------------------------------------------')
 
-
-    
     
     # ------------------------ setup
     #
     
     evo_npy         = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/distances/evo/rand_rep_distance_matrix.npy"
-    output_dir      = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/logs/"
+    output_dir      = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/logs/distance/0920/"
     
     current_date    = datetime.now().strftime('%Y%m%d_%H%M')
     log_file        = output_dir+current_date+"_dist_matrix_comparison_pearsonr.txt"
@@ -145,7 +143,7 @@ if __name__ == '__main__':
     #model_names     = ['w2v_20240911_cbow_mc1_w3_v5', 'w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25', 'w2v_20240911_cbow_mc1_w3_v50']
     #model_names     = ['w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25']
     
-    model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/test/"
+    model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/"
     models_info     = find_files(model_dir)
     
     s = time.time()
@@ -216,7 +214,7 @@ if __name__ == '__main__':
                 print('Error', e)
             print(f" - New matrix shapes. \t w2v: {new_w2v.shape} evo : {new_evo.shape}")
 
-            '''
+            
             #
             #--------------------------- can now do some corelation! -----------------------
             #
@@ -227,7 +225,7 @@ if __name__ == '__main__':
             new_w2v_condensed = new_w2v.condensed_form()
             new_evo_condensed = new_evo.condensed_form()
             
-            '''
+         
             
             '''
             #
@@ -252,7 +250,7 @@ if __name__ == '__main__':
             #
             # ------------- Pearson test
             #
-            '''
+            
             print(f" - running pearsonr test on {model_name} - {dist_type} distance.")
             pearson_result = pearsonr(new_w2v_condensed, new_evo_condensed)
             e1 = time.time()
@@ -260,12 +258,12 @@ if __name__ == '__main__':
             print(f"Pearsonr test on {model_name} dist type {dist_type}. pearsonr stat: {round(pearson_result.statistic, 4)} pval: {round(pearson_result.pvalue, 4)}  time : {round(e1 - s1, 2)}s\n")
             lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| pearsonr | {round(pearson_result.statistic,4)} | {round(pearson_result.pvalue, 4)} | {round(e1 - s1, 2)}s \n")
             lf.flush()
-            '''
+            
             
             #
             # ------------- Spearman test
             #
-            '''
+            
             print(f" - running spearmanr test on {model_name} - {dist_type} distance.")
             spearmanr_result = spearmanr(new_w2v_condensed, new_evo_condensed)
             e2 = time.time()
@@ -274,7 +272,7 @@ if __name__ == '__main__':
             lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| spearmanr | {round(spearmanr_result.statistic,4)} | {round(spearmanr_result.pvalue, 4)} | {round(e2 - e1, 2)}s \n")
             
             lf.flush()
-            '''
+            
                
     e = time.time()
     print(f"{current_date} distance comparisons complete in time:  {round(e - s, 2)}")

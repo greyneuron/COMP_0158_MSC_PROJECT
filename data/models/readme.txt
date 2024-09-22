@@ -1,4 +1,13 @@
 -------------------------------
+Timings
+-------------------------------
+0920
+- Time to create corpus with gap size of 50 :
+- Model creation times  : see log
+- Distance comparison   (w2v_dist_corr_combined_batch.py) : 20240922_0719 distance comparisons complete in time:  13040.69s
+
+
+-------------------------------
 Model & corpus history
 -------------------------------
 
