@@ -1,0 +1,22 @@
+Parsing file for sentences: /Users/patrick/dev/ucl/comp0158_mscproject/data/corpus/uniref100_e_corpus_20240810.txt
+45909435 sentences processed, 255674676 added in 417.00527572631836s
+
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v5_w5_mc3.model | 5 | 5 | 3 | 1667.82s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v10_w5_mc3.model | 10 | 5 | 3 | 1679.44s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v20_w5_mc3.model | 20 | 5 | 3 | 1817.95s
+
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v5_w5_mc5.model | 5 | 5 | 5 | 1659.78s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v10_w5_mc5.model | 10 | 5 | 5 | 1815.21s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v20_w5_mc5.model | 20 | 5 | 5 | 1882.75s
+
+
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v5_w10_mc3.model | 5 | 10 | 3 | 1320.27s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v10_w10_mc3.model | 10 | 10 | 3 | 1337.47s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v20_w10_mc3.model | 20 | 10 | 3 | 1247.6s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v5_w10_mc5.model | 5 | 10 | 5 | 1270.31s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v10_w10_mc5.model | 10 | 10 | 5 | 1493.95s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240811_v20_w10_mc5.model | 20 | 10 | 5 | 1572.88s
+
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240814_v5_w5_mc1.model | 5 | 5 | 1 | 1474.09s
+/Users/patrick/dev/ucl/comp0158_mscproject/data/models/w2v_20240814_v10_w5_mc1.model | 10 | 5 | 1 | 1362.54s
+

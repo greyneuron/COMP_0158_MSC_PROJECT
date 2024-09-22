@@ -38,7 +38,7 @@ def get_array_sentences(corpus_file, limit=-1):
             line = line.strip('\n')
             tokens = line.split()
             
-            print(f"{counter} : {tokens}")
+            #print(f"{counter} : {tokens}")
             
             sentences.append(tokens)
             
@@ -59,6 +59,7 @@ def get_line_sentences(corpus_file):
     return sentences
 '''
 
+'''
 #
 # gets the vocab for a model - returns a python list and a numpy array
 #
@@ -72,7 +73,9 @@ def get_model_vocab(model_dir, model_name):
     for word in vocab:
         pfam_ids.append(word)
     return pfam_ids
+'''
 
+'''
 # creates a distance matrix for a model
 # this assumes a certain naming convention for models and vocab files
 # For example
@@ -146,6 +149,7 @@ def create_distance_matrix(model_base_name, model_name):
     print(f"distance matrix computed for model: {model_base_name}. num words: {num_entries}. time: {round(e-s,2)}s. success: {success_count} fail: {error_count} output: {output_name}")
     
     return
+'''
 
 
 #
@@ -157,55 +161,54 @@ if __name__ == '__main__':
     CBOW            = 0
     SKIP_GRAM       = 1
     
-    
-    print('\n')
+
+    print('\n---------------------------------------------------')
+    print('             ** Word2Vec Model Batch **            ')
     print('---------------------------------------------------')
-    print('       ** Word2Vec Model Batch **          ')
-    print('---------------------------------------------------')
     
-    parser = argparse.ArgumentParser(prog='Word2Vec Model Task Manager', description='Orchestrates the creation of word2vec models')
-    
-    parser.add_argument("--corpus_file", help="full path to corpus (pickle file from python array)", required=False)
-    parser.add_argument("--output_dir", help="output directory for models", required=False)
-    parser.add_argument("--model_type", choices=['cbow', 'skip'], help="output directory for models", required=False)
-    parser.add_argument("--mc", help="min word count (integer)", required=True)
-    parser.add_argument("--ws", help="window size (integer)", required=True)
-    #parser.add_argument("--vs", help="vector size (integer)", required=True)
+    # command line arguments
+    parser = argparse.ArgumentParser(prog='Word2Vec - Model Batch', description='Orchestrates the creation of word2vec models')
+    parser.add_argument("--corpus_file", help="full path to corpus text file of sentences (can use pickle file from python array but need to change code)", required=True)
+    parser.add_argument("--output_dir", help="output directory for models", required=True)
+    parser.add_argument("--mt", choices=['cbow', 'skip', 'all'], help="model type", required=True)
+    parser.add_argument("--mc", help="min word count (integer) : set to -1 to loop through them all", required=True)
+    parser.add_argument("--ws", help="window size (integer) : set to -1 to loop through them all", required=True)
+    parser.add_argument("--vs", help="vector size (integer) : set to -1 to loop through them all", required=True)
     
     
     # extract arguments
     args            = parser.parse_args()
     sentences_file  = args.corpus_file
     output_dir      = args.output_dir
-    model_type      = args.model_type
+    mt              = args.mt
     window_size     = int(args.ws)
+    vector_size     = int(args.vs)
     min_count       = int(args.mc)
-    #vector_size     = args.vs
     
-    pickle_file     = sentences_file
+    if min_count     == -1:
+        print(f"min_count is {min_count} - looping through them all")
+    else:
+        print(f"using min_count size {min_count}")
+
+    if vector_size     == -1:
+        print(f"vector size is {vector_size} - looping through them all")
+    else:
+        print(f"using vector size {vector_size}")
     
-    # sort out model type
-    if 'bag' == model_type:
-        model_type = CBOW
-    elif 'skip' == model_type:
-        model_type = SKIP_GRAM
-    
-    
-    #print(f"Running word2vec with model_type: {model_type} window_size: {window_size} min_count: {min_count} output_dir: {output_dir}, sentences: {sentences_file}.")
-    
-    log_file = output_dir+'/'+current_date+"_model_log.txt"
-    lf = open(log_file, "w")
-    
-    #
-    # -------------------------- load sentences -----------------------
-    #
-    
-    print('loading sentences from pickle file:', sentences_file)
-    s = time.time()
-    with open(sentences_file, 'rb') as f:
-        sentences = pkl.load(f)
-    e = time.time()
-    print(f"sentences loaded in {round(e-s, 2)} seconds.")
+    if window_size     == -1:
+        print(f"window_size is {window_size} - looping through them all")
+    else:
+        print(f"using window_size {window_size}")
+        
+    # model type
+    if 'cbow' == mt:
+        model_types = [CBOW]
+    elif 'skip' == mt:
+        model_types = [SKIP_GRAM] 
+    elif 'all' == mt:
+        model_types = [CBOW, SKIP_GRAM]    
+        
+    print(f"using model types : {model_types}")
     
     
     # -----------------------------------------------------------------
@@ -213,43 +216,75 @@ if __name__ == '__main__':
     # Change these params for each batch
     #
     # -----------------------------------------------------------------
-    #vector_sizes    = [75, 100]
-    vector_sizes    = [250, 500, 750, 1000]
+    
+    
+    # log file
+    log_file = output_dir+'/'+current_date+"_model_log.txt"
+    lf = open(log_file, "w")
+    
+    # min count, vector size, window size
+    if min_count != -1:
+        min_counts = [min_count]
+    else:
+        min_counts = [3, 5, 8]
+        
+    if window_size != -1:
+        window_sizes = [window_size]
+    else:
+        window_sizes = [13, 21, 44]
+        
+    if vector_size != -1:
+        vector_sizes = [vector_size]
+    else:
+        vector_sizes = [250, 500]
 
     
     #
-    # create and save model
+    # -------------------------- load sentences -----------------------
     #
-    for vector_size in vector_sizes:
-        
-        model_base_name = "w2v_"+current_date + "_sg"+str(model_type) + "_mc"+str(min_count) +"_w"+str(window_size) + "_v"+str(vector_size)+".model"
-        model_name      = output_dir+"w2v_"+current_date + "_sg"+str(model_type) + "_mc"+str(min_count) +"_w"+str(window_size) + "_v"+str(vector_size)+".model"
-        print(f"creating model {model_name}.")
-        
-        s = time.time()
-        #
-        #--------------------------- create model -----------------------
-        # create model here
-        
-        w2v_model   = create_w2v_model(sentences, int(model_type), vector_size, window_size, min_count)
-        w2v_model.save(model_name)
-        
-        e = time.time()
-        time_taken=str(round(e-s, 2))
-        
-        print(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken}")
-        
-        #
-        #--------------------------- create dist -----------------------
-        #
-        '''
-        print("creating distance matrix")
-        create_distance_matrix(model_base_name, model_name)
-        
-        e2 = time.time()
-        matrix_time_taken=str(round(e2-e, 2))
-        
-        print(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken} | {matrix_time_taken}")
-        lf.write(f"w2v_model_create_{current_date} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken} | {matrix_time_taken}\n")
-        '''
+    '''
+    pickle_file     = sentences_file
+    print('loading sentences from pickle file:', sentences_file)
+    s = time.time()
+    with open(sentences_file, 'rb') as f:
+        sentences = pkl.load(f)
+    e = time.time()
+    print(f"sentences loaded in {round(e-s, 2)} seconds.")
+    '''
     
+    t1 = time.time()
+    #print('loading sentences into array:', sentences_file)
+    sentences = get_array_sentences(sentences_file)
+    t2 = time.time()
+    now_time   = datetime.now().strftime('%Y%m%d_%H:%M')
+    print(f"{now_time} sentences loaded in {str(round(t2-t1, 2))}s")
+    sys.stdout.flush()
+    
+    #
+    # ---------------------- create and save model ----------------------
+    #
+    for model_type in model_types:
+        for min_count in min_counts:
+            for window_size in window_sizes:
+                for vector_size in vector_sizes:
+                    now_time   = datetime.now().strftime('%Y%m%d_%H:%M')
+                    model_base_name = "w2v_"+current_date + "_"+str(model_type) + "_mc"+str(min_count) +"_w"+str(window_size) + "_v"+str(vector_size)
+                    model_name      = output_dir+model_base_name+".model"
+                    
+                    print(f"{now_time} creating model {model_name}")
+                    sys.stdout.flush()
+                    
+                    s = time.time()
+                    #
+                    #--------------------------- create model -----------------------
+                    # create model here
+                    
+                    w2v_model   = create_w2v_model(sentences, int(model_type), vector_size, window_size, min_count)
+                    w2v_model.save(model_name)
+                    
+                    now_time   = datetime.now().strftime('%Y%m%d_%H:%M')
+                    e = time.time()
+                    time_taken=str(round(e-s, 2))
+                    
+                    print(f"{now_time} | {model_base_name} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken}")
+                    sys.stdout.flush()

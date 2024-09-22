@@ -8,6 +8,15 @@ find . -name "*mc8*model" -exec du -h {} +
 # output the number of pfam entries in the corpus by pfam
 awk '{ for (i = 1; i <= NF; i++) { if ($i ~ /PF[0-9]*/) { count[$i]++ } } } END { for (word in count) { print word, "|", count[word] } }' uniref100_e_corpus.dat | sort -k3,3nr
 
+
+
+# recursively rename files to remove '0920' from the start of their name
+find . -type f -name '0920*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/^0920//')"; mv "$file" "$new_name"; done
+
+# recursively rename files to rename from .model to _g50.model
+find . -type f -name 'w2v_20240920*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/\.model/_g50\.model/')"; mv "$file" "$new_name"; done
+
+
 #
 # -------------------------------- ec2 stuff ---------------------------------------- 
 #
@@ -35,12 +44,17 @@ aws configure
 aws s3 cp /data/dev/ucl/data/precorpus_78M_sql_extract.tar.gz s3://w2v-bucket/corpus/precorpus_78M_sql_extract.tar.gz
 
 
-# print names of all models with various param configs
-for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; find . -name "*mc$mc*model"; done; done
-for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; find . -name "*mc$mc*model" | wc -l; done; done
+# print names of all models with various param configs - these all work
+for mc in 1 3 5 8; do echo "hi $mc"; done
+for mc in 1 3 5 8; do find . -name "*mc$mc*model"; done
+for mc in 1 3 5 8; do find . -name "*mc$mc*model" | wc -l; done
+
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo "*mc$mc" w"$ws"; done; done
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do find . -name "*mc$mc*w$ws*model"; done; done
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do find . -name "*mc$mc*w$ws*model" | wc -l; done; done
+for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo "mc$mc" w"$ws" : ; find . -name "*mc$mc*w$ws*model" | wc -l; done; done
 
 
-for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; done; done
 
 cd models/cbow
 for mc in 1 3 5 8; do for ws in 3 5 8 13 21 44; do echo mc$mc_w$ws; grep "*mc$mc" 20240904_dist_matrix_mantel.txt | wc -l; done; done

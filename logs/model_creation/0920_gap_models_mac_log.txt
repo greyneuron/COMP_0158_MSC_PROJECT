@@ -1,0 +1,274 @@
+Fri 20 Sep 2024 18:37:25 BST
+Setting mac parameters
+Fri 20 Sep 2024 18:37:25 BST
+running models....
+
+---------------------------------------------------
+             ** Word2Vec Model Batch **            
+---------------------------------------------------
+min_count is -1 - looping through them all
+vector size is -1 - looping through them all
+window_size is -1 - looping through them all
+using model types : [0, 1]
+parsing sentence to array from: /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/uniref100_e_corpus_gap_50_20240920_1643.txt
+20240920_18:40 sentences loaded in 200.28s
+20240920_18:40 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc3_w13_v5.model
+20240920_18:55 | w2v_20240920_0_mc3_w13_v5 | 0 | 3 | 13 | 5 | 883.45
+20240920_18:55 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc3_w13_v25.model
+20240920_19:11 | w2v_20240920_0_mc3_w13_v25 | 0 | 3 | 13 | 25 | 950.99
+20240920_19:11 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc3_w21_v5.model
+20240920_19:26 | w2v_20240920_0_mc3_w21_v5 | 0 | 3 | 21 | 5 | 927.47
+20240920_19:26 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc3_w21_v25.model
+20240920_19:42 | w2v_20240920_0_mc3_w21_v25 | 0 | 3 | 21 | 25 | 941.34
+20240920_19:42 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc3_w44_v5.model
+20240920_19:57 | w2v_20240920_0_mc3_w44_v5 | 0 | 3 | 44 | 5 | 924.08
+20240920_19:57 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc3_w44_v25.model
+20240920_20:13 | w2v_20240920_0_mc3_w44_v25 | 0 | 3 | 44 | 25 | 940.19
+20240920_20:13 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc5_w13_v5.model
+20240920_20:28 | w2v_20240920_0_mc5_w13_v5 | 0 | 5 | 13 | 5 | 910.91
+20240920_20:28 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc5_w13_v25.model
+20240920_20:44 | w2v_20240920_0_mc5_w13_v25 | 0 | 5 | 13 | 25 | 926.04
+20240920_20:44 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc5_w21_v5.model
+20240920_20:59 | w2v_20240920_0_mc5_w21_v5 | 0 | 5 | 21 | 5 | 925.93
+20240920_20:59 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc5_w21_v25.model
+20240920_21:15 | w2v_20240920_0_mc5_w21_v25 | 0 | 5 | 21 | 25 | 944.05
+20240920_21:15 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc5_w44_v5.model
+20240920_21:30 | w2v_20240920_0_mc5_w44_v5 | 0 | 5 | 44 | 5 | 918.84
+20240920_21:30 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc5_w44_v25.model
+20240920_21:46 | w2v_20240920_0_mc5_w44_v25 | 0 | 5 | 44 | 25 | 933.45
+20240920_21:46 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc8_w13_v5.model
+20240920_22:03 | w2v_20240920_0_mc8_w13_v5 | 0 | 8 | 13 | 5 | 1008.4
+20240920_22:03 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc8_w13_v25.model
+20240920_22:20 | w2v_20240920_0_mc8_w13_v25 | 0 | 8 | 13 | 25 | 1059.33
+20240920_22:20 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc8_w21_v5.model
+20240920_22:34 | w2v_20240920_0_mc8_w21_v5 | 0 | 8 | 21 | 5 | 849.92
+20240920_22:34 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc8_w21_v25.model
+20240920_22:49 | w2v_20240920_0_mc8_w21_v25 | 0 | 8 | 21 | 25 | 872.98
+20240920_22:49 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc8_w44_v5.model
+20240920_23:03 | w2v_20240920_0_mc8_w44_v5 | 0 | 8 | 44 | 5 | 857.51
+20240920_23:03 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_0_mc8_w44_v25.model
+20240920_23:18 | w2v_20240920_0_mc8_w44_v25 | 0 | 8 | 44 | 25 | 867.58
+20240920_23:18 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc3_w13_v5.model
+20240920_23:32 | w2v_20240920_1_mc3_w13_v5 | 1 | 3 | 13 | 5 | 875.56
+20240920_23:32 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc3_w13_v25.model
+20240920_23:48 | w2v_20240920_1_mc3_w13_v25 | 1 | 3 | 13 | 25 | 921.02
+20240920_23:48 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc3_w21_v5.model
+20240921_00:02 | w2v_20240920_1_mc3_w21_v5 | 1 | 3 | 21 | 5 | 892.14
+20240921_00:02 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc3_w21_v25.model
+20240921_00:18 | w2v_20240920_1_mc3_w21_v25 | 1 | 3 | 21 | 25 | 949.06
+20240921_00:18 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc3_w44_v5.model
+20240921_00:33 | w2v_20240920_1_mc3_w44_v5 | 1 | 3 | 44 | 5 | 902.86
+20240921_00:33 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc3_w44_v25.model
+20240921_00:50 | w2v_20240920_1_mc3_w44_v25 | 1 | 3 | 44 | 25 | 974.26
+20240921_00:50 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc5_w13_v5.model
+20240921_01:04 | w2v_20240920_1_mc5_w13_v5 | 1 | 5 | 13 | 5 | 867.0
+20240921_01:04 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc5_w13_v25.model
+20240921_01:19 | w2v_20240920_1_mc5_w13_v25 | 1 | 5 | 13 | 25 | 912.24
+20240921_01:19 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc5_w21_v5.model
+20240921_01:34 | w2v_20240920_1_mc5_w21_v5 | 1 | 5 | 21 | 5 | 885.01
+20240921_01:34 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc5_w21_v25.model
+20240921_01:50 | w2v_20240920_1_mc5_w21_v25 | 1 | 5 | 21 | 25 | 950.37
+20240921_01:50 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc5_w44_v5.model
+20240921_02:05 | w2v_20240920_1_mc5_w44_v5 | 1 | 5 | 44 | 5 | 891.79
+20240921_02:05 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc5_w44_v25.model
+20240921_02:21 | w2v_20240920_1_mc5_w44_v25 | 1 | 5 | 44 | 25 | 979.86
+20240921_02:21 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc8_w13_v5.model
+20240921_02:36 | w2v_20240920_1_mc8_w13_v5 | 1 | 8 | 13 | 5 | 869.7
+20240921_02:36 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc8_w13_v25.model
+20240921_02:51 | w2v_20240920_1_mc8_w13_v25 | 1 | 8 | 13 | 25 | 903.33
+20240921_02:51 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc8_w21_v5.model
+20240921_03:05 | w2v_20240920_1_mc8_w21_v5 | 1 | 8 | 21 | 5 | 887.73
+20240921_03:05 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc8_w21_v25.model
+20240921_03:21 | w2v_20240920_1_mc8_w21_v25 | 1 | 8 | 21 | 25 | 949.54
+20240921_03:21 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc8_w44_v5.model
+20240921_03:36 | w2v_20240920_1_mc8_w44_v5 | 1 | 8 | 44 | 5 | 903.04
+20240921_03:36 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920w2v_20240920_1_mc8_w44_v25.model
+20240921_03:53 | w2v_20240920_1_mc8_w44_v25 | 1 | 8 | 44 | 25 | 979.99
+Sat 21 Sep 2024 03:56:03 BST
+
+
+Patricks-MBP.broadband
+Sat 21 Sep 2024 07:01:05 BST
+Setting mac parameters
+Sat 21 Sep 2024 07:01:05 BST
+running models....
+
+---------------------------------------------------
+             ** Word2Vec Model Batch **            
+---------------------------------------------------
+min_count is -1 - looping through them all
+vector size is -1 - looping through them all
+window_size is -1 - looping through them all
+using model types : [0, 1]
+parsing sentence to array from: /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/uniref100_e_corpus_gap_50_20240920_1643.txt
+20240921_07:04 sentences loaded in 217.43s
+20240921_07:04 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w13_v50.model
+20240921_07:19 | w2v_20240921_0_mc3_w13_v50 | 0 | 3 | 13 | 50 | 891.32
+20240921_07:19 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w13_v100.model
+20240921_07:34 | w2v_20240921_0_mc3_w13_v100 | 0 | 3 | 13 | 100 | 881.96
+20240921_07:34 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w21_v50.model
+20240921_07:49 | w2v_20240921_0_mc3_w21_v50 | 0 | 3 | 21 | 50 | 882.38
+20240921_07:49 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w21_v100.model
+20240921_08:04 | w2v_20240921_0_mc3_w21_v100 | 0 | 3 | 21 | 100 | 918.21
+20240921_08:04 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w44_v50.model
+20240921_08:19 | w2v_20240921_0_mc3_w44_v50 | 0 | 3 | 44 | 50 | 911.33
+20240921_08:19 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w44_v100.model
+20240921_08:34 | w2v_20240921_0_mc3_w44_v100 | 0 | 3 | 44 | 100 | 921.3
+20240921_08:34 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w13_v50.model
+20240921_08:49 | w2v_20240921_0_mc5_w13_v50 | 0 | 5 | 13 | 50 | 904.7
+20240921_08:49 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w13_v100.model
+20240921_09:05 | w2v_20240921_0_mc5_w13_v100 | 0 | 5 | 13 | 100 | 940.11
+20240921_09:05 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w21_v50.model
+20240921_09:20 | w2v_20240921_0_mc5_w21_v50 | 0 | 5 | 21 | 50 | 900.82
+20240921_09:20 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w21_v100.model
+20240921_09:35 | w2v_20240921_0_mc5_w21_v100 | 0 | 5 | 21 | 100 | 908.94
+20240921_09:35 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w44_v50.model
+20240921_09:51 | w2v_20240921_0_mc5_w44_v50 | 0 | 5 | 44 | 50 | 916.76
+20240921_09:51 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w44_v100.model
+20240921_10:06 | w2v_20240921_0_mc5_w44_v100 | 0 | 5 | 44 | 100 | 955.18
+20240921_10:06 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w13_v50.model
+20240921_10:22 | w2v_20240921_0_mc8_w13_v50 | 0 | 8 | 13 | 50 | 913.02
+20240921_10:22 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w13_v100.model
+20240921_10:37 | w2v_20240921_0_mc8_w13_v100 | 0 | 8 | 13 | 100 | 938.04
+20240921_10:37 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w21_v50.model
+20240921_10:53 | w2v_20240921_0_mc8_w21_v50 | 0 | 8 | 21 | 50 | 933.43
+20240921_10:53 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w21_v100.model
+20240921_11:09 | w2v_20240921_0_mc8_w21_v100 | 0 | 8 | 21 | 100 | 962.85
+20240921_11:09 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w44_v50.model
+20240921_11:25 | w2v_20240921_0_mc8_w44_v50 | 0 | 8 | 44 | 50 | 949.5
+20240921_11:25 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w44_v100.model
+20240921_11:40 | w2v_20240921_0_mc8_w44_v100 | 0 | 8 | 44 | 100 | 921.55
+20240921_11:40 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w13_v50.model
+20240921_11:55 | w2v_20240921_1_mc3_w13_v50 | 1 | 3 | 13 | 50 | 923.02
+20240921_11:55 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w13_v100.model
+20240921_12:11 | w2v_20240921_1_mc3_w13_v100 | 1 | 3 | 13 | 100 | 926.13
+20240921_12:11 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w21_v50.model
+20240921_12:27 | w2v_20240921_1_mc3_w21_v50 | 1 | 3 | 21 | 50 | 956.86
+20240921_12:27 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w21_v100.model
+20240921_12:43 | w2v_20240921_1_mc3_w21_v100 | 1 | 3 | 21 | 100 | 995.6
+20240921_12:43 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w44_v50.model
+20240921_13:01 | w2v_20240921_1_mc3_w44_v50 | 1 | 3 | 44 | 50 | 1076.3
+20240921_13:01 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w44_v100.model
+20240921_13:19 | w2v_20240921_1_mc3_w44_v100 | 1 | 3 | 44 | 100 | 1071.24
+20240921_13:19 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w13_v50.model
+20240921_13:35 | w2v_20240921_1_mc5_w13_v50 | 1 | 5 | 13 | 50 | 934.5
+20240921_13:35 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w13_v100.model
+20240921_13:50 | w2v_20240921_1_mc5_w13_v100 | 1 | 5 | 13 | 100 | 939.68
+20240921_13:50 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w21_v50.model
+20240921_14:07 | w2v_20240921_1_mc5_w21_v50 | 1 | 5 | 21 | 50 | 960.29
+20240921_14:07 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w21_v100.model
+20240921_14:23 | w2v_20240921_1_mc5_w21_v100 | 1 | 5 | 21 | 100 | 974.72
+20240921_14:23 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w44_v50.model
+20240921_14:39 | w2v_20240921_1_mc5_w44_v50 | 1 | 5 | 44 | 50 | 994.35
+20240921_14:39 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w44_v100.model
+20240921_14:56 | w2v_20240921_1_mc5_w44_v100 | 1 | 5 | 44 | 100 | 1003.54
+20240921_14:56 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w13_v50.model
+20240921_15:11 | w2v_20240921_1_mc8_w13_v50 | 1 | 8 | 13 | 50 | 917.98
+20240921_15:11 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w13_v100.model
+20240921_15:27 | w2v_20240921_1_mc8_w13_v100 | 1 | 8 | 13 | 100 | 944.17
+20240921_15:27 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w21_v50.model
+20240921_15:43 | w2v_20240921_1_mc8_w21_v50 | 1 | 8 | 21 | 50 | 964.66
+20240921_15:43 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w21_v100.model
+20240921_16:02 | w2v_20240921_1_mc8_w21_v100 | 1 | 8 | 21 | 100 | 1103.27
+20240921_16:02 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w44_v50.model
+20240921_16:19 | w2v_20240921_1_mc8_w44_v50 | 1 | 8 | 44 | 50 | 1069.69
+20240921_16:19 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w44_v100.model
+20240921_16:36 | w2v_20240921_1_mc8_w44_v100 | 1 | 8 | 44 | 100 | 1020.42
+Sat 21 Sep 2024 16:40:20 BST
+(conda_ucl_base) patrick@Patricks-MBP-2 model % 
+
+
+
+(conda_ucl_base) patrick@Patricks-MBP-2 model % ./run_w2v_00.sh mac
+Patricks-MBP.broadband
+Sat 21 Sep 2024 17:05:10 BST
+Setting mac parameters
+Sat 21 Sep 2024 17:05:10 BST
+running models....
+
+---------------------------------------------------
+             ** Word2Vec Model Batch **            
+---------------------------------------------------
+min_count is -1 - looping through them all
+vector size is -1 - looping through them all
+window_size is -1 - looping through them all
+using model types : [0, 1]
+parsing sentence to array from: /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/uniref100_e_corpus_gap_50_20240920_1643.txt
+20240921_17:09 sentences loaded in 232.5s
+20240921_17:09 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w13_v250.model
+20240921_17:27 | w2v_20240921_0_mc3_w13_v250 | 0 | 3 | 13 | 250 | 1092.29
+20240921_17:27 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w13_v500.model
+20240921_17:44 | w2v_20240921_0_mc3_w13_v500 | 0 | 3 | 13 | 500 | 1041.6
+20240921_17:44 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w21_v250.model
+20240921_18:01 | w2v_20240921_0_mc3_w21_v250 | 0 | 3 | 21 | 250 | 1020.68
+20240921_18:01 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w21_v500.model
+20240921_18:20 | w2v_20240921_0_mc3_w21_v500 | 0 | 3 | 21 | 500 | 1111.7
+20240921_18:20 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w44_v250.model
+20240921_18:38 | w2v_20240921_0_mc3_w44_v250 | 0 | 3 | 44 | 250 | 1089.28
+20240921_18:38 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc3_w44_v500.model
+20240921_18:57 | w2v_20240921_0_mc3_w44_v500 | 0 | 3 | 44 | 500 | 1164.66
+20240921_18:57 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w13_v250.model
+20240921_19:15 | w2v_20240921_0_mc5_w13_v250 | 0 | 5 | 13 | 250 | 1043.87
+20240921_19:15 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w13_v500.model
+20240921_19:32 | w2v_20240921_0_mc5_w13_v500 | 0 | 5 | 13 | 500 | 1058.59
+20240921_19:32 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w21_v250.model
+20240921_19:49 | w2v_20240921_0_mc5_w21_v250 | 0 | 5 | 21 | 250 | 1028.52
+20240921_19:49 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w21_v500.model
+20240921_20:07 | w2v_20240921_0_mc5_w21_v500 | 0 | 5 | 21 | 500 | 1065.77
+20240921_20:07 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w44_v250.model
+20240921_20:24 | w2v_20240921_0_mc5_w44_v250 | 0 | 5 | 44 | 250 | 1007.65
+20240921_20:24 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc5_w44_v500.model
+20240921_20:42 | w2v_20240921_0_mc5_w44_v500 | 0 | 5 | 44 | 500 | 1094.8
+20240921_20:42 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w13_v250.model
+20240921_20:59 | w2v_20240921_0_mc8_w13_v250 | 0 | 8 | 13 | 250 | 977.41
+20240921_20:59 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w13_v500.model
+20240921_21:16 | w2v_20240921_0_mc8_w13_v500 | 0 | 8 | 13 | 500 | 1022.43
+20240921_21:16 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w21_v250.model
+20240921_21:32 | w2v_20240921_0_mc8_w21_v250 | 0 | 8 | 21 | 250 | 995.79
+20240921_21:32 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w21_v500.model
+20240921_21:50 | w2v_20240921_0_mc8_w21_v500 | 0 | 8 | 21 | 500 | 1052.54
+20240921_21:50 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w44_v250.model
+20240921_22:06 | w2v_20240921_0_mc8_w44_v250 | 0 | 8 | 44 | 250 | 999.07
+20240921_22:06 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_0_mc8_w44_v500.model
+20240921_22:24 | w2v_20240921_0_mc8_w44_v500 | 0 | 8 | 44 | 500 | 1055.58
+20240921_22:24 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w13_v250.model
+20240921_22:43 | w2v_20240921_1_mc3_w13_v250 | 1 | 3 | 13 | 250 | 1134.95
+20240921_22:43 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w13_v500.model
+20240921_23:06 | w2v_20240921_1_mc3_w13_v500 | 1 | 3 | 13 | 500 | 1358.19
+20240921_23:06 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w21_v250.model
+20240921_23:26 | w2v_20240921_1_mc3_w21_v250 | 1 | 3 | 21 | 250 | 1215.46
+20240921_23:26 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w21_v500.model
+20240921_23:51 | w2v_20240921_1_mc3_w21_v500 | 1 | 3 | 21 | 500 | 1510.08
+20240921_23:51 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w44_v250.model
+20240922_00:13 | w2v_20240921_1_mc3_w44_v250 | 1 | 3 | 44 | 250 | 1335.72
+20240922_00:13 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc3_w44_v500.model
+20240922_00:40 | w2v_20240921_1_mc3_w44_v500 | 1 | 3 | 44 | 500 | 1586.7
+20240922_00:40 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w13_v250.model
+20240922_00:59 | w2v_20240921_1_mc5_w13_v250 | 1 | 5 | 13 | 250 | 1139.44
+20240922_00:59 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w13_v500.model
+20240922_01:21 | w2v_20240921_1_mc5_w13_v500 | 1 | 5 | 13 | 500 | 1350.49
+20240922_01:21 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w21_v250.model
+20240922_01:42 | w2v_20240921_1_mc5_w21_v250 | 1 | 5 | 21 | 250 | 1224.35
+20240922_01:42 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w21_v500.model
+20240922_02:06 | w2v_20240921_1_mc5_w21_v500 | 1 | 5 | 21 | 500 | 1474.99
+20240922_02:06 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w44_v250.model
+20240922_02:28 | w2v_20240921_1_mc5_w44_v250 | 1 | 5 | 44 | 250 | 1291.68
+20240922_02:28 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc5_w44_v500.model
+20240922_02:55 | w2v_20240921_1_mc5_w44_v500 | 1 | 5 | 44 | 500 | 1611.3
+20240922_02:55 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w13_v250.model
+20240922_03:14 | w2v_20240921_1_mc8_w13_v250 | 1 | 8 | 13 | 250 | 1167.01
+20240922_03:14 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w13_v500.model
+20240922_03:37 | w2v_20240921_1_mc8_w13_v500 | 1 | 8 | 13 | 500 | 1363.46
+20240922_03:37 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w21_v250.model
+20240922_03:58 | w2v_20240921_1_mc8_w21_v250 | 1 | 8 | 21 | 250 | 1275.3
+20240922_03:58 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w21_v500.model
+20240922_04:23 | w2v_20240921_1_mc8_w21_v500 | 1 | 8 | 21 | 500 | 1488.0
+20240922_04:23 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w44_v250.model
+20240922_04:45 | w2v_20240921_1_mc8_w44_v250 | 1 | 8 | 44 | 250 | 1358.17
+20240922_04:45 creating model /Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/w2v_20240921_1_mc8_w44_v500.model
+20240922_05:12 | w2v_20240921_1_mc8_w44_v500 | 1 | 8 | 44 | 500 | 1624.59
+Sun 22 Sep 2024 05:16:10 BST
+
+
+
+
