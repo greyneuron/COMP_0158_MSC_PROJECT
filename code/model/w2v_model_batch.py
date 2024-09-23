@@ -236,7 +236,7 @@ if __name__ == '__main__':
     if vector_size != -1:
         vector_sizes = [vector_size]
     else:
-        vector_sizes = [250, 500]
+        vector_sizes = [5, 25, 100, 250, 500, 1000]
 
     
     #
@@ -269,7 +269,7 @@ if __name__ == '__main__':
                 for vector_size in vector_sizes:
                     now_time   = datetime.now().strftime('%Y%m%d_%H:%M')
                     model_base_name = "w2v_"+current_date + "_"+str(model_type) + "_mc"+str(min_count) +"_w"+str(window_size) + "_v"+str(vector_size)
-                    model_name      = output_dir+model_base_name+".model"
+                    model_name      = output_dir+model_base_name+"_g100.model"
                     
                     print(f"{now_time} creating model {model_name}")
                     sys.stdout.flush()
@@ -287,4 +287,5 @@ if __name__ == '__main__':
                     time_taken=str(round(e-s, 2))
                     
                     print(f"{now_time} | {model_base_name} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken}")
+                    
                     sys.stdout.flush()

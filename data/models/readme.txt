@@ -12,6 +12,11 @@ Timings
 - Corpus size : 37,721,172 lines
 - Corpus is identical to gap size of 50
 
+- Corpus with gap size of 25 : 297.6s;
+- Corpus is identical to gap size of 50
+
+
+
 -------------------------------
 Model & corpus history
 -------------------------------

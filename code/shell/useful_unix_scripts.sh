@@ -14,9 +14,15 @@ awk '{ for (i = 1; i <= NF; i++) { if ($i ~ /PF[0-9]*/) { count[$i]++ } } } END 
 find . -type f -name '0920*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/^0920//')"; mv "$file" "$new_name"; done
 
 # recursively rename files to rename from .model to _g50.model
-find . -type f -name 'w2v_20240920*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/\.model/_g50\.model/')"; mv "$file" "$new_name"; done
+find . -type f -name '*.model' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/\.model/_g50\.model/')"; mv "$file" "$new_name"; done
+
+# rename files to have cbow or skip
+find . -type f -name '*.model' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_0_/_cbow_/')"; echo "$file" "$new_name"; done
 
 
+
+find . -type f -name '*20240922_1_*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_1_/_skip_/')"; echo "$new_name"; done
+find . -type f -name '*20240922_1_*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_1_/_skip_/')"; mv "$file" "$new_name"; done
 #
 # -------------------------------- ec2 stuff ---------------------------------------- 
 #

@@ -384,10 +384,9 @@ def strip_line(line, min_gap):
 # EXAMPLE OUTPUT:
 #       START_GAP DISORDER GAP PF01399 GAP DISORDER
 #
-def create_corpus_gap_rule(input_file, output_file, ignore_file, min_gap=50, debug=False):
+def create_corpus_gap_rule(input_file, output_file, min_gap):
     
-    if debug : 
-        print(f"> Creating corpus with gap rule {min_gap} based upon {input_file}. outputting corpus to {output_file}")
+    print(f"> Creating corpus with gap rule {min_gap} based upon {input_file}. outputting corpus to {output_file}")
     
     PARSE_LIMIT  = -1  # number of lines to parse (useful for testing -1 means all)
     
@@ -434,10 +433,9 @@ current_date    = datetime.now().strftime('%Y%m%d_%H%M')
 s = time.time()
 #create_corpus_gap_rule(input_file, output_file, ignore_file, 50, debug=True)
 
-min_gap = 25
+min_gap = 100
 output_file = output_file_root + str(min_gap) + '_' + current_date +'.txt'
 print(f"Using minimum gap size of {min_gap}")
-
 
 # real
 create_corpus_gap_rule(input_file, output_file, min_gap)
@@ -465,8 +463,8 @@ lines = [line5a]
 print(f"Using minimum gap size of {min_gap}")
 for line in lines:
     strip_line(line, min_gap)
-'''
 
+'''
 e = time.time()
 print(f"Corpus created in {round(e-s,2)}s; output to {output_file}")
 
