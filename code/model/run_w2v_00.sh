@@ -37,9 +37,9 @@ platform=$1
 
 if [[ "$platform" == "mac" ]]; then 
     echo "Setting mac parameters"
-    #corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/uniref100_e_corpus_gap_50_20240920_1643.txt'
-    corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/0922/uniref100_e_corpus_gap_100_20240922_1421.txt'
-    output_dir='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0922_g100/'
+    corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/0920/uniref100_e_corpus_gap_50_20240920_1643.txt'
+    #corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/0922/uniref100_e_corpus_gap_100_20240922_1421.txt'
+    output_dir='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920_g50/skip/'
     code_dir="/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/model"
 
 elif [[ "$platform" == "aws" ]]; then 

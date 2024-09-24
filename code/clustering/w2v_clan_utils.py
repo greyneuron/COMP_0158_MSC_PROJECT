@@ -28,13 +28,9 @@ code_dir="/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/clustering"
 output_dir='/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/clusters/'
 
 
-
-
-
 # --------------------------------------------------------------------------------------------------------------------------
 #                               Interpro calls
 # --------------------------------------------------------------------------------------------------------------------------
-
 
 #
 # Query interpro for clan id associated with a pfam id. returns 'undef' if there is no match
@@ -73,7 +69,42 @@ def get_interpro_clans(pfam_ids, output_file):
         clan_id_clean = clan_id.strip().strip('"')
         print(f"{i} | {pfam_id_clean} | {clan_id_clean}")
         output_file.write(f"{i}|{pfam_id_clean}|{clan_id_clean}\n")
+
+
+#
+# given a model, extracts its vocab, calls interpro and writes pfam ids and clan ids to a file
+#
+def get_interpro_clans_for_model(model_path, output_file):
+    pfam_ids = get_pfam_vocab(model_path)
+    get_interpro_clans(pfam_ids, output_file)
+
+
+#
+# 
+# gets clans for a pfam entry but doesn't call Interpro if there are gaps
+#
+def get_pfam_clans_db(pfam_ids):
+    con = duckdb.connect(database=db_string)
     
+    clans = []
+    
+    # loop through each pfam, find its clan and build up a dictinary of clans > pfam_ids
+    for i, pfam_id in enumerate(pfam_ids):
+        try:          
+            results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_EVO WHERE PFAM_ID='{pfam_id}'").fetchall()
+            if(results is None or results ==[]):
+                print(f"----------> No local clan entry for {pfam_id}")
+            else:
+                clan_id = results[0][0]
+                if (clan_id != 'undef'):
+                    clans.append(clan_id)
+        except Exception as e:
+            print('get_clans_for_pfams() error', e, results)
+            con.close()
+            return
+    con.close()
+    return clans
+
 
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -100,46 +131,35 @@ def get_pfam_vocab(model_path):
     return pfam_vocab
 
 
-#
-# given a model, extracts its vocab, calls interpro and writes pfam ids and clan ids to a file
-#
-def get_interpro_clans_for_model(model_path, output_file):
-    pfam_ids = get_pfam_vocab(model_path)
+
     
-    get_interpro_clans(pfam_ids, output_file)
-    
-
-
-
 
 # --------------------------------------------------------------------------------------------------------------------------
-#                               W2V Model Stuff
+#                               Called from w2v_run__clustering
 # --------------------------------------------------------------------------------------------------------------------------
 
 
 #
 # For a model, this method gets all the pfam words in the model and then finds the clan id in the database
-# if the pfam entry is not in the database, it will return only pfams that are in clans that have more
-# than min_clan_size entries
+# if the pfam entry is not in the database. As it goes, it creates a dictionary keyed by clan id and whose 
+# values are the pfam ids in that clan. At the end, the 
 #
 def get_pfam_clans_for_model(model_name, model_path, min_clan_size):
-    print(f"get_pfam_clans_for_model() {model_name}, {model_path}")
+
     min_count_s = re.search("(mc[0-9]+)_", model_name)
-    min_count = min_count_s.group(1)
+    min_count   = min_count_s.group(1)
     
-    # call to various tility methods
-    vocab = get_pfam_vocab(model_path)
-    print(f"{min_count}: Found {len(vocab)}, pfam words in {model_name}. items[0-10] {vocab[0:10]}")
-    
-    # see if there is an entry
+    # initialise variables
     con = duckdb.connect(database=db_string)
     
-    filtered_clans = []
-    filtered_pfams = []
-    clan_dict = {}
-    filtered_clan_dict = {}
+    filtered_clans      = []
+    filtered_pfams      = []
+    clan_dict           = {}
+    filtered_clan_dict  = {}
     
-    # loop through each pfam, find its clan and build up a dictinary of clans > pfam_ids
+    
+    # loop through the pfams in the model, find their clans and build up a dictinary of clans > pfam_ids
+    vocab = get_pfam_vocab(model_path)
     for pfam_id in vocab:
         try:          
             results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_MC1 WHERE PFAM_ID='{pfam_id}'").fetchall()
@@ -148,7 +168,7 @@ def get_pfam_clans_for_model(model_name, model_path, min_clan_size):
             if(results is None or results ==[]):
                 clan_id = get_interpro_clan(pfam_id)
                 print(f"----------> No local clan entry for {pfam_id}, queried interpro w/ result:{pfam_id}:{clan_id}")
-                #con.execute(f"INSERT INTO W2V_PFAM_CLAN (PFAM_ID, CLAN_ID) VALUES ('{pfam_id}', '{clan_id}')")
+                raise Exception(f"No clan entry for {pfam_id} - add the entry to the DB table W2V_PFAM_CLAN_MC1" ) 
             else:
                 clan_id = results[0][0]
                 if (clan_id != 'undef'):
@@ -164,37 +184,52 @@ def get_pfam_clans_for_model(model_name, model_path, min_clan_size):
     con.close()
     
     # get dictionary with only clans with more than one pfam
-    filtered_clan_dict = {key:value for key, value in clan_dict.items() if len(value) >= min_clan_size}
-    filtered_clans = list(filtered_clan_dict.keys())
-    filtered_pfams = list(set([item for sublist in filtered_clan_dict.values() for item in sublist]))
+    filtered_clan_dict  = {key:value for key, value in clan_dict.items() if len(value) >= min_clan_size}
+    filtered_clans      = list(filtered_clan_dict.keys())
+    filtered_pfams      = list(set([item for sublist in filtered_clan_dict.values() for item in sublist]))
     
+    # return only the pfams that have clans, what those clans are, and the clan dictionary mapping the two
     return filtered_pfams, filtered_clans, filtered_clan_dict
 
+
 #
-# 
-# gets clans for a pfam entry but doesn't call INterpro if there are gaps
+# Assumes clans are in the database, returns a list
 #
-def get_pfam_clans_db(pfam_ids):
+def get_clans_for_pfams(pfam_ids):
     con = duckdb.connect(database=db_string)
-    
     clans = []
     
     # loop through each pfam, find its clan and build up a dictinary of clans > pfam_ids
-    for i, pfam_id in enumerate(pfam_ids):
+    for pfam_id in pfam_ids:
         try:          
-            results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_EVO WHERE PFAM_ID='{pfam_id}'").fetchall()
+            results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_MC1 WHERE PFAM_ID='{pfam_id}'").fetchall()
+            
             if(results is None or results ==[]):
-                print(f"----------> No local clan entry for {pfam_id}")
+                print(f"--------------------> No local clan entry for {pfam_id}, update needed.")
+                raise Exception(f"No clan entry for {pfam_id} - add the entry to the DB table W2V_PFAM_CLAN_MC1" )
             else:
                 clan_id = results[0][0]
-                if (clan_id != 'undef'):
-                    clans.append(clan_id)
+                clans.append(clan_id)
         except Exception as e:
-            print('get_clans_for_pfams() error', e, results)
+            print('get_clans_for_pfams() error', e)
             con.close()
             return
     con.close()
     return clans
+
+
+
+
+
+
+
+
+
+
+
+# --------------------------------------------------------------------------------------------------------------------------
+#                               Used for evo stuff (r_and_rep)
+# --------------------------------------------------------------------------------------------------------------------------
             
     
 
@@ -252,64 +287,8 @@ def get_pfam_clans_for_evo(pfam_ids, min_clan_size):
 
 
 
-#
-#
-# Assumes clans are in the database
-#
-def get_clans_for_pfams(pfam_ids):
-    con = duckdb.connect(database=db_string)
-    clans = []
-    
-    # loop through each pfam, find its clan and build up a dictinary of clans > pfam_ids
-    for pfam_id in pfam_ids:
-        try:          
-            results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_MC1 WHERE PFAM_ID='{pfam_id}'").fetchall()
-            
-            if(results is None or results ==[]):
-                print(f"--------------------> No local clan entry for {pfam_id}, update needed.")
-            else:
-                clan_id = results[0][0]
-                clans.append(clan_id)
-        except Exception as e:
-            print('get_clans_for_pfams() error', e, results)
-            con.close()
-            return
-    con.close()
-    return clans
-    
 
-
-# --------------------------------------------------------------------------------------------------------------------------
-'''
-#
-# one off method to clean up a previous list of clans - wasn;t sure if I'd removed all the whitespace etc
-#
-def clean_dat():
-    dat_file = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/clusters/pfam_api_clan_results.txt"
-    clean_dat_file = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/clusters/pfam_api_clan_results_clean.dat"
     
-    of = open(clean_dat_file, "w")
-    
-    with open(dat_file, 'r') as file:
-        for j, line in enumerate(file):
-            #print(line.strip())  # Strip removes any extra newline characters
-            tokens = line.split("|")
-            for i, token in enumerate(tokens):
-                if i>0:
-                    of.write('|')
-                word = token.strip().strip('"')
-                #word = word.rstrip()
-                #word = word.lstrip()
-                if(word == "_with"):
-                    word = "undef"
-                #print(f"{j}:{i}:{word}:")
-                of.write(word)
-            of.write('\n')
-    of.close()
-    return(clean_dat_file)
-
-'''
-
 
 # --------------------------------------------------------------------------------------------------------------------------
 #                               Database Creation Stuff

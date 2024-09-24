@@ -208,7 +208,7 @@ if __name__ == '__main__':
     elif 'all' == mt:
         model_types = [CBOW, SKIP_GRAM]    
         
-    print(f"using model types : {model_types}")
+
     
     
     # -----------------------------------------------------------------
@@ -219,8 +219,8 @@ if __name__ == '__main__':
     
     
     # log file
-    log_file = output_dir+'/'+current_date+"_model_log.txt"
-    lf = open(log_file, "w")
+    #log_file = output_dir+'/'+current_date+"_model_log.txt"
+    #lf = open(log_file, "w")
     
     # min count, vector size, window size
     if min_count != -1:
@@ -236,9 +236,17 @@ if __name__ == '__main__':
     if vector_size != -1:
         vector_sizes = [vector_size]
     else:
-        vector_sizes = [5, 25, 100, 250, 500, 1000]
+        vector_sizes = [5, 25, 50, 100, 250, 500]
 
-    
+    print('\n---------------------------------------------------')
+    print(f"               Model Config Summary")
+    print(f" - using corpus types    : {sentences_file}")
+    print(f" - iterating model types : {model_types}")
+    print(f" - iterating min counts  : {min_counts}")
+    print(f" - iterating window sz   : {window_sizes}")
+    print(f" - iterating vector sz   : {vector_sizes}")
+    print(f" - output folder         : {output_dir}")
+    print('\n---------------------------------------------------')
     #
     # -------------------------- load sentences -----------------------
     #
@@ -269,7 +277,7 @@ if __name__ == '__main__':
                 for vector_size in vector_sizes:
                     now_time   = datetime.now().strftime('%Y%m%d_%H:%M')
                     model_base_name = "w2v_"+current_date + "_"+str(model_type) + "_mc"+str(min_count) +"_w"+str(window_size) + "_v"+str(vector_size)
-                    model_name      = output_dir+model_base_name+"_g100.model"
+                    model_name      = output_dir+model_base_name+"_g50.model"
                     
                     print(f"{now_time} creating model {model_name}")
                     sys.stdout.flush()
@@ -278,9 +286,11 @@ if __name__ == '__main__':
                     #
                     #--------------------------- create model -----------------------
                     # create model here
-                    
-                    w2v_model   = create_w2v_model(sentences, int(model_type), vector_size, window_size, min_count)
-                    w2v_model.save(model_name)
+                    try:
+                        w2v_model   = create_w2v_model(sentences, int(model_type), vector_size, window_size, min_count)
+                        w2v_model.save(model_name)
+                    except Exception as e:
+                        print(f"Error creating/saving model {model_name} : {e}")
                     
                     now_time   = datetime.now().strftime('%Y%m%d_%H:%M')
                     e = time.time()

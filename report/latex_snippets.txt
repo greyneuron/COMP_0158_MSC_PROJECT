@@ -1,0 +1,20 @@
+\begin{table}[hbt!]
+\centering
+\label{table_corpus_model}
+\begin{tabular}{|c|c|}
+	\hline
+	w2v hyperparameter & resulting w2v vocabulary size \\
+	\hline
+	1 & 15,481 \\
+    3 & 13,535 \\
+    5 & 12,815 \\
+    8 & 11,884 \\
+	\hline
+\end{tabular}
+\caption{Vocabulary sizes for each word2vec min\_count hyperparameter.}
+\end{table}
+
+
+\begin{tcolorbox}[width=\linewidth, sharp corners=all, colback=white!95!black, colframe=white, boxrule=0.2mm, leftrule=0.2mm, rightrule=0.2mm]
+Interpro API example: https://www.ebi.ac.uk/interpro/api/entry/pfam/PF13041
+\end{tcolorbox}

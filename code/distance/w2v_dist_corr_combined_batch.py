@@ -118,17 +118,19 @@ if __name__ == '__main__':
     print('---------------------------------------------------------------------------')
 
     
-    # ------------------------ setup
-    #
+    # ---------------------------------------------------- SETUP  -----------------------------------------------------------------
     
+    model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920_g50/"
     evo_npy         = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/distances/evo/rand_rep_distance_matrix.npy"
-    output_dir      = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/logs/distance/0920/"
+    output_dir      = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/logs/distance/"
+    log_file        = output_dir+"20240920_g50_dist_correlations.txt"
+    
+    # ----------------------------------------------------------------------------------------------------------------------------
+    
     
     current_date    = datetime.now().strftime('%Y%m%d_%H%M')
-    log_file        = output_dir+current_date+"_dist_matrix_comparison_pearsonr.txt"
     lf              = open(log_file, "a")
     
-    print(f"Log file : {log_file}")
     
     # --------------------- get rand_rep matrix and vocab
     #
@@ -137,24 +139,44 @@ if __name__ == '__main__':
     print(f"- rand_rep extracted. number of pfams : {len(evo_vocab)} matrix shape: {evo_dist_matrix.shape}\n")
     
 
-    # --------------------- get models
-    #
-    #model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/cbow/"
-    #model_names     = ['w2v_20240911_cbow_mc1_w3_v5', 'w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25', 'w2v_20240911_cbow_mc1_w3_v50']
-    #model_names     = ['w2v_20240911_cbow_mc1_w3_v10', 'w2v_20240911_cbow_mc1_w3_v25']
-    
-    model_dir       = "/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920/"
+    # get the list of files
     models_info     = find_files(model_dir)
     
     s = time.time()
     for model_info in models_info:
         model_path = model_info[0]
         model_name = model_info[1]
+
+        # extract meta data for logs
+        type_s    = re.search("_([a-zA-Z0-9]+)_mc", model_name)
+        type      = type_s.group(1)
         
-        min_count_s = re.search("(mc[0-9]+)_", model_name)
+        gap_s    = re.search("_g([0-9]+)", model_name)
+        gap_size = gap_s.group(1)
+        
         vector_s    = re.search("v([0-9]+)", model_name)
         vector_size = vector_s.group(1)
-    
+        
+        min_count_s = re.search("mc([0-9]+)_", model_name)
+        min_count   = min_count_s.group(1)
+        
+        vector_s    = re.search("_v([0-9]+)", model_name)
+        vector_size = vector_s.group(1)
+        
+        window_s    = re.search("_w([0-9]+)_", model_name)
+        window_size = window_s.group(1)
+        
+        
+        print('\n\n----------- Creating distance corr.  ----------- ')
+        print(f" Model      : {model_name}")
+        print(f" Type       : {type}")
+        print(f" Gap        : {gap_size}")
+        print(f" Min count  : {min_count}")
+        print(f" Vector     : {vector_size}")
+        print(f" Window     : {window_size}")
+        print('--------------------------------------------------- ')
+        
+        
         #
         #--------------------------- create distance matrices -----------------------
         #
@@ -166,13 +188,16 @@ if __name__ == '__main__':
         print(f"- distance matrices created for {model_name}. w2v vocab size: {len(w2v_vocab)}. w2v matrix size: {w2v_euc_dist_matrix.shape}. time taken: {round(e2-s2,2)}")
         
         # make sure to use normalised!
-        w2v_matrices = {'euc': w2v_euc_dist_matrix_n, 'cos' :w2v_cos_dist_matrix_n}
+        #w2v_matrices = {'euc': w2v_euc_dist_matrix_n, 'cos' :w2v_cos_dist_matrix_n}
+        
+        # just use euclidean
+        w2v_matrices = {'euc': w2v_euc_dist_matrix_n}
         
         
         # loop through each type of distance matrix
         for dist_type, w2v_distance_matrix in w2v_matrices.items():
             s1 = time.time()
-            print(f"\n** {model_name} - {dist_type} correlation...")
+            print(f"\n > {model_name} - {dist_type} correlation...")
             print(' - converting to Distance Matrix ahead of correlation and distance calculations...')
             w2v_dist_matrix_fl   = w2v_distance_matrix.astype(np.float64)
 
@@ -225,28 +250,29 @@ if __name__ == '__main__':
             new_w2v_condensed = new_w2v.condensed_form()
             new_evo_condensed = new_evo.condensed_form()
             
-         
-            
-            '''
+
+            # Don't bother with mantel - no diff to pearson or spearman
+
             #
             # Mantel and correlation tests
             #
             #print(len(new_w2v_condensed), len(new_evo_condensed))
-            my_correlation = correlation(new_w2v_condensed, new_evo_condensed)
-            print(' - scipy correlation:', my_correlation)
+            #my_correlation = correlation(new_w2v_condensed, new_evo_condensed)
+            #print(' - scipy correlation:', my_correlation)
 
-            print(f" - running mantel test on {model_name} - {dist_type} distance.")
-            n=50
-            corr_coeff, p_value, num = mantel(new_w2v, new_evo, permutations=n, strict=False)
-            print(f" - mantel test corr : {round(corr_coeff,4)} p_val : {round(p_value,4)} num: {num}.\n")
+            #print(f" - running mantel test on {model_name} - {dist_type} distance.")
+            #n=50
+            #corr_coeff, p_value, num = mantel(new_w2v, new_evo, permutations=n, strict=False)
+            #print(f" - mantel test corr : {round(corr_coeff,4)} p_val : {round(p_value,4)} num: {num}.\n")
             
-            e1 = time.time()
+            #e1 = time.time()
             
-            print(f"Correlation tests on {model_name} dist type {dist_type}. corr-coeff: {round(my_correlation,4)} mantel corr : {round(corr_coeff,4)} mantel p_val : {round(p_value,4)}. time : {round(e1 - s1, 2)}s\n")
-            lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| {round(my_correlation, 4)} \t|  {round(corr_coeff,4)} | {round(p_value,4)} | {round(e1 - s1, 2)}s \n")
-            lf.flush()
-            '''
+            #print(f"Correlation tests on {model_name} dist type {dist_type}. corr-coeff: {round(my_correlation,4)} mantel corr : {round(corr_coeff,4)} mantel p_val : {round(p_value,4)}. time : {round(e1 - s1, 2)}s\n")
+            #lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| {round(my_correlation, 4)} \t|  {round(corr_coeff,4)} | {round(p_value,4)} | {round(e1 - s1, 2)}s \n")
+            #lf.flush()
+   
             
+
             #
             # ------------- Pearson test
             #
@@ -255,9 +281,9 @@ if __name__ == '__main__':
             pearson_result = pearsonr(new_w2v_condensed, new_evo_condensed)
             e1 = time.time()
             
-            print(f"Pearsonr test on {model_name} dist type {dist_type}. pearsonr stat: {round(pearson_result.statistic, 4)} pval: {round(pearson_result.pvalue, 4)}  time : {round(e1 - s1, 2)}s\n")
-            lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| pearsonr | {round(pearson_result.statistic,4)} | {round(pearson_result.pvalue, 4)} | {round(e1 - s1, 2)}s \n")
-            lf.flush()
+            #print(f"{model_name} | {dist_type} | {type} | {gap_size} | {min_count} | {window_size} | {vector_size} | {round(pearson_result.statistic, 4)} pval: {round(pearson_result.pvalue, 4)}  time : {round(e1 - s1, 2)}s\n")
+            #lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| pearsonr | {round(pearson_result.statistic,4)} | {round(pearson_result.pvalue, 4)} | {round(e1 - s1, 2)}s \n")
+            #lf.flush()
             
             
             #
@@ -268,14 +294,17 @@ if __name__ == '__main__':
             spearmanr_result = spearmanr(new_w2v_condensed, new_evo_condensed)
             e2 = time.time()
             
-            print(f"Spearmanr test on {model_name} dist type {dist_type}. spearmanr stat: {round(spearmanr_result.statistic, 4)} pval: {round(spearmanr_result.pvalue, 4)}  time : {round(e1 - s1, 2)}s\n")
-            lf.write(f"{current_date} | {model_name} \t| {dist_type} \t| spearmanr | {round(spearmanr_result.statistic,4)} | {round(spearmanr_result.pvalue, 4)} | {round(e2 - e1, 2)}s \n")
+            
+            print(f"\n{model_name} | {dist_type} | {type} | g:{gap_size} | mc:{min_count} | w:{window_size} | v:{vector_size} | p:{round(pearson_result.statistic, 4)} | pp:{round(pearson_result.pvalue, 4)} | sp{round(spearmanr_result.statistic, 4)} | spp:{round(spearmanr_result.pvalue, 4)} {round(e2 - s1, 2)}s") 
+            lf.write(f"{model_name} | {dist_type} | {type} | {gap_size} | {min_count} | {window_size} | {vector_size} | {round(pearson_result.statistic, 4)} | {round(pearson_result.pvalue, 4)} | {round(spearmanr_result.statistic, 4)} | {round(spearmanr_result.pvalue, 4)} | {round(e2 - s1, 2)}\n" )
+            
             
             lf.flush()
+
             
                
     e = time.time()
-    print(f"{current_date} distance comparisons complete in time:  {round(e - s, 2)}")
+    print(f"\n{current_date} distance comparisons complete in time:  {round(e - s, 2)}")
     lf.close()
     
     

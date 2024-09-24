@@ -298,3 +298,10 @@ logs/20240908_modelcreation_log_mac.txt
 
 logs/model_creation/20240901_aws_01_log.txt
 logs/~$w2v_logs_summary.xlsx
+logs/model_creation/0920/0920_gap_50_skip_models_mac_log_txt
+logs/distance/20240920_g50_dist_correlations_cbow_redo.txt
+logs/distance/20240920_g50_dist_correlations.txt
+logs/distance/20240922_g100_dist_correlations.txt
+logs/distance/20240831_g1_distance_correlations.txt
+logs/distance/20240910_g1_dist_correlations_mantel.txt
+logs/distance/20240910_g1_dist_correlations_pearsonr.txt

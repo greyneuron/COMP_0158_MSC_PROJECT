@@ -4,8 +4,8 @@ from sklearn.cluster import KMeans
 class W2V_KMeans:
     
     def __init__(self, X, Y, pfam_ids, model_name, output_dir):
-        print(f"\n------------ W2V KMeans Classifier ------------")
-        print(f" Model name         : {model_name}")
+        #print(f"\n------------ W2V KMeans Classifier ------------")
+        #print(f" Model name         : {model_name}")
         
         assert len(Y) == len(pfam_ids), "must have same number of labels as pfam_ids"
         assert len(Y) == X.shape[0], "matrix must have same number of rows as there are labels"
@@ -26,9 +26,9 @@ class W2V_KMeans:
         
         cluster_dict = {}
                 
-        if(debug):
-            logfile_name = self.output_dir+timestamp+'_kmeans_k'+str(k)+'_results.txt'
-            log = open(logfile_name, "a")
+        #if(debug):
+        #    logfile_name = self.output_dir+timestamp+'_kmeans_k'+str(k)+'_results.txt'
+        #    log = open(logfile_name, "a")
         
         N, D = self.X.shape[0], self.X.shape[1]
         
@@ -53,8 +53,8 @@ class W2V_KMeans:
                 cluster_dict[cluster_id] = [pfam_id]
             
             #print(f"{self.model_name} \t|\t {self.pfam_ids[i]} \t|\t {self.Y[i]} \t|\t {labels[i]}")
-            if(debug):
-                log.write(f"{self.model_name} \t|\t kmeans \t|\t {k} \t|\t {self.pfam_ids[i]} \t|\t {self.Y[i]} \t|\t {labels[i]}\n")
-        if(debug):
-            log.close()
+            #if(debug):
+            #    log.write(f"{self.model_name} \t|\t kmeans \t|\t {k} \t|\t {self.pfam_ids[i]} \t|\t {self.Y[i]} \t|\t {labels[i]}\n")
+        #if(debug):
+        #   log.close()
         return cluster_dict
