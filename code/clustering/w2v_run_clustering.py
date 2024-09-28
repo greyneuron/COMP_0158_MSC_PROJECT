@@ -1,13 +1,13 @@
 from gensim.models import Word2Vec
 
-import w2v_clan_utils
-from w2v_random_forest import W2V_RandomForest
-from w2v_kmeans import W2V_KMeans
-from w2v_adaboost import W2V_AdaBoost
-from w2v_svm import W2V_SVM
+#import w2v_clan_utils
+from methods.w2v_random_forest import W2V_RandomForest
+from methods.w2v_kmeans import W2V_KMeans
+from methods.w2v_adaboost import W2V_AdaBoost
+from methods.w2v_svm import W2V_SVM
 
 import w2v_evo_utils
-import w2v_clan_utils
+#import w2v_clan_utils
 
 from datetime import datetime
 import re
@@ -18,6 +18,11 @@ import argparse
 import duckdb
 
 from pathlib import Path
+
+import pandas as pd
+
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 #
 # This loads a w2v model and then removes vectors that don;t have a pfam clan as well as vectors related to GAP words and DISORDER words
@@ -31,7 +36,7 @@ db_string = "/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/database/w2v_
 # --------------------------------------------------------------------------------------------------------------------------
 
 #
-# finds files in a directory
+# finds files in a directory - useful for iterating through a load of models in one directory
 #
 def find_files(directory):
     files_info = []
@@ -45,8 +50,8 @@ def find_files(directory):
     return files_info
 
 #
-# extracts the words used in a word2vec model by wuerying the model itself
-# returns a list of words with any whitespace remoived as well as count of the umber of items
+# extracts the words used in a word2vec model by loading and querying the model for its vocab
+# returns a list of words in the vocab as count of the number of items. It only includes pfam words
 #       
 def get_pfam_vocab(model_path):
     model = Word2Vec.load(model_path)
@@ -60,9 +65,93 @@ def get_pfam_vocab(model_path):
         word = word.lstrip()
         word = word.rstrip()
         pfam_vocab.append(word)
-    return pfam_vocab, len(pfam_vocab)
+    return pfam_vocab
 
 
+
+
+
+# For a model, this method gets all the pfam words in the model and then finds the clan id in the database
+# if the pfam entry is not in the database. As it goes, it creates a dictionary keyed by clan id and whose 
+# values are the pfam ids in that clan.
+#
+def get_pfam_clans_for_model(model_name, model_path, min_clan_size):
+
+    min_count_s = re.search("(mc[0-9]+)_", model_name)
+    min_count   = min_count_s.group(1)
+    
+    # initialise variables
+    con = duckdb.connect(database=db_string)
+    
+    filtered_clans      = []
+    filtered_pfams      = []
+    clan_dict           = {}
+    filtered_clan_dict  = {}
+    
+    # get model vocab excluding exclude GAP, DISORDER etc.
+    vocab = get_pfam_vocab(model_path)
+    
+    # for each pfam id get the clan
+    for pfam_id in vocab:
+        try:          
+            results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_MC1 WHERE PFAM_ID='{pfam_id}'").fetchall()       
+            if(results is None or results ==[]):
+                raise Exception(f"No clan entry for {pfam_id} - query interpro and add the entry to the DB table W2V_PFAM_CLAN_MC1" ) 
+            
+            else:
+                clan_id = results[0][0]
+                if (clan_id != 'undef'):
+                    # add clan id to dictionary
+                    if clan_id in clan_dict:
+                        clan_dict[clan_id].append(pfam_id)  # Append to the list if the key exists
+                    else:
+                        clan_dict[clan_id] = [pfam_id]
+        except Exception as e:
+            print('get_pfam_clans_for_model() error', e, results)
+            con.close()
+            return
+    con.close()
+    
+    # get dictionary with only clans with more than one pfam
+    filtered_clan_dict  = {key:value for key, value in clan_dict.items() if len(value) >= min_clan_size}
+    filtered_clans      = list(filtered_clan_dict.keys())
+    filtered_pfams      = list(set([item for sublist in filtered_clan_dict.values() for item in sublist]))
+    
+    # return only the pfams that have clans, what those clans are, and the clan dictionary mapping the two
+    return filtered_pfams, filtered_clans, filtered_clan_dict
+
+
+#
+# Basically the same as the above but just takes a list of pfams
+#
+def get_clans_for_pfams(pfam_ids):
+    con = duckdb.connect(database=db_string)
+    clans = []
+    
+    # loop through each pfam, find its clan and build up a dictinary of clans > pfam_ids
+    for pfam_id in pfam_ids:
+        try:          
+            results = con.execute(f"SELECT CLAN_ID FROM W2V_PFAM_CLAN_MC1 WHERE PFAM_ID='{pfam_id}'").fetchall()
+            
+            if(results is None or results ==[]):
+                print(f"--------------------> No local clan entry for {pfam_id}, update needed.")
+                raise Exception(f"No clan entry for {pfam_id} - add the entry to the DB table W2V_PFAM_CLAN_MC1" )
+            else:
+                clan_id = results[0][0]
+                clans.append(clan_id)
+        except Exception as e:
+            print('get_clans_for_pfams() error', e)
+            con.close()
+            return
+    con.close()
+    return clans
+
+
+# --------------------------------------------------------------------------------
+
+#
+# gets the jaccard similarity of betweeen two sets
+#
 def jaccard_similarity(set1, set2):
     # intersection of two sets
     intersection = len(set1.intersection(set2))
@@ -71,16 +160,18 @@ def jaccard_similarity(set1, set2):
      
     return intersection / union
 
+# as above but for lists
 def jaccard_similarity_list(list1, list2):
     intersection = len(list(set(list1).intersection(list2)))
     union = (len(set(list1)) + len(set(list2))) - intersection
     return float(intersection) / union
 
+# --------------------------------------------------------------------------------
 
-# Retrieves a subset of vectors from a w2v model dictionary - those being the vectors corresponding to pfam words
-# in the dictionary that only have mappings to clans. This subset will be used to train model and see if it can
-# accurately predict the labels of a test set
-#
+'''
+# Retrieves a subset of vectors from a w2v model - those being the vectors corresponding to pfam words
+# in the dictionary that also have mappings to clans. Along with the vectors, this also returns the 
+# pfam words as whci
 def get_model_vectors_clan_only(model_path, min_count, vector_size, min_clan_size):
     
     model = Word2Vec.load(model_path)
@@ -146,6 +237,7 @@ def get_model_vectors_clan_only(model_path, min_count, vector_size, min_clan_siz
     con.close()
     
     return X, Y, pfam_ids, clan_dict
+'''
 
 
 
@@ -154,7 +246,6 @@ def get_model_vectors_clan_only(model_path, min_count, vector_size, min_clan_siz
 # accurately predict the labels of a test set
 #
 def get_model_vectors(model_path, pfams, vector_size):
-    
     model = Word2Vec.load(model_path)
 
     # create matrices and arrays for data
@@ -165,9 +256,7 @@ def get_model_vectors(model_path, pfams, vector_size):
     return X
 
 
-
-
-
+'''
 def reduce_matrix(source_list, target_list, target_matrix):
     reorder_indices = []
     missing_items   = []
@@ -205,7 +294,7 @@ def reduce_matrix(source_list, target_list, target_matrix):
 
     return reordered_vector.tolist(), reordered_matrix
 
-
+'''
 
 
 
@@ -242,11 +331,11 @@ def run_svm(X, Y, pfam_ids, kernel, model_name, output_dir, lf):
 #
 def run_kmeans(X, Y, min_clan_size, k, pfam_ids, clan_dict, model_name, output_dir, lf):
     
-    detail_dir = output_dir + 'detail/'
+    #detail_dir = output_dir + 'detail/'
     classifier  = W2V_KMeans(X, Y, pfam_ids, model_name, output_dir,)
     
-    detail_log_file   = detail_dir+model_name+'_kmeans_k'+str(k)+'_cluster_results.txt'
-    detail_file       = open(detail_log_file, "a")
+    #detail_log_file   = detail_dir+model_name+'_kmeans_k'+str(k)+'_cluster_results.txt'
+    #detail_file       = open(detail_log_file, "a")
     
     # get KMeans guess as to what the clusters are
     # KMeans returns a dictionary of 'k' clusters and the pfams within each 
@@ -255,94 +344,119 @@ def run_kmeans(X, Y, min_clan_size, k, pfam_ids, clan_dict, model_name, output_d
     max_similarity  = 0
     max_key_1       = ""
     max_key_2       = ""
+    max_i = 0
+    max_j = 0
     
-    similarity_count = 0
-    similarity_total = 0
-    threshold   = 0.5 # just a threshold for jaccard    
+    similarity_count    = 0
+    similarity_total    = 0
+    threshold           = 0.4 # just a threshold for jaccard    
     similarity_thresh_count = 0
 
     score_matrix = np.zeros((len(cluster_dict), len(clan_dict)))
     i = 0
     # loop through each cluster that has been found by KMeans
     # and compare it to the actual clans in clan_dict
+    
+    k_keys      = list(cluster_dict.keys())
+    clan_keys   = list(clan_dict.keys())
+    
     for key_1, set_1 in cluster_dict.items():
+        #print(f" assessing {key_1} of {len(cluster_dict)}")
         j = 0
         for key_2, set_2 in clan_dict.items():
             similarity          = jaccard_similarity_list(set_1, set_2)
             similarity_total    += similarity
-            similarity_count    +=1
+            similarity_count    += 1
+            
+            #k_keys.append(key_1)
+            #clan_keys.append(key_2)
             
             score_matrix[i,j] = similarity
+            
             # separate tracker to see how often we actually see similar clusters 
             if similarity >= threshold:
+                print(f"K{key_1} to {key_2} similarity : {round(similarity, 2)} {len(set_1)} : {len(set_2)}")
                 similarity_thresh_count += 1
-                
+            else:
+                print(f"K{key_1} to {key_2} similarity : {round(similarity, 2)}") 
             # keep track of maximum
             if similarity > 0:
                 if similarity > max_similarity:
                     max_similarity = similarity
                     max_key_1 = key_1
                     max_key_2 = key_2
-            
-            # print outputs
-            #print(f"{model_name} | {min_clan_size} | {k} | sim[{i},{j}] : {round(similarity, 4)} | kc:{key_1} | clan: {key_2}")
-            detail_file.write(f"{model_name} | {min_clan_size} | {k} | sim[{i},{j}] | {round(similarity, 4)} | {key_1} | {key_2} \n")
-            
+                    max_i = i
+                    max_j = j
+            #detail_file.write(f"{model_name} | {min_clan_size} | {k} | sim[{i},{j}] | {round(similarity, 4)} | {key_1} | {key_2} \n")
             j+=1
-            #print(f" -  kmeans cluster : {cluster_dict[key_1]}")
-            #print(f" -  actual clan    : {clan_dict[key_2]}")
-    i+=1 
+        i+=1 
 
-    print(f"Results: \n - {similarity_count} items of {len(cluster_dict)} above similarity threshold of {threshold}.")
-    print(f" - Max similarity kmeans cluster : {max_key_1} to {max_key_2} : {max_similarity}")
-    print(f" - kmeans cluster {cluster_dict[max_key_1]}")
-    print(f" - actual clan {clan_dict[max_key_2]}")
-    detail_file.close()
-    return score_matrix, max_key_1, max_key_2, max_similarity
-
+    print(f" - {similarity_count} items of {len(cluster_dict)} above similarity threshold of {threshold}.")
+    print(f" - Max similarity kmeans cluster : [{max_i}, {max_j}] kcluster: {max_key_1} clan: {max_key_2} : {max_similarity}")
+    #detail_file.close()
+    return score_matrix, k_keys, clan_keys, max_key_1, max_key_2, max_similarity
 
 #
 # main method
 #
 if __name__ == '__main__':
     
-    current_date    = datetime.now().strftime('%Y%m%d')
-    s1 = time.time()
+    current_date = datetime.now().strftime('%Y%m%d%H%M')
+    s            = time.time()
     
     print('\n')
     print('---------------------------------------------------')
     print('            ** Word2Vec - Clustering  **           ')
     print('---------------------------------------------------')
     
-    output_dir='/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/logs/clustering/'
-    evo_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/distances/evo/rand_rep_distance_matrix.npy'
-    model_dir="/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/models/0910_g1/best/"
+    # ----------------------------------------------------------------------------------------------------------------------------
+    
+    
+    # 1. Create a suitable test name below
+    # 2. Make sure the models to test are in a folder with that name
+    # 3. Also make sure there is a similarly named log file folder
+    
+    
+    test_name       = '0922_g100'
+    save_matrices   = True     # set to true to putput the similarity matrices
+    max_count       = 100       # this is just for debuging purposes - set max_count to 1 to just run 1 model
+    
+    model_dir       = '/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/models/'+test_name+'/best_test/'
+    output_dir      = '/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/logs/clustering/'+test_name+'/'
+    
+    output_matrices = output_dir+'matrices/'
+    
+    summary_filename = output_dir+current_date+'_'+test_name+'_km_results.txt'
+    summary_file     = open(summary_filename, "a")
+    #evo_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/distances/evo/rand_rep_distance_matrix.npy'
+    
     
     # ----------------------------------------------------------------------------------------------------------------------------
-    current_date        = datetime.now().strftime('%Y%m%d_%H%M')
-    summary_log_file    = output_dir+current_date+'_0910_g1_kmeans_results.txt'
-    summary_file        = open(summary_log_file, "a")
+    
+    print('---------------------------------------------------------------------------')
+    print('                         ** Word2Vec - Clustering  **                      ')
+    print(f"                             Test : {test_name}                           ")
+    print('---------------------------------------------------------------------------')
+    
     # ----------------------------------------------------------------------------------------------------------------------------
-
-
     # get all the models to test
     models_info     = find_files(model_dir)
-    min_clan_sizes  = [2]
+    #min_clan_sizes  = [2, 10, 25, 50, 100, 150, 200, 250]
+    min_clan_sizes  = [100]
     
-    s = time.time()
-    
-    max_count = 20
-    count = 0
+    # loop through all the models in the 'best' folder
+    count       = 0
     for model_info in models_info:
         if count < max_count:
+            
             model_path = model_info[0]
             model_name = model_info[1]
-            #w2v_20240910_skip_mc3_w44_v25_g1.model
             
-            type_s    = re.search("_([a-zA-Z0-9]+)_mc", model_name)
-            type      = type_s.group(1)
-            gap_s    = re.search("_g([0-9]+)", model_name)
-            gap_size = gap_s.group(1)
+            # get info from filename for logging purposes
+            type_s      = re.search("_([a-zA-Z0-9]+)_mc", model_name)
+            type        = type_s.group(1)
+            gap_s       = re.search("_g([0-9]+)", model_name)
+            gap_size    = gap_s.group(1)
             vector_s    = re.search("v([0-9]+)", model_name)
             vector_size = vector_s.group(1)
             min_count_s = re.search("mc([0-9]+)_", model_name)
@@ -362,31 +476,44 @@ if __name__ == '__main__':
             print('--------------------------------------------------- ')
 
             for min_clan_size in min_clan_sizes:
-                
                 # ----------------------------------------------------------------------------------------------------------
                 # Get pfams and clans for model - if clans have >= min_clan_size clans 
                 # This has been checked multiple times
                 # ----------------------------------------------------------------------------------------------------------
-                pfams, clans, clan_dict = w2v_clan_utils.get_pfam_clans_for_model(model_name, model_path, min_clan_size)
-
-                print(f" - Model {model_name} has {len(pfams)} within {len(clans)} clans for a minimum clan size of {min_clan_size}.")
+                pfams, clans, clan_dict = get_pfam_clans_for_model(model_name, model_path, min_clan_size)
 
                 # Get the corresponding vectors for those pfams (X) and their actual clans (Y)
                 X = get_model_vectors(model_path, pfams, int(vector_size))
-                Y = w2v_clan_utils.get_clans_for_pfams(pfams)
-                k = len(clans)
-                
-                # ----------------------------------------------------------------------------------------------------------
-                #                               Run KMeans
-                # ----------------------------------------------------------------------------------------------------------
-                score_matrix, max_kcluster, max_clan, max_sim  = run_kmeans(X, Y, min_clan_size, k, pfams, clan_dict, model_name, output_dir, summary_file)
-                  
-                print(f"{model_name} | {round(score_matrix.mean(), 4)} | {round(score_matrix.min(),4)} | {round(score_matrix.max(), 4)} | {max_kcluster} | {max_clan} | {max_sim}")
-                
-                summary_file.write(f"{model_name} | 'kmeans' | {k} | {min_clan_size} | {round(score_matrix.mean(), 4)} | {round(score_matrix.min(),4)} | {round(score_matrix.max(), 4)} | {max_kcluster} | {max_clan} | {max_sim}\n")
+                # get correct clans (belt and braces to make sure order is same)
+                Y = get_clans_for_pfams(pfams)
                 
                 
-                count +=1
+                # number of clusters == nuumber of clans
+                k_multipliers = [1.0, 0.75, 0.5, 0.25]
+                for k_multiplier in k_multipliers:
+                    k = int(k_multiplier * len(clans))
+                
+                    # ----------------------------------------------------------------------------------------------------------
+                    #                               Run KMeans
+                    # ----------------------------------------------------------------------------------------------------------
+                    score_matrix, k_keys, clan_keys, max_kcluster, max_clan, max_sim  = run_kmeans(X, Y, min_clan_size, k, pfams, clan_dict, model_name, output_dir, summary_file)
+                    
+                    
+                    print(f"\n - {model_name} | mcs: {min_clan_size} | k: {k} | mean: {round(score_matrix.mean(), 4)} | max: {round(score_matrix.max(),4)} | min: {round(score_matrix.min(), 4)} | > | k:{max_kcluster} c:{max_clan} = {round(max_sim, 5)}")
+                    
+                    summary_file.write(f"{model_name} | 'kmeans' | {min_clan_size} | {k} | {round(score_matrix.mean(), 4)}  | {round(score_matrix.max(), 5)} {round(score_matrix.min(),4)} | > | {max_kcluster} : {max_clan} : {round(max_sim, 5)}\n")
+                    summary_file.flush()
+                    
+                    if (save_matrices):
+                        # save the score matrix to a file
+                        jaccard_matrix_name=test_name+'_'+model_name+'_mcs'+str(min_clan_size)+'_kmeans_jaccard_'+str(k_multiplier)+'.npy'
+                        jaccard_file_name = output_matrices+jaccard_matrix_name
+                        with open(jaccard_file_name, "wb") as f:
+                            np.save(f, score_matrix)
+                            np.save(f, k_keys)
+                            np.save(f, clan_keys)
+                            f.close()
+                    count +=1
     summary_file.close()
         
     

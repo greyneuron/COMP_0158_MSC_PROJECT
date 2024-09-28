@@ -1,10 +1,10 @@
 from gensim.models import Word2Vec
 
-from w2v_clan_utils import *
-from w2v_random_forest import W2V_RandomForest
-from w2v_kmeans import W2V_KMeans
+from code.clustering.w2v_clan_helper import *
+from code.clustering.methods.w2v_random_forest import W2V_RandomForest
+from code.clustering.methods.w2v_kmeans import W2V_KMeans
 from w2v_adaboost import W2V_AdaBoost
-from w2v_svm import W2V_SVM
+from code.clustering.methods.w2v_svm import W2V_SVM
 
 from datetime import datetime
 import re

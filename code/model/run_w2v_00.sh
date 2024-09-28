@@ -30,16 +30,17 @@
 
 #The code you want to run now goes here.
 
-hostname
 date
 
 platform=$1
 
 if [[ "$platform" == "mac" ]]; then 
     echo "Setting mac parameters"
+    #corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/0910/uniref100_e_corpus_gap_1_20240910.txt'
     corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/0920/uniref100_e_corpus_gap_50_20240920_1643.txt'
     #corpus_file='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/corpus/0922/uniref100_e_corpus_gap_100_20240922_1421.txt'
-    output_dir='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0920_g50/skip/'
+
+    output_dir='/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/data/models/0910_g1/'
     code_dir="/Users/patrick/dev/ucl/word2vec/comp_0158_msc_project/code/model"
 
 elif [[ "$platform" == "aws" ]]; then 
@@ -58,10 +59,8 @@ else
 fi
 
 # call python
-
-date
 echo "running models...."
-python3 "${code_dir}/w2v_model_batch.py" --mt skip --mc -1 --ws -1 --vs -1 --corpus_file="${corpus_file}" --output_dir="$output_dir"
+python3 "${code_dir}/w2v_model_batch.py" --mt all --mc -1 --ws -1 --vs -1 --corpus_file="${corpus_file}" --output_dir="$output_dir"
 date
 
 

@@ -208,8 +208,6 @@ if __name__ == '__main__':
     elif 'all' == mt:
         model_types = [CBOW, SKIP_GRAM]    
         
-
-    
     
     # -----------------------------------------------------------------
     #
@@ -222,21 +220,23 @@ if __name__ == '__main__':
     #log_file = output_dir+'/'+current_date+"_model_log.txt"
     #lf = open(log_file, "w")
     
+    gap_size = 'g100'
+    
     # min count, vector size, window size
     if min_count != -1:
         min_counts = [min_count]
     else:
-        min_counts = [3, 5, 8]
+        min_counts = [8]
         
     if window_size != -1:
         window_sizes = [window_size]
     else:
-        window_sizes = [13, 21, 44]
+        window_sizes = [44]
         
     if vector_size != -1:
         vector_sizes = [vector_size]
     else:
-        vector_sizes = [5, 25, 50, 100, 250, 500]
+        vector_sizes = [50]
 
     print('\n---------------------------------------------------')
     print(f"               Model Config Summary")
@@ -272,14 +272,18 @@ if __name__ == '__main__':
     # ---------------------- create and save model ----------------------
     #
     for model_type in model_types:
+        if model_type == CBOW:
+            model_type_name = 'cbow'
+        elif model_type == SKIP_GRAM:
+            model_type_name = 'skip'
         for min_count in min_counts:
             for window_size in window_sizes:
                 for vector_size in vector_sizes:
                     now_time   = datetime.now().strftime('%Y%m%d_%H:%M')
-                    model_base_name = "w2v_"+current_date + "_"+str(model_type) + "_mc"+str(min_count) +"_w"+str(window_size) + "_v"+str(vector_size)
-                    model_name      = output_dir+model_base_name+"_g50.model"
+                    model_base_name = "w2v_"+current_date + "_"+model_type_name + "_mc"+str(min_count) +"_w"+str(window_size) + "_v"+str(vector_size)
+                    model_name      = output_dir+model_base_name+'_'+gap_size+'.model'
                     
-                    print(f"{now_time} creating model {model_name}")
+                    print(f"{now_time} : creating model {model_name}")
                     sys.stdout.flush()
                     
                     s = time.time()
@@ -296,6 +300,6 @@ if __name__ == '__main__':
                     e = time.time()
                     time_taken=str(round(e-s, 2))
                     
-                    print(f"{now_time} | {model_base_name} | {model_type} | {min_count} | {window_size} | {vector_size} | {time_taken}")
+                    print(f"{now_time} | {model_base_name} | {model_type_name} | {min_count} | {window_size} | {vector_size} | {time_taken}")
                     
                     sys.stdout.flush()

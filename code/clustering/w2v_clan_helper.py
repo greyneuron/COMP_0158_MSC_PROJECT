@@ -138,7 +138,7 @@ def get_pfam_vocab(model_path):
 #                               Called from w2v_run__clustering
 # --------------------------------------------------------------------------------------------------------------------------
 
-
+'''
 #
 # For a model, this method gets all the pfam words in the model and then finds the clan id in the database
 # if the pfam entry is not in the database. As it goes, it creates a dictionary keyed by clan id and whose 
@@ -191,7 +191,9 @@ def get_pfam_clans_for_model(model_name, model_path, min_clan_size):
     # return only the pfams that have clans, what those clans are, and the clan dictionary mapping the two
     return filtered_pfams, filtered_clans, filtered_clan_dict
 
+'''
 
+'''
 #
 # Assumes clans are in the database, returns a list
 #
@@ -216,6 +218,7 @@ def get_clans_for_pfams(pfam_ids):
             return
     con.close()
     return clans
+'''
 
 
 

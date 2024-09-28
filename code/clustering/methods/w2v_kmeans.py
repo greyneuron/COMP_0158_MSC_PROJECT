@@ -39,7 +39,7 @@ class W2V_KMeans:
         classifier  = KMeans(n_clusters=int(k), random_state=0)
         labels      = classifier.fit_predict(self.X)
         
-        print(classifier.labels_)
+        #print(classifier.labels_)
 
         # output results
         #print('Model \t|\t PFAM Id \t|\t True Label \t|\t Cluster Number')

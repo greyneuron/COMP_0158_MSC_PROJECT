@@ -20,9 +20,32 @@ find . -type f -name '*.model' | while read file; do new_name="$(dirname "$file"
 find . -type f -name '*.model' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_0_/_cbow_/')"; echo "$file" "$new_name"; done
 
 
+find . -type f -name 'w2v*_1_*g50*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_1_/_skip_/')"; echo "$(basename "$file")" "-->" "$new_name"; done
 
-find . -type f -name '*20240922_1_*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_1_/_skip_/')"; echo "$new_name"; done
-find . -type f -name '*20240922_1_*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_1_/_skip_/')"; mv "$file" "$new_name"; done
+find . -type f -name 'w2v*_1_*g50*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_1_/_skip_/')"; mv "$file" "$new_name"; done
+find . -type f -name 'w2v*_0_*g50*' | while read file; do new_name="$(dirname "$file")/$(basename "$file" | sed 's/_0_/_cbow_/')"; mv "$file" "$new_name"; done
+
+
+#
+# -------------------------------- latex - replace pipe with ampersands for a table
+#
+#awk '{FS="|"}{print $1, "&", $3, "&" $4, "&" $5}' 202409250825_0910_g1_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g
+awk '{FS="|"} { if ($3 == 2) print $1, "&", $3, "&" $4, "&" $5} ' 202409251819_0922_g100_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g
+awk '{FS="|"} { if ($3 == 10) print $1, "&", $3, "&" $4, "&" $5} ' 202409251819_0922_g100_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g 
+awk '{FS="|"} { if ($3 == 25) print $1, "&", $3, "&" $4, "&" $5} ' 202409251819_0922_g100_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g 
+awk '{FS="|"} { if ($3 == 50) print $1, "&", $3, "&" $4, "&" $5} ' 202409251819_0922_g100_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g 
+awk '{FS="|"} { if ($3 == 100) print $1, "&", $3, "&" $4, "&" $5} ' 202409251819_0922_g100_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g
+awk '{FS="|"} { if ($3 == 150) print $1, "&", $3, "&" $4, "&" $5} ' 202409251819_0922_g100_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g
+awk '{FS="|"} { if ($3 == 200) print $1, "&", $3, "&" $4, "&" $5} ' 202409251819_0922_g100_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g 
+awk '{FS="|"} { if ($3 == 250) print $1, "&", $3, "&" $4, "&" $5} ' 202409251819_0922_g100_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g 
+
+
+awk '{FS="|"} { if ($1 == 250) print $1, "&", $3, "&" $4, "&" $5} ' 202409251659_0920_g50_km_results.txt | sort -k7,7nr | sed 's/_/\\_/'g
+
+
+
+
+
 #
 # -------------------------------- ec2 stuff ---------------------------------------- 
 #
