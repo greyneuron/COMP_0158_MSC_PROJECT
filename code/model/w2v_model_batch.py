@@ -220,7 +220,7 @@ if __name__ == '__main__':
     #log_file = output_dir+'/'+current_date+"_model_log.txt"
     #lf = open(log_file, "w")
     
-    gap_size = 'g100'
+    gap_size = 'g50'
     
     # min count, vector size, window size
     if min_count != -1:
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     if vector_size != -1:
         vector_sizes = [vector_size]
     else:
-        vector_sizes = [50]
+        vector_sizes = [5, 50, 100, 250, 500]
 
     print('\n---------------------------------------------------')
     print(f"               Model Config Summary")

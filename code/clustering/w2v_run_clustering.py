@@ -69,8 +69,6 @@ def get_pfam_vocab(model_path):
 
 
 
-
-
 # For a model, this method gets all the pfam words in the model and then finds the clan id in the database
 # if the pfam entry is not in the database. As it goes, it creates a dictionary keyed by clan id and whose 
 # values are the pfam ids in that clan.
@@ -375,10 +373,10 @@ def run_kmeans(X, Y, min_clan_size, k, pfam_ids, clan_dict, model_name, output_d
             
             # separate tracker to see how often we actually see similar clusters 
             if similarity >= threshold:
-                print(f"K{key_1} to {key_2} similarity : {round(similarity, 2)} {len(set_1)} : {len(set_2)}")
+                #print(f"K{key_1} to {key_2} similarity : {round(similarity, 2)} {len(set_1)} : {len(set_2)}")
                 similarity_thresh_count += 1
-            else:
-                print(f"K{key_1} to {key_2} similarity : {round(similarity, 2)}") 
+            #else:
+                #print(f"K{key_1} to {key_2} similarity : {round(similarity, 2)}") 
             # keep track of maximum
             if similarity > 0:
                 if similarity > max_similarity:
@@ -484,20 +482,24 @@ if __name__ == '__main__':
 
                 # Get the corresponding vectors for those pfams (X) and their actual clans (Y)
                 X = get_model_vectors(model_path, pfams, int(vector_size))
-                # get correct clans (belt and braces to make sure order is same)
-                Y = get_clans_for_pfams(pfams)
+                Y = get_clans_for_pfams(pfams) # get correct clans (belt and braces to make sure order is same)
                 
+                # useful to check pfams being used
+                '''    
+                for clan, clan_pfams in clan_dict.items():
+                    print(f"{clan} : {len(clan_pfams)} pfam entries:\n {clan_pfams}")
+                '''    
+                print(f"MIN CLAN SIZE: {min_clan_size} : NUM CLANS : {len(clans)} : NUM PFAMS : {len(pfams)} ({model_name}) X (vectors): {X.shape} Y (labels - clans): {len(Y)}")
                 
                 # number of clusters == nuumber of clans
                 k_multipliers = [1.0, 0.75, 0.5, 0.25]
                 for k_multiplier in k_multipliers:
                     k = int(k_multiplier * len(clans))
-                
+                    print(f" - USING K MULTIPLIER OF : {str(k_multiplier)}")
                     # ----------------------------------------------------------------------------------------------------------
                     #                               Run KMeans
                     # ----------------------------------------------------------------------------------------------------------
                     score_matrix, k_keys, clan_keys, max_kcluster, max_clan, max_sim  = run_kmeans(X, Y, min_clan_size, k, pfams, clan_dict, model_name, output_dir, summary_file)
-                    
                     
                     print(f"\n - {model_name} | mcs: {min_clan_size} | k: {k} | mean: {round(score_matrix.mean(), 4)} | max: {round(score_matrix.max(),4)} | min: {round(score_matrix.min(), 4)} | > | k:{max_kcluster} c:{max_clan} = {round(max_sim, 5)}")
                     
