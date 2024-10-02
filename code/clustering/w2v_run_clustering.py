@@ -415,7 +415,7 @@ if __name__ == '__main__':
     # 3. Also make sure there is a similarly named log file folder
     
     
-    test_name       = '0910_g1'
+    test_name       = '0920_g50'
     save_matrices   = True     # set to true to putput the similarity matrices
     max_count       = 100       # this is just for debuging purposes - set max_count to 1 to just run 1 model
     
@@ -439,8 +439,9 @@ if __name__ == '__main__':
     # ----------------------------------------------------------------------------------------------------------------------------
     # get all the models to test
     models_info     = find_files(model_dir)
+    
     #min_clan_sizes  = [2, 10, 25, 50, 100, 150, 200, 250]
-    min_clan_sizes  = [100]
+    min_clan_sizes  = [100, 150]
     
     # loop through all the models in the 'best' folder
     count       = 0
