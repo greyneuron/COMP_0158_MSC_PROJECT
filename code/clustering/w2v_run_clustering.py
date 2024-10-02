@@ -6,7 +6,7 @@ from methods.w2v_kmeans import W2V_KMeans
 from methods.w2v_adaboost import W2V_AdaBoost
 from methods.w2v_svm import W2V_SVM
 
-import w2v_evo_utils
+#import w2v_evo_utils
 #import w2v_clan_utils
 
 from datetime import datetime
@@ -415,14 +415,14 @@ if __name__ == '__main__':
     # 3. Also make sure there is a similarly named log file folder
     
     
-    test_name       = '0922_g100'
+    test_name       = '0910_g1'
     save_matrices   = True     # set to true to putput the similarity matrices
     max_count       = 100       # this is just for debuging purposes - set max_count to 1 to just run 1 model
     
-    model_dir       = '/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/models/'+test_name+'/best_test/'
+    model_dir       = '/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/models/'+test_name+'/graph/'
     output_dir      = '/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/logs/clustering/'+test_name+'/'
     
-    output_matrices = output_dir+'matrices/'
+    output_matrices = '/Users/patrick/dev/ucl/word2vec/COMP_0158_MSC_PROJECT/data/clusters/sim_matrices/'
     
     summary_filename = output_dir+current_date+'_'+test_name+'_km_results.txt'
     summary_file     = open(summary_filename, "a")
