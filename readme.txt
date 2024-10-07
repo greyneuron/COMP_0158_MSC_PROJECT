@@ -1,11 +1,13 @@
 ------------------------------------------------------------------
-			 Installation Instructions
+	Installation Instructions - Broadly correct as of 7/10/24
+
+	Ignore SqlLite - used DuckDB instead
 ------------------------------------------------------------------
 
 These are for a Macbook
 
 - Conda
-- Sqlite
+- Sqlite (not needed - use DuckDB instead)
 - Various conda packages
 - Python3
 - Brew (for installation)
@@ -212,7 +214,9 @@ code	: 	combine_e_protein_tokens.py
 ------------------------------------------------------------------
 			 Data Load - Creating Corpus
 ------------------------------------------------------------------
-THis uses uniref100_e_tokens_20240808_ALL_COMBINED.dat to create a sentence per protein. This means:
+code/corpus/create_corpus.py
+
+This uses uniref100_e_tokens_20240808_ALL_COMBINED.dat to create a sentence per protein. This means:
 - Remiving overlaps
 - Removing lines with no pfam entries
 - Removing lines with no entries at all
@@ -234,3 +238,26 @@ Stats:
 ------------------------------------------------------------------
 			 Creating Models
 ------------------------------------------------------------------
+
+
+Check parameters in w2v_model_batch.py 
+
+run_w2v_00.sh mac
+
+
+------------------------------------------------------------------
+			Distance Matrices and Correalations
+------------------------------------------------------------------
+code/distance/w2v_dist_corr_combined_batch.py
+
+
+------------------------------------------------------------------
+			 Clustering
+------------------------------------------------------------------
+code/clustering/w2v_run_cllustering.py
+
+
+------------------------------------------------------------------
+			 Graphics and PCA analysis
+------------------------------------------------------------------
+code/clustering/w2v_cluster_helper.ipynb
