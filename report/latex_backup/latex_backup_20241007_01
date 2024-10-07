@@ -145,7 +145,7 @@ Unfortunately, despite exhaustive searching through different model configuratio
 % ----------------------------------------------------------------
 %             Chapter 1 - Introduction and Background
 % ----------------------------------------------------------------
-\chapter{Introduction and Background}
+\chapter{Introduction}
 
 \section{Proteins}
 
@@ -1177,7 +1177,7 @@ The initial experiments were conducted with the model configurations shown in ta
 The word vectors for each of the 240 w2v models were extracted and pairwise distances were calculated using both Cosine and Euclidean formula; the resulting distances were normalised and each matrix (2 for each model) was correlated with the representative pfam distance matrix using both a pearson and spearman metrics. 
 
 \subsubsection{Results}
-\paragraph{}The top 10 results for all models using the Pearson and Spearman correlations are shown in table \ref{table_dist_results_pearson_g1} below.\\
+\paragraph{}The top 10 results for all models using the Pearson and Spearman correlations are shown in table \ref{table_dist_results_pearson_g1} below. Note that the Mantel test metric was also calculated but this produced the same results as either Pearson or Spearman (depending upon which metric was used in the Mantel calculation), thus these results are not shown. All metrics had very low p-values indicating that the metrics are confident of the low correlations in the results, this is also not shown\\
 
 \begin{table}[hbt!]
 \centering
@@ -1224,15 +1224,8 @@ The word vectors for each of the 240 w2v models were extracted and pairwise dist
 \end{table}
 \pagebreak
 
-\subsubsection{Analysis}
+These results are surprising - there is very little correlation between the two distance matrices with the maximum correlation being only \textbf{0.0914} using the spearman test and the skipgram model with the configuration : [min word count : 8, window size : 44, vector size :  25]). Reasons for this are discussed in the Conclusion.
 
-These results are surprising - there is very little correlation between the two distance matrices with the maximum correlation being only \textbf{0.0914} using the spearman test and the skipgram model with the configuration : [min word count : 8, window size : 44, vector size :  25]).
-
-\paragraph{}It's not clear what the reasons for this lack of correlation are, but the following factors may have had some influence:
-\begin{itemize}
-    \item The word2vec distance matrices are created by encoding protein domains whereas the representative Pfam matrix was derived directly from the protein amino sequences - perhaps these two different approaches cannot be compared?
-    \item The representative Pfam matrix was created by selecting a single protein at random from each Pfam family - it's possible that this introduced some noise or even that another random selection might provide different results.
-\end{itemize}
 
 \paragraph{}Some patterns do emerge from these experiments that motivated further experiments in the next iteration:
 \begin{enumerate}
@@ -1288,15 +1281,11 @@ Given the inconclusive results from the distance matrix comparison, it was decid
 %One of the disadvantages of KMeans clustering, is that it must be provided with a value for 'K' - the number of clusters to find. Given the objective is to find clusters of clans and that we know how many clans there should actually be for a set of encoded Pfam domains, it was decided that, for each test, K would be set to equal the number of clans encompassed by the Pfam word vectors in the current set (this is not the same for each model due to the minimum count hyperparameter). 
 
 
-
-\subsubsection{Results}
-
-
 \paragraph{} Each of the selected models was run through a KMeans clustering algorithm. Initially all Pfam embeddings were clustered as long as they belonged to clans with at least two Pfam members. 600 clans met that criteria and with K set to 600 the best result as measured by the Jaccard similarity was 0.005. Subsequent experiments were then executed changing the minimum clan sizes from 2 up to 50 with corresponding changes in the value for K. The top results per minimum clan size are shown in table \ref{kmeansg1results}.\\
 
 \begin{table}[hbt!]
 \centering
-\label{kmeansg1results}
+
 \begin{tabular}{|p{60mm}|c|c|p{45mm}|}
 \hline
 	model & min clan size & K & Average Jaccard similarity\\
@@ -1317,13 +1306,14 @@ w2v\_20240910\_skip\_mc8\_w44\_v100\_g1  &  250  & 2  & 0.3355 \\
 \hline
 \end{tabular}
 \caption{Initial Experiments 1 - Jaccard similarities for clusters for different clan sizes}
+\label{kmeansg1results}
 \end{table}
 
 As can be seen, as the minimum clan size criteria is increased from 2 to 250, the number of clans that meet that criteria reduces decrease from 600 to only 2. But even with only 2 clusters to compare, both with 250 or more pfams, the correlation is very low - at only 33\%.
 
 \vspace{10mm}
 \subsection{Experiments I - Analysis}
-To analyse the results and explain the poor correlations, visual analysis of the vector space was undertaken by plotting the first 3 Principal Components of different model configurations. These plots are colour coded according to the correct clan each word embedding actually belongs to.
+To analyse the results and try to explain correlations, visual analysis of the vector space was undertaken by plotting the first 3 Principal Components of different model configurations. These plots are colour coded according to the correct clan each word embedding actually belongs to.
 
 \subsubsection{Analysis 1 - Principal Components}The plots in \ref{fig:0910g1kmbestc2} show all the vectors from the 2 'best' models (according to the distance matrix comparison). It is visually clear that all the vectors are very tightly packed in space, making it difficult for distance-based clustering algorithms to separate them.
 
@@ -1669,84 +1659,53 @@ The 3 Principal Components of a number of models were plotted to see if the high
 % ----------------------------------------------------------------
 %             Chapter 4 - Analysis and Conclusiona
 % ----------------------------------------------------------------
-\chapter{Conclusions and Final Thoughts}
+\chapter{Conclusion}
 
-\section{Conclusions}
-Throughout the course of this study, 78 million eukaryotic protein sequences, 300 million Pfam domains entries and over 4 billion lines of disorder information have been analysed and used to create 3 different corpi. By experimenting with a range of word2vec hyperparameters and architectures over 400 models have been created - each producing a unique encoding of protein family (Pfam) domain tokens (words) ranging in vector size from 5 to 1,000.
+\section{Discussion}
+In this study, a wide range of word2vec models have been successfully evaluated to investigate whether biological meaningful information is contained within their embeddings. A number of discussion points on results and method are presented below.
 
-\paragraph{}Providing these vectors from the best models as inputs into a KMeans clustering algorithm did not result in K-means clusters that mirrored anything meaningful in a biological sense - certainly when compared to the Pfam clans that act as groupings of these protein families in real life. The figure below \ref{fig:finaldiagram} that plots the 3 Primary Components of one set of these vectors, is representative of the findings for all models. It is clear that the word2vec embeddings simply do not create vectors that can be easily separated in space.
+\subsubsection{Clustering performance}
+Despite over 240 models being created and assessed, very little correlation could be found between the clusters found within the embeddings of Pfam domains and Pfam clans - the maximum observed was 10\% overlap. There could be many reasons for this.
 
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/final_diagram.png}
-    \caption{3 PCA - word2vec skipgram embeddings vector size of 500 - colour coded to actual clans}
-    \label{fig:finaldiagram}
-\end{figure}
+\paragraph{Corpus considerations}Firstly, considering the \textbf{corpus}, with all vectors being positioned within the same small region, the word2vec algorithm has concluded that almost all domain tokens are somehow related semantically and must therefore appear close to each other in many sentences in the corpus. Changing the gap sizes should in theory have changed this distribution but the results for the gap sizes of 1, 50 and 100 were not markedly different. In retrospect, it may have been a mistake to include outlier sentences consisting of many domains with few other regions, this would be an interesting alternative to investigate. However, the reasons for including them were sound as they are contain biologically meaningful information.
 
+\paragraph{}One might also consider the \textbf{window size}, as that impacts  the number of iterations of training the model executes - each resulting in a slight modification to the embeddings. However, many different combinations were tried with no discernible difference. The same is true of varying the \textbf{minimum word} count hyperparameter.
 
+\paragraph{}Other studies have also used a similar domain-based representation of proteins to create word2vec embeddings and have reported better results. Specifically \textbf{Melidis et al.} (2020) \cite{llmdom2vec} showed that their embeddings outperformed sequence embeddings for toxin and enzymatic function prediction and was comparable for cellular location prediction. 
 
-\paragraph{}This study built on a previous body of work \cite{llmword2vec} which also used Pfam domain and disorder tokens to find a grammar through word2vec embeddings. This study has taken that work further by investigating significantly more models, with different  corpus rules and on a data set that has had 4 years to evolve. Following this study, though, one can only conclude that no hyperparameter configuration of the word2vec model would allow meaningful clusters to be found that mirror real Pfam clans.
-\\
-\todo{todo why do we think that is?}
+\paragraph{}They used gap sizes of 30 and also reduced sentence length by keeping only one domain in an overlapping region. The main difference with their approach was to use a much wider set of domain annotations - they used all available InterPro domain annotations including super-family, family, single domains and functional sites compared to this study's use of family and disorder regions only. They also developed sentences for all proteins rather than just eukaryotic proteins alone. Although its not clear from their paper, the use of a larger corpus and vocabulary may have resulted in embeddings that are distributed across a wider space.
+
+\paragraph{Choice of clustering algorithm}Another possible explanation for the inability to produce meaningful clusters, may be the choice of \textbf{KMeans} algorithm to create them. An alternative may have been to use a \textbf{Gaussian Mixture Model} for clustering. These are probabilistic models that assume that all data points are generated from a mixture of a set number of Gaussian distributions with unknown parameters. They can be thought of as a generalised K-Means algorithm that incorporates information about the underlying covariance and means of the data in each cluster. This approach was considered at one point, but these models also depend upon a value being provided for the number of clusters to produce are more computationally intensive and less transparent. Also, when analysing the PCA plots, it is difficult to forsee that this model would be able to produce better clusters.
 
 
+\subsubsection{Lack of distance correlation}
+The lack of correlation observed between the distance matrices from word2vec embeddings and the supplied representative pfam distance matrix deserves some discussion. Both were ultimately derived from protein sequences, thus some correlation might have been expected. The following factors may have had some bearing on the poor results.
+\paragraph{} Firstly, the word2vec distance matrices are created by encoding protein domains whereas the representative Pfam matrix was derived directly from alignments of the protein amino sequences. Although the protein domain tokens used in sentences were pfam ids and that pfam ids are also derived from sequence alignments - perhaps the final distance outputs from these two approaches are too far removed from the underlying sequence to allow comparison?
+\paragraph{} Furthermore, the representative Pfam matrix was created by selecting a single protein at random from each Pfam family - it's possible that this introduced some noise or even that another random selection might provide different results.
+
+\subsubsection{Method and choice of architecture}
+With respect to the choice of architecture, two decisions were taken that may have resulted in additional overhead without some prior knowledge of these technologies.
+
+\paragraph{} Firstly, Amazon Web Services (\textbf{AWS}) infrastructure was used to provide extra compute power when needed. This required some investment in time, although previous familiarity and tutorials limited this. Combined with the use of the \textbf{Terraform} tool to specify and provision AWS hardware, instances were extremely easy to create and destroy. That said, the AWS console is difficult to navigate, with too many services and too many hardware and operating system choices to be made. Pricing can be opaque and without prior experience it is easy to incur significant cost. However, when creating the number of models that were necessary, the choice of AWS was a good one as it allowed these to be created in the background and with some certainty on completion times. However, AWS may not be suitable for someone who is brand new to the technology.
+
+\paragraph{} Another decision was the use of a local database (\textbf{DuckDB}) to store protein and domain data ahead of corpus creation. This approach was used because the volume of data required to form a corpus was not being parsed and searched quickly enough using basic python or unix command line tools on a local Macbook. Given the relational nature of the dataset (with protein ids acting as a foreign key for domains and disorder regions) a database was installed locally and proved extremely quick at ingesting tab delimited data and combining tokens. With indexes applied, the database was able to combine tokens from 10M proteins through a table join in only 30 seconds. The installation of DuckDB was simple and only a few SQL commands were needed to perform the data manipulations required. This approach would be recommended in future.
 
 
-\section{Proposed Next Steps}
-Given the broad range of parameters used to configure the various models in this study, it is unlikely that further investigations using this model type or approach to building a corpus will lead to different results.
+\section{Recommendations for future work}
+Staying within the parameters of a word2vec model, recommendations from this study to take forward for further investigation include:
 
-\paragraph{}The word2vec model, although a game changer when it was introduced, has been superceded by Transformer based models when analysing the vast quantities of textual data. Protein Language Models based upon this architecture have gained significant traction in recent years and that is where current research momentum lies. 
+\paragraph{}Firstly, more domain annotations could be used in constructing the corpus as per Melidis at al. \cite{llmdom2vec}. They achieved some success with this vocabulary and it would be interesting to repeat the experiments of this study with that alternative corpus.
 
-\paragraph{}Therefore, going forward, the recommendation from this report would be to investigate Transformer based encodings which have proven better at processing vast quantities of data and identifying long-range relationships between words. That might include:
+\paragraph{}Secondly, experimenting with a corpus that excludes outlier sentences is worthwhile investigating. This means excluding those sentences that have a high concentration of pfam domains compared to other tokens. Including these may have caused the embeddings in this study to converge in space.
 
-\begin{itemize}
-    \item Run a set of out of the box BERT models using the same corpi used here, extracting the encodings and again, passing them through a set of KMeans clustering algorithms
-    \item Investigate a different corpus representation. In creating the corpus for this study, all Pfam domain tokens were treated the same in the corpus - is this also true biologically or should more weight be given to tokens depending upon where they are placed along the polypeptide chain?
-    \item And of course, a custom model could be created to try to distribute the embeddings across different regions in multi-dimensional space
-    \item \todo{todo add more}
-\end{itemize}
+\paragraph{}Beyond word2vec a BERT language model may be worth investigating. This architecture reads text from both directions in parallel which, in theory gives a more complete understanding of context. However, without changing the underlying corpus it is difficult to see whether this might indeed change anything.
 
+\paragraph{}Finally, a custom embedding could be created. Although this study would advise designing such a model in close conjunction with experienced Biochemists with a deeper understanding of the biological and evolutionary relationships between protein sequences. For example, different weights might be applied to different tokens depending upon their position along the length of a protein and their particular function.
 
-
-\clearpage
-\section{Final Thoughts}
-Proteins are crucial to life, the more we understand them, the more medicine and healthcare will be revolutionised - in fact this is already happening. High throughput experiments now yield billions of entries of protein sequences per experiment and it's simply not possible for this data to be characterized using traditional MSA and HMM techniques - yet we need to understand them in order to take advantage and develop new targetted medicines. Fortunately Machine Learning and language modelling techniques have already proven their ability to find biologically meaningful information in these billions of lines of protein sequences.
-
-\paragraph{}The large Tech companies are also ploughing huge resources into this area, snapping up promising research companies as they go. In fact it was Google's Deep Mind division that released AlphaFold in 2018 and many of the latest Language Model architectures are coming out of Silicon Valley. Even if they are not initially intended for use in understanding proteins, the knock-on effects have already been seen - such as how the Transformer model, also released by Google, resulted in follow-on large Protein Language Models like Prot-Bert.
-
-\paragraph{}Where does this leave the word2vec model that revolutionised language models just over 10 years ago? Well, it seems that in a short space of time, momentum has moved towards the Transformer models that by design can process far higher volumes of data. They are better suited to the huge volumes of data coming out of the massively parallelised protein sequencers of today.
-
-\paragraph{}Irrespective, in the last 12 years, language models have made an enormous difference to our understanding of proteins. Given the levels of investment being poured into the area this is a very exciting time to be working in Bioinformatics and the future looks full of promise!  
+\section{Conclusion}
+Using multiple word2vec models with protein domains as sentences, this study investigated whether meaningful biological relationships could be found by clustering domain embeddings. Despite trying over 240 model configurations and 3 different corpus constructions, the highest correlation achieved when comparing clusters with Pfam clans was only 10\%.
 
 
-
-%\begin{tikzpicture}
-% draw a horizontal line
-%\draw (0,0) -- (15,0);
-
-% draw vertical lines
-%\foreach \x in {0, 1,2,3,4,5,6,7,8,9,10,11,12,13, 14, 15}
-%\draw (\x cm,2pt) -- (\x cm,-2pt);
-
-% draw nodes to add events
-%\draw (0,0) node[below=3pt] {2012};
-%\draw (1,0) node[below=3pt] {2013} node[above=10pt] {word2Vec (2013)};
-%\draw (4,0) node[below=3pt] {2017} node[above=48pt] {Transformer (2017)};
-%\draw (5,0) node[below=3pt] {2018} node[above=28pt] {BERT (2018)};
-%\draw (5,0) node[above=14pt] {GPT (2018)};
-%\draw (6,0) node[above=6pt] {GPT-2 (2019)};
-%\draw (6,0) node[below=3pt] {2019} node[above=20pt] {XLNet (2019)};
-%\draw (6,0) node[below=3pt] {2019} node[below=20pt] {TAPE (2019)};
-%\draw (7,0) node[below=3pt] {2020} node[below=36pt] {ProtBert (2020)};
-%\draw (7,0) node[above=48pt] {GPT-3 (2020)};
-%\draw (7,0) node[below=56pt] {ProtTrans (2020)};
-%\draw (7,0) node[below=70pt] {w2v grammar (2020)};
-%\draw (7,0) node[below=84pt] {d2v grammar (2020)};
-%\draw (8,0) node[below=3pt] {2021} node[below=20pt] {ESM (2021)};
-%\draw (9,0) node[below=3pt] {2022};
-%\draw (10,0) node[below=3pt] {2023} node[above=6pt] {GPT-4 (2023)};
-%\draw (11,0) node[below=3pt] {2024} node[below=20pt] {AlphaFold3 (2024)};
-%\end{tikzpicture}
 
 
 \appendix
@@ -1761,8 +1720,6 @@ Proteins are crucial to life, the more we understand them, the more medicine and
 \bibitem{domain1}Moore, A.D., Bjorklund,  A.K., Ekman, D., Bornberg\-Bauer, E., Elofsson, A.: Arrangements in the modular evolution of proteins. Trends in Biochemical Sciences 33(9), 444–451 (2008)
 
 \bibitem{domain2}Forslund, S.K., Kaduk, M., Sonnhammer, E.L.: Evolution of protein domain architectures, 469–504 (2019)
-
-
 
 
 % --------------- domain - sequence and structre --------------- 
@@ -1936,8 +1893,8 @@ De Vries, G., \& Tsivtsivadze, E. (2017). Learning n-gram patterns for protein s
 The code for this project is freely available on \href{https://github.com/greyneuron/COMP_0158_MSC_PROJECT/tree/main}{github}. It is organised as follows at the top level:
 
 \begin{itemize}
-    \item \textbf{code} contains all python code, shell scripts and one or two C++ file organised by functional area
-    \item \textbf{data} contains some sample data, restructed due to github limitations on sizes
+    \item \textbf{code} contains all python, C++ code, and shell scripts organised by functional area
+    \item \textbf{data} contains some sample data, restricted due to github limitations on sizes
     \item \textbf{logs} contains outputs logs from the various
     \item \textbf{database} contains the duckdb local database to hold the output of the data preparation exercises (not uploaded due to github restrictions)
 \end{itemize}
